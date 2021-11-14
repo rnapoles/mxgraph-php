@@ -75,7 +75,7 @@ class mxGdCanvas
 	 * The buffered <image> is only created if the given
 	 * width and height are greater than 0.
 	 */
-	function mxGdCanvas($width = 0, $height = 0, $scale = 1,
+	function __construct($width = 0, $height = 0, $scale = 1,
 		$background = null, $imageBasePath = "")
 	{
 	 	$this->enableTtf = mxConstants::$TTF_ENABLED;
@@ -260,11 +260,9 @@ class mxGdCanvas
 				$start = mxUtils::getNumber($style, mxConstants::$STYLE_STARTSIZE,
 					mxConstants::$DEFAULT_STARTSIZE) * $this->scale;
 
-				// Removes some styles to draw the content area
+                    // Removes some styles to draw the content area
 				$cloned = array_slice($style, 0);
-				if(isset($cloned[mxConstants::$STYLE_SWIMLANE_FILLCOLOR])){
-					$cloned[mxConstants::$STYLE_FILLCOLOR] = $cloned[mxConstants::$STYLE_SWIMLANE_FILLCOLOR];
-				}
+				$cloned[mxConstants::$STYLE_FILLCOLOR] = $cloned[mxConstants::$STYLE_SWIMLANE_FILLCOLOR];
 				unset($cloned[mxConstants::$STYLE_GRADIENTCOLOR]);
 				unset($cloned[mxConstants::$STYLE_ROUNDED]);
 

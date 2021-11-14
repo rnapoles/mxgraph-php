@@ -37,10 +37,10 @@ function main()
 	// Creates an interlaced image for better loading in the browser
 	//imageInterlace($image, 1);
 	// Marks background color as being transparent
-	//imageColorTransparent($image, imageColorAllocate($image, 255, 255, 255));
+	imageColorTransparent($image, imageColorAllocate($image, 255, 255, 255));
 
 	header("Content-Type: image/png");	
-	mxUtils::encodeImage($image);
+	echo mxUtils::encodeImage($image);
 }
 
 // Uses a local font so that all examples work on all platforms. This can be

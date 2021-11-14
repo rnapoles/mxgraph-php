@@ -68,7 +68,7 @@ class mxGraph
 	 * Constructs a new graph model using the specified
 	 * root cell.
 	 */
-	function mxGraph($model = null, $stylesheet = null)
+	function __construct($model = null, $stylesheet = null)
 	{
 		$this->model = ($model != null) ? $model : new mxGraphModel();
 		$this->stylesheet = ($stylesheet != null) ? $stylesheet : $this->createStylesheet();
@@ -414,7 +414,7 @@ class mxGraph
 	{
 		return $this->imageBundles;
 	}
-
+	
 	/**
 	 * Function: setImageBundles
 	 * 
