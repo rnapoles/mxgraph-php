@@ -29,9 +29,9 @@ class mxStylesheetCodec extends mxObjectCodec
 	 * references.
 	 * mapping - Optional mapping from field- to attributenames.
 	 */
-	function mxStylesheetCodec($template)
+	function __construct($template)
 	{
-		parent::mxObjectCodec($template);
+		parent::__construct($template);
 	}
 	
 	/**

@@ -67,7 +67,7 @@ class mxGraphView extends mxEventSource
 	 * 
 	 * Constructs a new view for the specified <mxGraph>.
 	 */
-	function mxGraphView($graph)
+	function __construct($graph)
 	{
 		$this->EMPTY_POINT = new mxPoint();
 		$this->graph = $graph;

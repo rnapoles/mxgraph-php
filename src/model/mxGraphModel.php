@@ -66,7 +66,7 @@ class mxGraphModel extends mxEventSource
 	 *
 	 * Constructs a new graph model using the specified root cell.
 	 */
-	function mxGraphModel($root = null)
+	function __construct($root = null)
 	{
 	 	if (isset($root))
 	 	{
@@ -234,24 +234,21 @@ class mxGraphModel extends mxEventSource
 	 */
 	function cloneCellImpl($cell, $mapping, $includeChildren)
 	{
-		$ident = mxCellPath::create($cell);
-		$clne = $mapping[$ident];
+		$clne = $this->cellCloned($cell);
 		
-		if ($clne == null)
+		// Stores the clone in the lookup under the
+		// cell path for the original cell
+		$mapping[mxCellPath::create($cell)] = $clne;
+		
+		if ($includeChildren)
 		{
-			$clne = $this->cellCloned($cell);
-			$mapping[$ident] = $clne;	
-		
-			if ($includeChildren)
+			$childCount = $this->getChildCount($cell);
+
+			for ($i = 0; $i < $childCount; $i++)
 			{
-				$childCount = $this->getChildCount($cell);
-	
-				for ($i = 0; $i < $childCount; $i++)
-				{
-					$child = $this->getChildAt($cell, $i);
-					$cloneChild = $this->cloneCellImpl($child, $mapping, true);
-					$clne->insert($cloneChild);
-				}
+				$child = $this->getChildAt($cell, $i);
+				$cloneChild = $this->cloneCellImpl($child, $mapping, true);
+				$clne->insert($cloneChild);
 			}
 		}
 		
