@@ -414,7 +414,7 @@ class mxGraph
 	{
 		return $this->imageBundles;
 	}
-	
+
 	/**
 	 * Function: setImageBundles
 	 * 

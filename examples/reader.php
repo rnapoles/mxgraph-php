@@ -33,12 +33,12 @@ function main()
 	//imageColorTransparent($image, imageColorAllocate($image, 255, 255, 255));
 	
 	header("Content-Type: image/png");
-	echo mxUtils::encodeImage($image);
+	mxUtils::encodeImage($image);
 }
 
 // Uses a local font so that all examples work on all platforms. This can be
 // changed to vera on Mac or arial on Windows systems.
-mxConstants::$DEFAULT_FONTFAMILY = "ttf/verah.ttf";
+mxConstants::$DEFAULT_FONTFAMILY = realpath("ttf/verah.ttf");
 
 // If you can't get the fonts to render try using one of the following:
 //mxConstants::$DEFAULT_FONTFAMILY = "C:\WINDOWS\Fonts\arial.ttf";

@@ -260,9 +260,11 @@ class mxGdCanvas
 				$start = mxUtils::getNumber($style, mxConstants::$STYLE_STARTSIZE,
 					mxConstants::$DEFAULT_STARTSIZE) * $this->scale;
 
-                    // Removes some styles to draw the content area
+				// Removes some styles to draw the content area
 				$cloned = array_slice($style, 0);
-				$cloned[mxConstants::$STYLE_FILLCOLOR] = $cloned[mxConstants::$STYLE_SWIMLANE_FILLCOLOR];
+				if(isset($cloned[mxConstants::$STYLE_SWIMLANE_FILLCOLOR])){
+					$cloned[mxConstants::$STYLE_FILLCOLOR] = $cloned[mxConstants::$STYLE_SWIMLANE_FILLCOLOR];
+				}
 				unset($cloned[mxConstants::$STYLE_GRADIENTCOLOR]);
 				unset($cloned[mxConstants::$STYLE_ROUNDED]);
 

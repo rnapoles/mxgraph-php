@@ -52,7 +52,7 @@ class mxCellState extends mxRectangle
 	 * Holds an array of <mxPoints> that represent the absolute points of an
 	 * edge.
 	 */
-	var $absolutePoints;
+	var $absolutePoints = [];
 
 	/**
 	 * Variable: absoluteOffset
