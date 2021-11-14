@@ -2,7 +2,18 @@
 /**
  * Copyright (c) 2006, Gaudenz Alder
  */
-include_once("../src/mxServer.php");
+
+use Mxgraph\Io\mxCodec;
+use Mxgraph\Model\mxGraphModel;
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxPoint;
+use Mxgraph\Util\mxUtils;
+use Mxgraph\View\mxGraph;
+
+include_once __DIR__ . "/../vendor/autoload.php";
+
+error_reporting(E_ALL);
+ini_set('display_errors', 'on');
 
 /**
  * Function: main
@@ -11,6 +22,8 @@ include_once("../src/mxServer.php");
  */
 function main()
 {
+	$targetXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="4" value="e1" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="10" y="10"/></Array></mxGeometry></mxCell><mxCell id="5" value="v3" style="shape=ellipse" vertex="1" parent="4"><mxGeometry relative="1" width="40" height="40" as="geometry"><mxPoint x="-20" y="-20" as="offset"/></mxGeometry></mxCell><mxCell id="2" value="Hello" vertex="1" parent="1"><mxGeometry width="80" height="30" x="20" y="20" as="geometry"/></mxCell><mxCell id="3" value="World!" vertex="1" parent="1"><mxGeometry width="80" height="30" x="200" y="150" as="geometry"/></mxCell></root></mxGraphModel>';
+
 	// Creates graph with model
 	$model = new mxGraphModel();
 	$graph = new mxGraph($model);
@@ -31,7 +44,7 @@ function main()
 		
 		$model->add($parent, $e1, 0);
 	}
-	catch (Exception $e)
+	catch (\Exception $e)
 	{
 		$model->endUpdate();
 		throw($e);
@@ -52,19 +65,21 @@ function main()
 	$node = $enc->encode($model);
 	$xml2 = $doc->saveXML($node);
 
-	if ($xml1 == $xml2)
+	if ($xml1 == $xml2 && $xml1 == $targetXml)
 	{
 		echo "Test Passed: ".htmlentities($xml1);
 	}
 	else
 	{
-		echo "Test Failed: <br>xml1=".htmlentities($xml1)."<br>xml2=".htmlentities($xml2);
+		echo "<br /><br />Test Failed: <br>xml1=".htmlentities($xml1)."<br /><br /><hr />" .htmlentities($targetXml);
 	}
 }
 
 // Uses a local font so that all examples work on all platforms. This can be
 // changed to vera on Mac or arial on Windows systems.
 mxConstants::$DEFAULT_FONTFAMILY = "verah";
+\Mxgraph\Util\mxLog::$printLog = true;
+
 putenv("GDFONTPATH=".realpath("../examples/ttf"));
 
 // If you can't get the fonts to render try using one of the following:

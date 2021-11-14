@@ -1,4 +1,9 @@
 <?php
+namespace Mxgraph\Canvas;
+
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxUtils;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */

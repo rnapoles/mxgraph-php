@@ -1,4 +1,17 @@
 <?php
+namespace Mxgraph\View;
+
+use Mxgraph\Canvas\mxGdCanvas;
+use Mxgraph\Model\mxCell;
+use Mxgraph\Model\mxGeometry;
+use Mxgraph\Model\mxGraphModel;
+use Mxgraph\mxServer;
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxEvent;
+use Mxgraph\Util\mxPoint;
+use Mxgraph\Util\mxRectangle;
+use Mxgraph\Util\mxUtils;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -70,6 +83,8 @@ class mxGraph
 	 */
 	function __construct($model = null, $stylesheet = null)
 	{
+		mxServer::init();
+
 		$this->model = ($model != null) ? $model : new mxGraphModel();
 		$this->stylesheet = ($stylesheet != null) ? $stylesheet : $this->createStylesheet();
 		$this->view = $this->createGraphView();
@@ -517,7 +532,7 @@ class mxGraph
 			$this->model->setTerminal($edge, $source, true);
 			$this->model->setTerminal($edge, $target, false);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->model->endUpdate();
 			throw($e);

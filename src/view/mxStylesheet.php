@@ -1,4 +1,8 @@
 <?php
+namespace Mxgraph\View;
+
+use Mxgraph\Util\mxConstants;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -178,7 +182,7 @@ class mxStylesheet
 
 			if (isset($pairs))
 			{
-				if (isset($style) && $name[0] != ';')
+				if (isset($style) && $name{0} != ';')
 				{
 					$style = array_slice($style, 0);
 				}

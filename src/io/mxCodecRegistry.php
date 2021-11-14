@@ -1,4 +1,8 @@
 <?php
+namespace Mxgraph\Io;
+
+use Mxgraph\Model\mxGraphModel;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -48,7 +52,7 @@ class mxCodecRegistry
 				mxCodecRegistry::addAlias($classname, $name);
 			}
 		}
-		
+
 		return $codec;
 	}
 
@@ -74,7 +78,7 @@ class mxCodecRegistry
 	static function getCodec($name)
 	{
 		$codec = null;
-		
+
 		if (isset($name))
 		{
 			if (isset(mxCodecRegistry::$aliases[$name]))
@@ -97,14 +101,14 @@ class mxCodecRegistry
 				try
 				{
 					$obj = mxCodecRegistry::getInstanceForName($name);
-					
+
 					if (isset($obj))
 					{
 						$codec = new mxObjectCodec($obj);
 						mxCodecRegistry::register($codec);
 					}
 				}
-				catch (Exception $e)
+				catch (\Exception $e)
 				{
 					// ignore
 				}
@@ -125,7 +129,13 @@ class mxCodecRegistry
 		{
 			return new $name();
 		}
-		
+
+		foreach (get_declared_classes() as $class) {
+			if (substr($class, -strlen($name)) == $name) {
+				return new $class;
+			}
+		}
+
 		return null;
 	}
 	
@@ -145,8 +155,8 @@ class mxCodecRegistry
 			return "Array";
 		}
 
-		return get_class($obj);
+		$name = explode("\\", get_class($obj));
+		return array_pop($name);
 	}
-
 }
 ?>

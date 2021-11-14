@@ -1,4 +1,11 @@
 <?php
+namespace Mxgraph\Reader;
+
+use Mxgraph\Canvas\mxGdCanvas;
+use Mxgraph\Util\mxPoint;
+use Mxgraph\Util\mxUtils;
+use Mxgraph\View\mxCellState;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */

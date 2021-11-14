@@ -1,4 +1,9 @@
 <?php
+namespace Mxgraph\Io;
+
+use Mxgraph\Util\mxLog;
+use Mxgraph\Util\mxUtils;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -245,12 +250,17 @@ class mxObjectCodec
 	 */
 	function encode($enc, $obj)
 	{
-		$node = $enc->document->createElement($this->getName());
-		
-		$obj = $this->beforeEncode($enc, $obj, $node);
-		$this->encodeObject($enc, $obj, $node);
-		
-		return $this->afterEncode($enc, $obj, $node);
+	    try {
+			$node = $enc->document->createElement($this->getName());
+
+			$obj = $this->beforeEncode($enc, $obj, $node);
+			$this->encodeObject($enc, $obj, $node);
+
+			return $this->afterEncode($enc, $obj, $node);
+		} catch(\Exception $e) {
+	    	print_R($e->getMessage().  ":" . $this->getName());
+	    	die();
+		}
 	}
 		
 	/**
@@ -766,7 +776,7 @@ class mxObjectCodec
 						$dec->decode($xml, $into);
 					}
 				}
-				catch (Exception $e)
+				catch (\Exception $e)
 				{
 					// ignore
 				}

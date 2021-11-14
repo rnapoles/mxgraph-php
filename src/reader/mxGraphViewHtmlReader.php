@@ -1,4 +1,8 @@
 <?php
+namespace Mxgraph\Reader;
+
+use Mxgraph\Canvas\mxHtmlCanvas;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */

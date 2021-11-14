@@ -1,4 +1,6 @@
 <?php
+namespace Mxgraph\Util;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -46,8 +48,8 @@ class mxRectangle extends mxPoint
 	{
 	    $this->x = $x;
 	    $this->y = $y;
-	    $this->width = $w;
-	    $this->height = $h;
+	    $this->width = $width;
+	    $this->height = $height;
 	}
 	
 	/**

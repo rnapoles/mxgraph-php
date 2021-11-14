@@ -2,7 +2,11 @@
 /**
  * Copyright (c) 2006, Gaudenz Alder
  */
-include_once("../src/mxServer.php");
+
+use Mxgraph\Io\mxCodec;
+use Mxgraph\View\mxGraph;
+
+include_once __DIR__ . "/../vendor/autoload.php";
 
 /**
  * Creates a graph using the API and returns the XML.

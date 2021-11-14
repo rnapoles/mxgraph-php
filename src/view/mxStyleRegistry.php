@@ -1,4 +1,8 @@
 <?php
+namespace Mxgraph\View;
+
+use Mxgraph\Util\mxConstants;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -10,6 +14,7 @@ class mxStyleRegistry
 	 *
 	 * Singleton class that acts as a global converter from string to object values
 	 * in a style. This is currently only used to perimeters and edge styles.
+	 *
 	 * 
 	 * Variable: values
 	 *
@@ -57,14 +62,4 @@ class mxStyleRegistry
 
 }
 
-mxStyleRegistry::putValue(mxConstants::$EDGESTYLE_ELBOW, mxEdgeStyle::$ElbowConnector);
-mxStyleRegistry::putValue(mxConstants::$EDGESTYLE_ENTITY_RELATION, mxEdgeStyle::$EntityRelation);
-mxStyleRegistry::putValue(mxConstants::$EDGESTYLE_LOOP, mxEdgeStyle::$Loop);
-mxStyleRegistry::putValue(mxConstants::$EDGESTYLE_SIDETOSIDE, mxEdgeStyle::$SideToSide);
-mxStyleRegistry::putValue(mxConstants::$EDGESTYLE_TOPTOBOTTOM, mxEdgeStyle::$TopToBottom);
-
-mxStyleRegistry::putValue(mxConstants::$PERIMETER_ELLIPSE, mxPerimeter::$EllipsePerimeter);
-mxStyleRegistry::putValue(mxConstants::$PERIMETER_RECTANGLE, mxPerimeter::$RectanglePerimeter);
-mxStyleRegistry::putValue(mxConstants::$PERIMETER_RHOMBUS, mxPerimeter::$RhombusPerimeter);
-mxStyleRegistry::putValue(mxConstants::$PERIMETER_TRIANGLE, mxPerimeter::$TrianglePerimeter);
 ?>

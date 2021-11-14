@@ -2,7 +2,13 @@
 /**
  * Copyright (c) 2006, Gaudenz Alder
  */
-include_once("../src/mxServer.php");
+
+use Mxgraph\Model\mxGraphModel;
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxUtils;
+use Mxgraph\View\mxGraph;
+
+include_once __DIR__ . "/../vendor/autoload.php";
 
 /**
  * Function: main
@@ -37,7 +43,7 @@ function main()
 	// Creates an interlaced image for better loading in the browser
 	//imageInterlace($image, 1);
 	// Marks background color as being transparent
-	imageColorTransparent($image, imageColorAllocate($image, 255, 255, 255));
+	//imageColorTransparent($image, imageColorAllocate($image, 255, 255, 255));
 
 	header("Content-Type: image/png");	
 	echo mxUtils::encodeImage($image);
@@ -45,7 +51,7 @@ function main()
 
 // Uses a local font so that all examples work on all platforms. This can be
 // changed to vera on Mac or arial on Windows systems.
-mxConstants::$DEFAULT_FONTFAMILY = realpath("ttf/verah.ttf");
+mxConstants::$DEFAULT_FONTFAMILY = "ttf/verah.ttf";
 
 // If you can't get the fonts to render try using one of the following:
 //mxConstants::$DEFAULT_FONTFAMILY = "C:\WINDOWS\Fonts\arial.ttf";

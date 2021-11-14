@@ -1,4 +1,9 @@
 <?php
+namespace Mxgraph\Io;
+
+use Mxgraph\Model\mxCell;
+use Mxgraph\Model\mxGeometry;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -206,5 +211,4 @@ class mxCellCodec extends mxObjectCodec
 
 }
 
-mxCodecRegistry::register(new mxCellCodec(new mxCell()));
 ?>

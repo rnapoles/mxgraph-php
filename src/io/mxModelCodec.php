@@ -1,4 +1,8 @@
 <?php
+namespace Mxgraph\Io;
+
+use Mxgraph\Model\mxGraphModel;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -88,5 +92,4 @@ class mxModelCodec extends mxObjectCodec
 
 }
 
-mxCodecRegistry::register(new mxModelCodec(new mxGraphModel()));
 ?>

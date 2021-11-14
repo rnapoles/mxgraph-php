@@ -1,4 +1,10 @@
 <?php
+namespace Mxgraph\Io;
+
+use Mxgraph\Model\mxCellPath;
+use Mxgraph\Util\mxLog;
+use Mxgraph\Util\mxUtils;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -139,7 +145,7 @@ class mxCodec
 			$this->elements = array();
 			$this->addElement($this->document->documentElement);
 		}
-	
+
 		return $this->elements[$id];
 	}
 	
@@ -150,11 +156,11 @@ class mxCodec
 	 */
 	function addElement($node)
 	{
-		if ($node instanceof DOMElement)
+		if ($node instanceof \DOMElement)
 		{
 			$id = $node->getAttribute("id");
 			
-			if ($id != null && $this->elements[$id] == null)
+			if ($id != null && \array_key_exists($id, $this->elements) == false)
 			{
 				$this->elements[$id] = $node;
 			}
@@ -206,8 +212,8 @@ class mxCodec
 				}
 			}
 		}
-		
-		return $id;
+
+		return $id;//str_replace("\\", "_", $id);
 	}
 
 	/**
@@ -260,10 +266,12 @@ class mxCodec
 			{
 				if (get_class($obj) == "DOMElement")
 				{
+				    /** @var \DOMElement $node */
 					$node = $obj->cloneNode(true);
 				}
 				else
 				{
+
 		    		mxLog::warn("mxCodec.encode: No codec for ".
 		    			mxCodecRegistry::getName($obj));
 				}
@@ -309,7 +317,7 @@ class mxCodec
 					$obj->removeAttribute("as");
 				}
 			}
-			catch (Exception $ex)
+			catch (\Exception $ex)
 			{
 				// ignore
 				mxLog::debug("Cannot decode ".$node->nodeName.": $ex");

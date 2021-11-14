@@ -13,7 +13,10 @@
  *     is one of html, png or jpg.
  */
 // Includes the mxGraph library
-include_once("../src/mxServer.php");
+use Mxgraph\Reader\mxGraphViewImageReader;
+use Mxgraph\Util\mxUtils;
+
+include_once __DIR__ . "/../vendor/autoload.php";
 
 // Gets the format parameter from the URL
 $format = $_GET["format"];

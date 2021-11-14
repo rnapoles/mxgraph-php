@@ -1,4 +1,9 @@
 <?php
+namespace Mxgraph\View;
+
+use Mxgraph\Util\mxPoint;
+use Mxgraph\Util\mxRectangle;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -52,7 +57,7 @@ class mxCellState extends mxRectangle
 	 * Holds an array of <mxPoints> that represent the absolute points of an
 	 * edge.
 	 */
-	var $absolutePoints = [];
+	var $absolutePoints;
 
 	/**
 	 * Variable: absoluteOffset

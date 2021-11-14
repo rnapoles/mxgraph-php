@@ -2,7 +2,12 @@
 /**
  * Copyright (c) 2006, Gaudenz Alder
  */
-include_once("../src/mxServer.php");
+
+use Mxgraph\Reader\mxGraphViewImageReader;
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxUtils;
+
+include_once __DIR__ . "/../vendor/autoload.php";
 
 /**
  * Function: main

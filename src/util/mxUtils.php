@@ -1,4 +1,6 @@
 <?php
+namespace Mxgraph\Util;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -302,9 +304,9 @@ class mxUtils
             $p4 = mxUtils::getRotatedPoint($p4, $cos, $sin, $cx);
 
             $result = new mxRectangle($p1->x, $p1->y, 0, 0);
-            $result.add(new mxRectangle($p2->x, $p2->y, 0, 0));
-            $result.add(new mxRectangle($p3->x, $p3->y, 0, 0));
-            $result.add(new mxRectangle($p4->x, $p4->y, 0, 0));
+            $result->add(new mxRectangle($p2->x, $p2->y, 0, 0));
+            $result->add(new mxRectangle($p3->x, $p3->y, 0, 0));
+            $result->add(new mxRectangle($p4->x, $p4->y, 0, 0));
         }
 
         return $result;
@@ -648,7 +650,7 @@ class mxUtils
 					}
 				}
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
 				$model->endUpdate();
 				throw($e);
@@ -756,7 +758,7 @@ class mxUtils
 					}
 				}
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
 				$model->endUpdate();
 				throw($e);
@@ -1002,7 +1004,7 @@ class mxUtils
 	 */
 	static function createXmlDocument()
 	{
-		return new DOMDocument("1.0");
+		return new \DOMDocument("1.0");
 	}
 
 	/**

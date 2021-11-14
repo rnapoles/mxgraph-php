@@ -1,4 +1,6 @@
 <?php
+namespace Mxgraph\Util;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */

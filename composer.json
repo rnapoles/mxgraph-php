@@ -1,0 +1,24 @@
+{
+  "name": "exbsoftware/mxgraph",
+  "description": "EXB Mxgraph fork",
+  "license": "Apache-2.0",
+  "require": {
+    "ext-libxml": "*",
+    "ext-xml": "*",
+    "ext-gd": "*"
+  },
+  "authors": [
+    {
+      "name": "Emiel van Goor",
+      "email": "e.goor@exb-software.com"
+    }
+  ],
+  "autoload": {
+    "psr-0": {
+      "Mxgraph": "src/"
+    },
+    "psr-4": {
+      "Mxgraph\\": "src/"
+    }
+  }
+}

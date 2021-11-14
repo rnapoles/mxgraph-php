@@ -1,4 +1,9 @@
 <?php
+namespace Mxgraph\Io;
+
+use Mxgraph\Util\mxUtils;
+use Mxgraph\View\mxStylesheet;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */

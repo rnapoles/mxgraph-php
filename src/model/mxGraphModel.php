@@ -1,4 +1,27 @@
 <?php
+namespace Mxgraph\Model;
+
+use Mxgraph\Io\mxCellCodec;
+use Mxgraph\Io\mxCodecRegistry;
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxEvent;
+use Mxgraph\Util\mxEventObject;
+use Mxgraph\Util\mxEventSource;
+use Mxgraph\Util\mxPoint;
+use Mxgraph\Util\mxUtils;
+use Mxgraph\View\mxEdgeStyle;
+use Mxgraph\View\mxElbowConnector;
+use Mxgraph\View\mxEllipsePerimeter;
+use Mxgraph\View\mxEntityRelation;
+use Mxgraph\View\mxLoop;
+use Mxgraph\View\mxPerimeter;
+use Mxgraph\View\mxRectanglePerimeter;
+use Mxgraph\View\mxRhombusPerimeter;
+use Mxgraph\View\mxSideToSide;
+use Mxgraph\View\mxStyleRegistry;
+use Mxgraph\View\mxTopToBottom;
+use Mxgraph\View\mxTrianglePerimeter;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -162,7 +185,7 @@ class mxGraphModel extends mxEventSource
 			
 			$this->cellAdded($root);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -234,21 +257,24 @@ class mxGraphModel extends mxEventSource
 	 */
 	function cloneCellImpl($cell, $mapping, $includeChildren)
 	{
-		$clne = $this->cellCloned($cell);
+		$ident = mxCellPath::create($cell);
+		$clne = $mapping[$ident];
 		
-		// Stores the clone in the lookup under the
-		// cell path for the original cell
-		$mapping[mxCellPath::create($cell)] = $clne;
-		
-		if ($includeChildren)
+		if ($clne == null)
 		{
-			$childCount = $this->getChildCount($cell);
-
-			for ($i = 0; $i < $childCount; $i++)
+			$clne = $this->cellCloned($cell);
+			$mapping[$ident] = $clne;	
+		
+			if ($includeChildren)
 			{
-				$child = $this->getChildAt($cell, $i);
-				$cloneChild = $this->cloneCellImpl($child, $mapping, true);
-				$clne->insert($cloneChild);
+				$childCount = $this->getChildCount($cell);
+	
+				for ($i = 0; $i < $childCount; $i++)
+				{
+					$child = $this->getChildAt($cell, $i);
+					$cloneChild = $this->cloneCellImpl($child, $mapping, true);
+					$clne->insert($cloneChild);
+				}
 			}
 		}
 		
@@ -386,7 +412,7 @@ class mxGraphModel extends mxEventSource
 				$parent->insert($child, $index);
 				$this->cellAdded($child);
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
 				$this->endUpdate();
 				throw($e);
@@ -685,7 +711,7 @@ class mxGraphModel extends mxEventSource
             
             $this->cellRemoved($cell);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -811,7 +837,7 @@ class mxGraphModel extends mxEventSource
 				$previous->removeEdge($edge, $source);
 			}
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -846,7 +872,7 @@ class mxGraphModel extends mxEventSource
 			$this->setTerminal($edge, $source, true);
 			$this->setTerminal($edge, $target, false);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -975,7 +1001,7 @@ class mxGraphModel extends mxEventSource
 	 	{
 		 	$cell->setValue($value);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -1023,7 +1049,7 @@ class mxGraphModel extends mxEventSource
 		{	
 		 	$cell->setGeometry($geometry);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -1066,7 +1092,7 @@ class mxGraphModel extends mxEventSource
  		{
 		 	$cell->setStyle($style);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -1108,7 +1134,7 @@ class mxGraphModel extends mxEventSource
 	 	{
 		 	$cell->setCollapsed($isCollapsed);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -1150,14 +1176,14 @@ class mxGraphModel extends mxEventSource
 	 	{
 		 	$cell->setVisible($visible);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
 		}
 		$this->endUpdate();
-	 	
-	 	return $isVisible;
+
+	 	return $visible;
 	}
 
 	/**
@@ -1185,15 +1211,15 @@ class mxGraphModel extends mxEventSource
 			// cells in the target model
 			foreach ($mapping as $key => $cell)
 			{
-				$terminal = $this->getTerminal($cell, $true);
+				$terminal = $this->getTerminal($cell, true);
 				
 				if (isset($terminal))
 				{
 					$terminal = $mapping[mxCellPath::create($terminal)];
-					$this->setTerminal($cell, $terminal, $true);
+					$this->setTerminal($cell, $terminal, true);
 				}
 				
-				$terminal = $this->getTerminal(cell, false);
+				$terminal = $this->getTerminal($cell, false);
 				
 				if (isset($terminal))
 				{
@@ -1202,7 +1228,7 @@ class mxGraphModel extends mxEventSource
 				}
 			}
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);
@@ -1257,7 +1283,7 @@ class mxGraphModel extends mxEventSource
 				$this->mergeChildrenImpl($cell, $target, $cloneAllEdges, $mapping);
 			}
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			$this->endUpdate();
 			throw($e);

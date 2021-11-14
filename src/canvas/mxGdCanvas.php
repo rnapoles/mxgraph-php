@@ -1,4 +1,10 @@
 <?php
+namespace Mxgraph\Canvas;
+
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxPoint;
+use Mxgraph\Util\mxUtils;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -136,7 +142,7 @@ class mxGdCanvas
 	{
 		$style = $state->style;
 		
-		if (sizeof($state->absolutePoints) > 1)
+		if ($state->absolutePoints != null && sizeof($state->absolutePoints) > 1)
 		{
 			$dashed = mxUtils::getNumber($style, mxConstants::$STYLE_DASHED);
 			$stroke = mxUtils::getValue($style, mxConstants::$STYLE_STROKECOLOR);

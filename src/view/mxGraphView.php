@@ -1,4 +1,14 @@
 <?php
+namespace Mxgraph\View;
+
+use Mxgraph\Util\mxConstants;
+use Mxgraph\Util\mxEvent;
+use Mxgraph\Util\mxEventObject;
+use Mxgraph\Util\mxEventSource;
+use Mxgraph\Util\mxPoint;
+use Mxgraph\Util\mxRectangle;
+use Mxgraph\Util\mxUtils;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
@@ -628,10 +638,10 @@ class mxGraphView extends mxEventSource
         {
             if (mxUtils::getValue($style, mxConstants::$STYLE_IMAGE) != null)
             {
-                $w = mxUtils::$getValue($style,
+                $w = mxUtils::getValue($style,
                         mxConstants::$STYLE_IMAGE_WIDTH,
                         mxConstants::$DEFAULT_IMAGESIZE) * $this->scale;
-                $h = mxUtils::$getValue($style,
+                $h = mxUtils::getValue($style,
                         mxConstants::$STYLE_IMAGE_HEIGHT,
                         mxConstants::$DEFAULT_IMAGESIZE) * $this->scale;
 

@@ -1,4 +1,8 @@
 <?php
+namespace Mxgraph\Model;
+
+use Mxgraph\Util\mxRectangle;
+
 /**
  * Copyright (c) 2006-2013, Gaudenz Alder
  */
