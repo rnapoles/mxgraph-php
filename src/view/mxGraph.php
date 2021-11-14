@@ -455,8 +455,7 @@ class mxGraph
         $height = 1,
         $style = null,
         $relative = false
-    )
-    {
+    ) {
         if ($parent == null) {
             $parent = $this->getDefaultParent();
         }
@@ -482,8 +481,7 @@ class mxGraph
         $height = 1,
         $style = null,
         $relative = false
-    )
-    {
+    ) {
         $geometry = new mxGeometry($x, $y, $width, $height);
         $geometry->relative = $relative;
 
@@ -518,8 +516,7 @@ class mxGraph
         $source = null,
         $target = null,
         $style = null
-    )
-    {
+    ) {
         if ($parent == null) {
             $parent = $this->getDefaultParent();
         }
@@ -559,8 +556,7 @@ class mxGraph
         $source = null,
         $target = null,
         $style = null
-    )
-    {
+    ) {
         $geometry = new mxGeometry();
         $edge = new mxCell($value, $geometry, $style);
 

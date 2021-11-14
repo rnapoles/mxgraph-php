@@ -83,8 +83,7 @@ class mxObjectCodec
         $exclude = array(),
         $idrefs = array(),
         $mapping = array()
-    )
-    {
+    ) {
         $this->template = $template;
 
         $this->exclude = $exclude;

@@ -180,7 +180,7 @@ class mxStylesheet
             $pairs = explode(";", $name);
 
             if (isset($pairs)) {
-                if (isset($style) && $name{0} != ';') {
+                if (isset($style) && $name[0] != ';') {
                     $style = array_slice($style, 0);
                 } else {
                     $style = array();

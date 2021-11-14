@@ -44,8 +44,7 @@ class mxUtils
         $offset,
         $vertexBounds,
         $scale
-    )
-    {
+    ) {
         $size = mxUtils::getLabelSize($label, $style);
 
         $x = $offset->x;

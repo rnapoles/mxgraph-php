@@ -41,7 +41,10 @@ class mxServer
     {
         if (defined('MXGRAPH-VERSION') == false) {
             define("MXGRAPH-VERSION", "@MXGRAPH-VERSION@");
-            libxml_disable_entity_loader(true);
+
+            if (\PHP_VERSION_ID < 80000) {
+                libxml_disable_entity_loader(true);
+            }
 
             // original from mxCellCodec
             mxCodecRegistry::register(new mxCellCodec(new mxCell()));

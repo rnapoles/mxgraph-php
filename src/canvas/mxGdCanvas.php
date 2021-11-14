@@ -88,8 +88,7 @@ class mxGdCanvas
         $scale = 1,
         $background = null,
         $imageBasePath = ""
-    )
-    {
+    ) {
         $this->enableTtf = mxConstants::$TTF_ENABLED;
         $this->imageBasePath = $imageBasePath;
         $this->scale = $scale;
@@ -634,14 +633,13 @@ class mxGdCanvas
         $shadow = false,
         $rounded = false,
         $dashed = false
-    )
-    {
+    ) {
         // TODO: Rounded rectangles
         if (isset($fill)) {
             if ($shadow) {
                 imageFilledRectangle(
                     $this->image,
-                    $x + mxConstants::$SHADOW_OFFSETX ,
+                    $x + mxConstants::$SHADOW_OFFSETX,
                     $y + mxConstants::$SHADOW_OFFSETY,
                     $x + mxConstants::$SHADOW_OFFSETX + $w,
                     $y + mxConstants::$SHADOW_OFFSETX + $h,
@@ -739,8 +737,7 @@ class mxGdCanvas
         $stroke = null,
         $shadow = false,
         $direction = null
-    )
-    {
+    ) {
         if ($direction == mxConstants::$DIRECTION_NORTH) {
             $points = array($x, $y + $h, $x + $w / 2, $y,
                 $x + $w, $y + $h, $x, $y + $h);
@@ -772,8 +769,7 @@ class mxGdCanvas
         $stroke = null,
         $shadow = false,
         $direction = null
-    )
-    {
+    ) {
         if ($direction == mxConstants::$DIRECTION_NORTH ||
             $direction == mxConstants::$DIRECTION_SOUTH) {
             $points = array($x + 0.5 * $w, $y, $x + $w, $y + 0.25 * $h,

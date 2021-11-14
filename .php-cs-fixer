@@ -1,0 +1,39 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()
+	->in(__DIR__ . '/src')
+
+/*
+$config->setRules([
+        '@PSR12' => true,
+        'strict_param' => true,
+        'array_syntax' => ['syntax' => 'short'],
+    ])
+    ->setFinder($finder)
+;
+*/
+
+return new PhpCsFixer\Config();
+	->setUsingCache(false)
+	->setRiskyAllowed(true)
+	->setRules([
+		'@Symfony:risky' => true,
+		'@PSR2' => true,
+		'@PhpCsFixer' => true,
+		'@PHP54Migration' => true,
+		'@PHP70Migration' => true,
+		'@PHP70Migration:risky' => true,
+		'@PHP71Migration' => true,
+		'@PHP71Migration:risky' => true,
+		'@PHP72Migration' => true,
+		'@PHP73Migration' => true,
+		'@PHP74Migration' => true,
+
+		'no_php4_constructor' => true,
+		'phpdoc_add_missing_param_annotation' => true,
+		'no_superfluous_phpdoc_tags' => false,
+		'phpdoc_no_empty_return' => false,
+		'strict_param' => true,
+		'array_syntax' => ['syntax' => 'short'],
+	])
+
