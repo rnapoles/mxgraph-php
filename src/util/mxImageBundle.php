@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Util;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxImageBundle
 {
     /**
-     * Class: mxImageBundle
+     * Class: mxImageBundle.
      *
      * Maps from keys to base64 encoded images or file locations. All values must
      * be URLs or use the format data:image/format followed by a comma and the base64
@@ -41,10 +43,10 @@ class mxImageBundle
      *
      * Maps from keys to images.
      */
-    public $images = array();
+    public $images = [];
 
     /**
-     * Constructor: mxImageBundle
+     * Constructor: mxImageBundle.
      *
      * Constructs a new image bundle.
      */
@@ -53,7 +55,7 @@ class mxImageBundle
     }
 
     /**
-     * Function: getImages
+     * Function: getImages.
      *
      * Returns the <images>.
      */
@@ -63,22 +65,27 @@ class mxImageBundle
     }
 
     /**
-     * Function: putImage
+     * Function: putImage.
      *
      * Adds the specified entry to the map.
+     *
+     * @param mixed $key
+     * @param mixed $value
      */
-    public function putImage($key, $value)
+    public function putImage($key, $value): void
     {
         $this->images[$key] = $value;
     }
 
     /**
-     * Function: getImage
+     * Function: getImage.
      *
      * Returns the value for the given key.
+     *
+     * @param mixed $key
      */
     public function getImage($key)
     {
-        return (array_key_exists($key, $this->images)) ? $this->images[$key] : null;
+        return (\array_key_exists($key, $this->images)) ? $this->images[$key] : null;
     }
 }

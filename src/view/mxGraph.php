@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\View;
 
 use Mxgraph\Canvas\mxGdCanvas;
@@ -14,13 +16,12 @@ use Mxgraph\Util\mxRectangle;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
-
 class mxGraph
 {
     /**
-     * Class: mxGraph
+     * Class: mxGraph.
      *
      * Implements a graph component.
      *
@@ -31,28 +32,28 @@ class mxGraph
     public $model;
 
     /**
-     * Variable: stylesheet
+     * Variable: stylesheet.
      *
      * Holds the <mxStylesheet>.
      */
     public $stylesheet;
 
     /**
-     * Variable: view
+     * Variable: view.
      *
      * Holds the <mxGraphView>.
      */
     public $view;
 
     /**
-     * Variable: gridSize
+     * Variable: gridSize.
      *
      * Specifies the grid size. Default is 10.
      */
     public $gridSize = 10;
 
     /**
-     * Variable: labelsVisible
+     * Variable: labelsVisible.
      *
      * Specifies if labels should be visible. This is used in
      * <getLabel>. Default is true.
@@ -60,33 +61,36 @@ class mxGraph
     public $labelsVisible = true;
 
     /**
-     * Variable: defaultLoopStyle
+     * Variable: defaultLoopStyle.
      *
      * <mxEdgeStyle> to be used for loops. This is a fallback for
      * loops if the <mxConstants.STYLE_LOOP> is undefined. Default is
      * <mxEdgeStyle.Loop>.
      */
-    public $defaultLoopStyle = "mxEdgeStyle.Loop";
+    public $defaultLoopStyle = 'mxEdgeStyle.Loop';
 
     /**
-     * Variable: imageBundles
+     * Variable: imageBundles.
      *
      * Holds the list of image bundles.
      */
-    protected $imageBundles = array();
+    protected $imageBundles = [];
 
     /**
-     * Constructor: mxGraphModel
+     * Constructor: mxGraphModel.
      *
      * Constructs a new graph model using the specified
      * root cell.
+     *
+     * @param null|mixed $model
+     * @param null|mixed $stylesheet
      */
     public function __construct($model = null, $stylesheet = null)
     {
         mxServer::init();
 
-        $this->model = ($model != null) ? $model : new mxGraphModel();
-        $this->stylesheet = ($stylesheet != null) ? $stylesheet : $this->createStylesheet();
+        $this->model = (null != $model) ? $model : new mxGraphModel();
+        $this->stylesheet = (null != $stylesheet) ? $stylesheet : $this->createStylesheet();
         $this->view = $this->createGraphView();
         $this->view->revalidate();
 
@@ -94,7 +98,7 @@ class mxGraph
     }
 
     /**
-     * Function: createStylesheet
+     * Function: createStylesheet.
      *
      * Creates a new <mxStylesheet> to be used in this graph.
      */
@@ -104,7 +108,7 @@ class mxGraph
     }
 
     /**
-     * Function: createGraphView
+     * Function: createGraphView.
      *
      * Creates a new <mxGraphView> to be used in this graph.
      */
@@ -114,7 +118,7 @@ class mxGraph
     }
 
     /**
-     * Function: getModel
+     * Function: getModel.
      *
      * Returns the <mxGraphModel> that contains the cells.
      */
@@ -124,7 +128,7 @@ class mxGraph
     }
 
     /**
-     * Function: getStylesheet
+     * Function: getStylesheet.
      *
      * Returns the <mxStylesheet> that defines the style.
      */
@@ -134,7 +138,7 @@ class mxGraph
     }
 
     /**
-     * Function: getView
+     * Function: getView.
      *
      * Returns the <mxGraphView> that contains the <mxCellStates>.
      */
@@ -144,7 +148,7 @@ class mxGraph
     }
 
     /**
-     * Function: getDefaultParent
+     * Function: getDefaultParent.
      *
      * Returns the first child child of <mxGraphModel.root>. The value returned
      * by this function should be used as the parent for new cells (aka default
@@ -158,37 +162,41 @@ class mxGraph
     }
 
     /**
-     * Function: convertValueToString
+     * Function: convertValueToString.
      *
      * Returns the textual representation for the given cell. This
      * implementation returns the nodename or string-representation of the user
      * object.
+     *
+     * @param mixed $cell
      */
     public function convertValueToString($cell)
     {
         $result = $this->model->getValue($cell);
 
-        return ($result != null) ? $result : "";
+        return (null != $result) ? $result : '';
     }
 
     /**
-     * Function: getLabel
+     * Function: getLabel.
      *
      * Returns a string or DOM node that represents the label for the given
      * cell. This implementation uses <convertValueToString> if <labelsVisible>
      * is true. Otherwise it returns an empty string.
+     *
+     * @param mixed $cell
      */
     public function getLabel($cell)
     {
-        $result = "";
+        $result = '';
 
-        if ($cell != null) {
+        if (null != $cell) {
             $state = $this->view->getState($cell);
-            $style = ($state != null) ?
+            $style = (null != $state) ?
                 $state->style : $this->getCellStyle($cell);
 
-            if ($this->labelsVisible &&
-                !mxUtils::getValue($style, mxConstants::$STYLE_NOLABEL, false)) {
+            if ($this->labelsVisible
+                && !mxUtils::getValue($style, mxConstants::$STYLE_NOLABEL, false)) {
                 $result = $this->convertValueToString($cell);
             }
         }
@@ -197,7 +205,7 @@ class mxGraph
     }
 
     /**
-     * Function: getChildOffsetForCell
+     * Function: getChildOffsetForCell.
      *
      * Returns the offset to be used for the cells inside the given cell. The
      * root and layer cells may be identified using <mxGraphModel.isRoot> and
@@ -209,6 +217,8 @@ class mxGraph
      * Parameters:
      *
      * cell - <mxCell> whose offset should be returned.
+     *
+     * @param mixed $cell
      */
     public function getChildOffsetForCell($cell)
     {
@@ -216,7 +226,7 @@ class mxGraph
     }
 
     /**
-     * Function: isOrthogonal
+     * Function: isOrthogonal.
      *
      * Returns true if perimeter points should be computed such that the
      * resulting edge has only horizontal or vertical segments.
@@ -224,6 +234,8 @@ class mxGraph
      * Parameters:
      *
      * edge - <mxCellState> that represents the edge.
+     *
+     * @param mixed $edge
      */
     public function isOrthogonal($edge)
     {
@@ -233,16 +245,18 @@ class mxGraph
 
         $edgeStyle = $this->view->getEdgeStyle($edge, null, null, null);
 
-        return $edgeStyle === mxEdgeStyle::$ElbowConnector ||
-            $edgeStyle === mxEdgeStyle::$SideToSide ||
-            $edgeStyle === mxEdgeStyle::$TopToBottom ||
-            $edgeStyle === mxEdgeStyle::$EntityRelation;
+        return $edgeStyle === mxEdgeStyle::$ElbowConnector
+            || $edgeStyle === mxEdgeStyle::$SideToSide
+            || $edgeStyle === mxEdgeStyle::$TopToBottom
+            || $edgeStyle === mxEdgeStyle::$EntityRelation;
     }
 
     /**
-     * Function: isCellVisible
+     * Function: isCellVisible.
      *
      * Returns true if the given cell is visible.
+     *
+     * @param mixed $cell
      */
     public function isCellVisible($cell)
     {
@@ -250,9 +264,11 @@ class mxGraph
     }
 
     /**
-     * Function: isCellCollapsed
+     * Function: isCellCollapsed.
      *
      * Returns true if the given cell is collapsed.
+     *
+     * @param mixed $cell
      */
     public function isCellCollapsed($cell)
     {
@@ -260,9 +276,11 @@ class mxGraph
     }
 
     /**
-     * Function: isCellCollapsed
+     * Function: isCellCollapsed.
      *
      * Returns true if the given cell is connectable.
+     *
+     * @param mixed $cell
      */
     public function isCellConnectable($cell)
     {
@@ -270,9 +288,11 @@ class mxGraph
     }
 
     /**
-     * Function: getCellGeometry
+     * Function: getCellGeometry.
      *
      * Returns the <mxGeometry> for the given <mxCell>.
+     *
+     * @param mixed $cell
      */
     public function getCellGeometry($cell)
     {
@@ -280,7 +300,9 @@ class mxGraph
     }
 
     /**
-     * Function: getCellStyle
+     * Function: getCellStyle.
+     *
+     * @param mixed $cell
      */
     public function getCellStyle($cell)
     {
@@ -290,27 +312,29 @@ class mxGraph
 
         $name = $this->model->getStyle($cell);
 
-        if ($name != null) {
+        if (null != $name) {
             $style = $this->postProcessCellStyle($this->stylesheet->getCellStyle($name, $style));
         }
 
-        if ($style == null) {
-            $style = array();
+        if (null == $style) {
+            $style = [];
         }
 
         return $style;
     }
 
     /**
-     * Function: postProcessCellStyle
+     * Function: postProcessCellStyle.
      *
      * Tries to resolve the value for the image style in the image bundles and
      * turns short data URIs as defined in mxImageBundle to data URIs as
      * defined in RFC 2397 of the IETF.
+     *
+     * @param mixed $style
      */
     public function postProcessCellStyle($style)
     {
-        if (isset($style) && array_key_exists(mxConstants::$STYLE_IMAGE, $style)) {
+        if (isset($style) && \array_key_exists(mxConstants::$STYLE_IMAGE, $style)) {
             $key = $style[mxConstants::$STYLE_IMAGE];
             $image = $this->getImageFromBundles($key);
 
@@ -321,11 +345,11 @@ class mxGraph
             }
 
             // Converts short data uris to normal data uris
-            if (isset($image) && substr($image, 0, 11) == "data:image/") {
-                $comma = strpos($image, ",");
+            if (isset($image) && 'data:image/' == substr($image, 0, 11)) {
+                $comma = strpos($image, ',');
 
-                if ($comma !== false) {
-                    $image = substr($image, 0, $comma).";base64,".
+                if (false !== $comma) {
+                    $image = substr($image, 0, $comma).';base64,'.
                         substr($image, $comma + 1);
                 }
 
@@ -337,7 +361,7 @@ class mxGraph
     }
 
     /**
-     * Function: setCellStyles
+     * Function: setCellStyles.
      *
      * Sets the key to value in the styles of the given cells. This will modify
      * the existing cell styles in-place and override any existing assignment
@@ -350,33 +374,42 @@ class mxGraph
      * key - String representing the key to be assigned.
      * value - String representing the new value for the key.
      * cells - Array of <mxCells> to change the style for.
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @param mixed $cells
      */
-    public function setCellStyles($key, $value, $cells)
+    public function setCellStyles($key, $value, $cells): void
     {
         mxUtils::setCellStyles($this->model, $cells, $key, $value);
     }
+
     /**
-     * Function: addBundle
+     * Function: addBundle.
      *
      * Adds the specified <mxImageBundle>.
+     *
+     * @param mixed $bundle
      */
-    public function addImageBundle($bundle)
+    public function addImageBundle($bundle): void
     {
-        array_push($this->imageBundles, $bundle);
+        $this->imageBundles[] = $bundle;
     }
 
     /**
-     * Function: removeImageBundle
+     * Function: removeImageBundle.
      *
      * Removes the specified <mxImageBundle>.
+     *
+     * @param mixed $bundle
      */
-    public function removeImageBundle($bundle)
+    public function removeImageBundle($bundle): void
     {
-        $tmp = array();
+        $tmp = [];
 
-        for ($i = 0; $i < sizeof($this->imageBundles); $i++) {
+        for ($i = 0; $i < \count($this->imageBundles); ++$i) {
             if ($this->imageBundles[$i] !== $bundle) {
-                array_push($tmp, $this->imageBundles[$i]);
+                $tmp[] = $this->imageBundles[$i];
             }
         }
 
@@ -384,15 +417,17 @@ class mxGraph
     }
 
     /**
-     * Function: getImageFromBundles
+     * Function: getImageFromBundles.
      *
      * Searches all <imageBundles> for the specified key and returns the value
      * for the first match or null if the key is not found.
+     *
+     * @param mixed $key
      */
     public function getImageFromBundles($key)
     {
         if (isset($key)) {
-            for ($i = 0; $i < sizeof($this->imageBundles); $i++) {
+            for ($i = 0; $i < \count($this->imageBundles); ++$i) {
                 $image = $this->imageBundles[$i]->getImage($key);
 
                 if (isset($image)) {
@@ -405,7 +440,7 @@ class mxGraph
     }
 
     /**
-     * Function: getImageBundles
+     * Function: getImageBundles.
      *
      * Returns the <imageBundles>.
      */
@@ -415,17 +450,19 @@ class mxGraph
     }
 
     /**
-     * Function: setImageBundles
+     * Function: setImageBundles.
      *
      * Sets the <imageBundles>.
+     *
+     * @param mixed $value
      */
-    public function setImageBundles($value)
+    public function setImageBundles($value): void
     {
         $this->imageBundles = $value;
     }
 
     /**
-     * Function: insertVertex
+     * Function: insertVertex.
      *
      * Adds a new vertex into the given parent <mxCell> using value as the user
      * object and the given coordinates as the <mxGeometry> of the new vertex.
@@ -444,6 +481,16 @@ class mxGraph
      * style - Optional string that defines the cell style.
      * relative - Optional boolean that specifies if the geometry is relative.
      * Default is false.
+     *
+     * @param mixed      $parent
+     * @param null|mixed $id
+     * @param null|mixed $value
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $width
+     * @param mixed      $height
+     * @param null|mixed $style
+     * @param mixed      $relative
      */
     public function insertVertex(
         $parent,
@@ -456,7 +503,7 @@ class mxGraph
         $style = null,
         $relative = false
     ) {
-        if ($parent == null) {
+        if (null == $parent) {
             $parent = $this->getDefaultParent();
         }
 
@@ -467,9 +514,19 @@ class mxGraph
     }
 
     /**
-     * Function: createVertex
+     * Function: createVertex.
      *
      * Creates the vertex to be used in insertVertex.
+     *
+     * @param mixed      $parent
+     * @param null|mixed $id
+     * @param null|mixed $value
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $width
+     * @param mixed      $height
+     * @param null|mixed $style
+     * @param mixed      $relative
      */
     public function createVertex(
         $parent,
@@ -493,7 +550,7 @@ class mxGraph
     }
 
     /**
-     * Function: insertEdge
+     * Function: insertEdge.
      *
      * Adds a new edge into the given parent <mxCell> using value as the user
      * object and the given source and target as the terminals of the new edge.
@@ -508,6 +565,13 @@ class mxGraph
      * source - <mxCell> that defines the source of the edge.
      * target - <mxCell> that defines the target of the edge.
      * style - Optional string that defines the cell style.
+     *
+     * @param mixed      $parent
+     * @param null|mixed $id
+     * @param null|mixed $value
+     * @param null|mixed $source
+     * @param null|mixed $target
+     * @param null|mixed $style
      */
     public function insertEdge(
         $parent,
@@ -517,7 +581,7 @@ class mxGraph
         $target = null,
         $style = null
     ) {
-        if ($parent == null) {
+        if (null == $parent) {
             $parent = $this->getDefaultParent();
         }
 
@@ -528,6 +592,7 @@ class mxGraph
         $index = $this->model->getChildCount($parent);
 
         $this->model->beginUpdate();
+
         try {
             $edge = $this->model->add($parent, $edge, $index);
 
@@ -535,7 +600,8 @@ class mxGraph
             $this->model->setTerminal($edge, $target, false);
         } catch (\Exception $e) {
             $this->model->endUpdate();
-            throw($e);
+
+            throw ($e);
         }
         $this->model->endUpdate();
 
@@ -543,11 +609,18 @@ class mxGraph
     }
 
     /**
-     * Function: createEdge
+     * Function: createEdge.
      *
      * Creates the edge to be used in <insertEdge>. This implementation does
      * not set the source and target of the edge, these are set when the edge
      * is added to the model.
+     *
+     * @param mixed      $parent
+     * @param null|mixed $id
+     * @param null|mixed $value
+     * @param null|mixed $source
+     * @param null|mixed $target
+     * @param null|mixed $style
      */
     public function createEdge(
         $parent,
@@ -568,7 +641,7 @@ class mxGraph
     }
 
     /**
-     * Function: getGraphBounds
+     * Function: getGraphBounds.
      *
      * Returns the bounds of the visible graph. Shortcut to
      * <mxGraphView.getGraphBounds>.
@@ -579,10 +652,14 @@ class mxGraph
     }
 
     /**
-     * Function: getBoundingBox
+     * Function: getBoundingBox.
      *
      * Returns the bounding box of the given cell including all connected edges
      * if includeEdge is true.
+     *
+     * @param mixed $cell
+     * @param mixed $includeEdges
+     * @param mixed $includeDescendants
      */
     public function getBoundingBox($cell, $includeEdges = false, $includeDescendants = false)
     {
@@ -590,9 +667,11 @@ class mxGraph
     }
 
     /**
-     * Function: getPaintBounds
+     * Function: getPaintBounds.
      *
      * Returns the bounding box of the given cells and their descendants.
+     *
+     * @param mixed $cells
      */
     public function getPaintBounds($cells)
     {
@@ -600,17 +679,22 @@ class mxGraph
     }
 
     /**
-     * Function: getBoundsForCells
+     * Function: getBoundsForCells.
      *
      * Returns the bounds for the given cells.
+     *
+     * @param mixed $cells
+     * @param mixed $includeEdges
+     * @param mixed $includeDescendants
+     * @param mixed $boundingBox
      */
     public function getBoundsForCells($cells, $includeEdges = false, $includeDescendants = false, $boundingBox = false)
     {
-        $cellCount = sizeof($cells);
+        $cellCount = \count($cells);
         $result = null;
 
         if ($cellCount > 0) {
-            for ($i = 0; $i < $cellCount; $i++) {
+            for ($i = 0; $i < $cellCount; ++$i) {
                 $bounds = $this->getCellBounds(
                     $cells[$i],
                     $includeEdges,
@@ -618,8 +702,8 @@ class mxGraph
                     $boundingBox
                 );
 
-                if ($bounds != null) {
-                    if ($result == null) {
+                if (null != $bounds) {
+                    if (null == $result) {
                         $result = new mxRectangle(
                             $bounds->x,
                             $bounds->y,
@@ -637,21 +721,26 @@ class mxGraph
     }
 
     /**
-     * Function: getCellBounds
+     * Function: getCellBounds.
      *
      * Returns the bounds of the given cell including all connected edges
      * if includeEdge is true.
+     *
+     * @param mixed $cell
+     * @param mixed $includeEdges
+     * @param mixed $includeDescendants
+     * @param mixed $boundingBox
      */
     public function getCellBounds($cell, $includeEdges = false, $includeDescendants = false, $boundingBox = false)
     {
-        $cells = array($cell);
+        $cells = [$cell];
 
         // Includes the connected edges
         if ($includeEdges) {
             $edgeCount = $this->model->getEdgeCount($cell);
 
-            for ($i = 0; $i < $edgeCount; $i++) {
-                array_push($cells, $this->model->getEdgeAt($cell, $i));
+            for ($i = 0; $i < $edgeCount; ++$i) {
+                $cells[] = $this->model->getEdgeAt($cell, $i);
             }
         }
 
@@ -659,10 +748,10 @@ class mxGraph
 
         // Recursively includes the bounds of the children
         if ($includeDescendants) {
-            for ($i = 0; $i < sizeof($cells); $i++) {
+            for ($i = 0; $i < \count($cells); ++$i) {
                 $childCount = $this->model->getChildCount($cells[$i]);
 
-                for ($j = 0; $j < $childCount; $j++) {
+                for ($j = 0; $j < $childCount; ++$j) {
                     $tmp = $this->getCellBounds(
                         $this->model->getChildAt($cells[$i], $j),
                         $includeEdges,
@@ -670,7 +759,7 @@ class mxGraph
                         $boundingBox
                     );
 
-                    if ($result != null) {
+                    if (null != $result) {
                         $result->add($tmp);
                     } else {
                         $result = $tmp;
@@ -683,7 +772,7 @@ class mxGraph
     }
 
     /**
-     * Function: getConnectionConstraint
+     * Function: getConnectionConstraint.
      *
      * Returns an <mxConnectionConstraint> that describes the given connection
      * point. This result can then be passed to <getConnectionPoint>.
@@ -693,6 +782,10 @@ class mxGraph
      * edge - <mxCellState> that represents the edge.
      * terminal - <mxCellState> that represents the terminal.
      * source - Boolean indicating if the terminal is the source or target.
+     *
+     * @param mixed $edge
+     * @param mixed $terminal
+     * @param mixed $source
      */
     public function getConnectionConstraint($edge, $terminal, $source)
     {
@@ -727,7 +820,7 @@ class mxGraph
     }
 
     /**
-     * Function: getConnectionPoint
+     * Function: getConnectionPoint.
      *
      * Returns the nearest point in the list of absolute points or the center
      * of the opposite terminal.
@@ -737,12 +830,15 @@ class mxGraph
      * vertex - <mxCellState> that represents the vertex.
      * constraint - <mxConnectionConstraint> that represents the connection point
      * constraint as returned by <getConnectionConstraint>.
+     *
+     * @param mixed $vertex
+     * @param mixed $constraint
      */
     public function getConnectionPoint($vertex, $constraint)
     {
         $point = null;
 
-        if (isset($vertex) && isset($constraint->point)) {
+        if (isset($vertex, $constraint->point)) {
             $point = new mxPoint(
                 $vertex->x + $constraint->point->x * $vertex->width,
                 $vertex->y + $constraint->point->y * $vertex->height
@@ -757,7 +853,7 @@ class mxGraph
     }
 
     /**
-     * Function: findTreeRoots
+     * Function: findTreeRoots.
      *
      * Returns all children in the given parent which do not have incoming
      * edges. If the result is empty then the with the greatest difference
@@ -772,26 +868,30 @@ class mxGraph
      * invert - Optional boolean that specifies if outgoing or incoming edges
      * should be counted for a tree root. If false then outgoing edges will be
      * counted. Default is false.
+     *
+     * @param mixed $parent
+     * @param mixed $isolate
+     * @param mixed $invert
      */
     public function findTreeRoots($parent, $isolate = false, $invert = false)
     {
-        $roots = array();
+        $roots = [];
 
-        if ($parent != null) {
+        if (null != $parent) {
             $model = $this->getModel();
             $childCount = $model->getChildCount($parent);
             $maxDiff = 0;
 
-            for ($i=0; $i<$childCount; $i++) {
+            for ($i = 0; $i < $childCount; ++$i) {
                 $cell = $model->getChildAt($parent, $i);
 
-                if ($this->model->isVertex($cell) &&
-                    $this->isCellVisible($cell)) {
+                if ($this->model->isVertex($cell)
+                    && $this->isCellVisible($cell)) {
                     $edgeCount = $model->getEdgeCount($cell);
                     $fanOut = 0;
                     $fanIn = 0;
 
-                    for ($j = 0; $j < $edgeCount; $j++) {
+                    for ($j = 0; $j < $edgeCount; ++$j) {
                         $edge = $model->getEdgeAt($cell, $j);
 
                         if ($this->isCellVisible($edge)) {
@@ -799,20 +899,20 @@ class mxGraph
                             $target = $this->view->getVisibleTerminal($edge, false);
 
                             if ($source !== $target) {
-                                if ($source === $cell && (!$isolate ||
-                                    $this->model->getParent(target) == $parent)) {
-                                    $fanOut++;
-                                } elseif (!$isolate ||
-                                    $this->model->getParent(source) == $parent) {
-                                    $fanIn++;
+                                if ($source === $cell && (!$isolate
+                                    || $this->model->getParent(target) == $parent)) {
+                                    ++$fanOut;
+                                } elseif (!$isolate
+                                    || $this->model->getParent(source) == $parent) {
+                                    ++$fanIn;
                                 }
                             }
                         }
                     }
 
-                    if (($invert && $fanOut == 0 && $fanIn > 0) ||
-                        (!$invert && $fanIn == 0 && $fanOut > 0)) {
-                        array_push($roots, $cell);
+                    if (($invert && 0 == $fanOut && $fanIn > 0)
+                        || (!$invert && 0 == $fanIn && $fanOut > 0)) {
+                        $roots[] = $cell;
                     }
 
                     $diff = ($invert) ? $fanIn - $fanOut : $fanOut - $fanIn;
@@ -824,8 +924,8 @@ class mxGraph
                 }
             }
 
-            if (sizeof($roots) == 0 && $best != null) {
-                array_push($roots, $best);
+            if (0 == \count($roots) && null != $best) {
+                $roots[] = $best;
             }
         }
 
@@ -833,7 +933,10 @@ class mxGraph
     }
 
     /**
-     * Function: createImage
+     * Function: createImage.
+     *
+     * @param null|mixed $clip
+     * @param null|mixed $background
      */
     public function createImage($clip = null, $background = null)
     {
@@ -841,21 +944,26 @@ class mxGraph
     }
 
     /**
-     * Function: drawGraph
+     * Function: drawGraph.
      *
      * Draws the given cell onto the specified canvas.
+     *
+     * @param mixed $canvas
      */
-    public function drawGraph($canvas)
+    public function drawGraph($canvas): void
     {
         $this->drawCell($canvas, $this->model->getRoot());
     }
 
     /**
-     * Function: paintCell
+     * Function: paintCell.
      *
      * Draws the given cell onto the specified canvas.
+     *
+     * @param mixed $canvas
+     * @param mixed $cell
      */
-    public function drawCell($canvas, $cell)
+    public function drawCell($canvas, $cell): void
     {
         $this->drawState(
             $canvas,
@@ -866,38 +974,44 @@ class mxGraph
         // Draws the children on top
         $childCount = $cell->getChildCount();
 
-        for ($i = 0; $i < $childCount; $i++) {
+        for ($i = 0; $i < $childCount; ++$i) {
             $child = $cell->getChildAt($i);
             $this->drawCell($canvas, $child);
         }
     }
 
     /**
-     * Function: paintState
+     * Function: paintState.
      *
      * Draws the given cell and label onto the specified canvas. No
      * children or descendants are painted.
+     *
+     * @param mixed $canvas
+     * @param mixed $state
+     * @param mixed $label
      */
-    public function drawState($canvas, $state, $label)
+    public function drawState($canvas, $state, $label): void
     {
         $cell = (isset($state)) ? $state->cell : null;
 
-        if ($cell != null && $cell !== $this->model->getRoot() &&
-            ($this->model->isVertex($cell) || $this->model->isEdge($cell))) {
+        if (null != $cell && $cell !== $this->model->getRoot()
+            && ($this->model->isVertex($cell) || $this->model->isEdge($cell))) {
             $canvas->drawCell($state);
 
-            if ($label != null && $state->labelBounds != null) {
+            if (null != $label && null != $state->labelBounds) {
                 $canvas->drawLabel($label, $state, false);
             }
         }
     }
 
     /**
-     * Function: graphModelChanged
+     * Function: graphModelChanged.
      *
      * Called when the graph model has changed.
+     *
+     * @param mixed $event
      */
-    public function graphModelChanged($event)
+    public function graphModelChanged($event): void
     {
         $this->view->revalidate();
     }

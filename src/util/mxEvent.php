@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Util;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxEvent
 {
     /**
-     * Class: mxEvent
+     * Class: mxEvent.
      *
      * Defines global constants.
      *
@@ -16,19 +18,19 @@ class mxEvent
      *
      * Defines the name of the graphModelChanged event.
      */
-    public static $GRAPH_MODEL_CHANGED = "graphModelChanged";
+    public static $GRAPH_MODEL_CHANGED = 'graphModelChanged';
 
     /**
-     * Variable: SCALE
+     * Variable: SCALE.
      *
      * Defines the name of the scale event.
      */
-    public static $SCALE = "scale";
+    public static $SCALE = 'scale';
 
     /**
-     * Variable: TRANSLATE
+     * Variable: TRANSLATE.
      *
      * Defines the name of the translate event.
      */
-    public static $TRANSLATE = "translate";
+    public static $TRANSLATE = 'translate';
 }

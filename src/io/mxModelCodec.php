@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Io;
 
-use Mxgraph\Model\mxGraphModel;
-
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxModelCodec extends mxObjectCodec
 {
     /**
-     * Class: mxModelCodec
+     * Class: mxModelCodec.
      *
      * Codec for <mxGraphModels>. This class is created and registered
      * dynamically at load time and used implicitly via <mxCodec>
@@ -32,6 +32,8 @@ class mxModelCodec extends mxObjectCodec
      * idrefs - Optional array of fieldnames to be converted to/from
      * references.
      * mapping - Optional mapping from field- to attributenames.
+     *
+     * @param mixed $template
      */
     public function __construct($template)
     {
@@ -40,20 +42,28 @@ class mxModelCodec extends mxObjectCodec
 
     /**
      * Overrides <mxObjectCodec.encodeObject>.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $node
      */
-    public function encodeObject($enc, $obj, $node)
+    public function encodeObject($enc, $obj, $node): void
     {
-        $rootNode = $enc->document->createElement("root");
+        $rootNode = $enc->document->createElement('root');
         $enc->encodeCell($obj->getRoot(), $rootNode);
         $node->appendChild($rootNode);
     }
 
     /**
      * Override <mxObjectCodec.decodeChild>.
+     *
+     * @param mixed $dec
+     * @param mixed $child
+     * @param mixed $obj
      */
-    public function decodeChild($dec, $child, &$obj)
+    public function decodeChild($dec, $child, &$obj): void
     {
-        if ($child->nodeName == "root") {
+        if ('root' == $child->nodeName) {
             $this->decodeRoot($dec, $child, $obj);
         } else {
             parent::decodeChild($dec, $child, $obj);
@@ -62,8 +72,12 @@ class mxModelCodec extends mxObjectCodec
 
     /**
      * Override <mxObjectCodec.decodeRoot>.
+     *
+     * @param mixed $dec
+     * @param mixed $root
+     * @param mixed $model
      */
-    public function decodeRoot($dec, $root, $model)
+    public function decodeRoot($dec, $root, $model): void
     {
         $rootCell = null;
         $tmp = $root->firstChild;
@@ -71,7 +85,7 @@ class mxModelCodec extends mxObjectCodec
         while (isset($tmp)) {
             $cell = $dec->decodeCell($tmp);
 
-            if (isset($cell) && $cell->getParent() == null) {
+            if (isset($cell) && null == $cell->getParent()) {
                 $rootCell = $cell;
             }
 

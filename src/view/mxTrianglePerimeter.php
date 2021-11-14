@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -21,14 +21,17 @@ use Mxgraph\Util\mxUtils;
 class mxTrianglePerimeter implements mxPerimeterFunction
 {
     /**
-     *
+     * @param mixed $bounds
+     * @param mixed $vertex
+     * @param mixed $next
+     * @param mixed $orthogonal
      */
     public function apply($bounds, $vertex, $next, $orthogonal)
     {
-        $direction = ($vertex != null) ?
+        $direction = (null != $vertex) ?
             mxUtils::getValue($vertex->style, mxConstants::$STYLE_DIRECTION) : null;
-        $vertical = $direction == mxConstants::$DIRECTION_NORTH ||
-            $direction == mxConstants::$DIRECTION_SOUTH;
+        $vertical = $direction == mxConstants::$DIRECTION_NORTH
+            || $direction == mxConstants::$DIRECTION_SOUTH;
 
         $x = $bounds->x;
         $y = $bounds->y;
@@ -63,19 +66,19 @@ class mxTrianglePerimeter implements mxPerimeterFunction
 
         $base = false;
 
-        if ($direction == mxConstants::$DIRECTION_NORTH ||
-            $direction == mxConstants::$DIRECTION_WEST) {
+        if ($direction == mxConstants::$DIRECTION_NORTH
+            || $direction == mxConstants::$DIRECTION_WEST) {
             $base = $alpha > -$t && $alpha < $t;
         } else {
-            $base = $alpha < -pi() + $t || $alpha > pi() - $t;
+            $base = $alpha < -M_PI + $t || $alpha > M_PI - $t;
         }
 
         $result = null;
 
         if ($base) {
-            if ($orthogonal && (($vertical && $next->x >= $start->x &&
-                        $next->x <= $end->x) || (!$vertical && $next->y >= $start->y &&
-                        $next->y <= $end->y))) {
+            if ($orthogonal && (($vertical && $next->x >= $start->x
+                        && $next->x <= $end->x) || (!$vertical && $next->y >= $start->y
+                        && $next->y <= $end->y))) {
                 if ($vertical) {
                     $result = new mxPoint($next->x, $start->y);
                 } else {
@@ -126,8 +129,8 @@ class mxTrianglePerimeter implements mxPerimeterFunction
                 $cy = $pt->y;
             }
 
-            if (($vertical && $next->x <= $x + $w / 2) ||
-                (!$vertical && $next->y <= $y + $h / 2)) {
+            if (($vertical && $next->x <= $x + $w / 2)
+                || (!$vertical && $next->y <= $y + $h / 2)) {
                 $result = mxUtils::intersection(
                     $next->x,
                     $next->y,
@@ -152,7 +155,7 @@ class mxTrianglePerimeter implements mxPerimeterFunction
             }
         }
 
-        if ($result == null) {
+        if (null == $result) {
             $result = new mxPoint($cx, $cy);
         }
 

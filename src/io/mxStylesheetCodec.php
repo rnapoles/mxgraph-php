@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Io;
 
 use Mxgraph\Util\mxUtils;
 use Mxgraph\View\mxStylesheet;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxStylesheetCodec extends mxObjectCodec
 {
     /**
-     * Class: mxStylesheetCodec
+     * Class: mxStylesheetCodec.
      *
      * Codec for <mxStylesheets>. This class is created and registered
      * dynamically at load time and used implicitely via <mxCodec>
@@ -33,6 +35,8 @@ class mxStylesheetCodec extends mxObjectCodec
      * idrefs - Optional array of fieldnames to be converted to/from
      * references.
      * mapping - Optional mapping from field- to attributenames.
+     *
+     * @param mixed $template
      */
     public function __construct($template)
     {
@@ -41,24 +45,27 @@ class mxStylesheetCodec extends mxObjectCodec
 
     /**
      * Override <mxObjectCodec.encode>.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
      */
     public function encode($enc, $obj)
     {
         $node = $enc->document->createElement($this->getName());
 
         foreach ($obj->styles as $i => $value) {
-            $styleNode = $enc->document->createElement("add");
+            $styleNode = $enc->document->createElement('add');
 
             if (isset($i)) {
-                $styleNode->setAttribute("as", $i);
+                $styleNode->setAttribute('as', $i);
 
                 foreach ($style as $j => $value) {
                     $value = $this->getStringValue($j, $value);
 
                     if (isset($value)) {
-                        $entry = $enc->document->createElement("add");
-                        $entry->setAttribute("value", $value);
-                        $entry->setAttribute("as", $j);
+                        $entry = $enc->document->createElement('add');
+                        $entry->setAttribute('value', $value);
+                        $entry->setAttribute('as', $j);
                         $styleNode->appendChild($entry);
                     }
                 }
@@ -74,25 +81,32 @@ class mxStylesheetCodec extends mxObjectCodec
 
     /**
      * Returns the string for encoding the given value.
+     *
+     * @param mixed $key
+     * @param mixed $value
      */
     public function getStringValue($key, $value)
     {
-        return (!function_exists($value) && !is_object($value)) ? $value : null;
+        return (!\function_exists($value) && !\is_object($value)) ? $value : null;
     }
 
     /**
      * Override <mxObjectCodec.decode>.
+     *
+     * @param mixed      $dec
+     * @param mixed      $node
+     * @param null|mixed $into
      */
     public function decode($dec, $node, &$into = null)
     {
-        $id = $node->getAttribute("id");
-        $obj = (in_array($id, $dec->objects)) ? $dec->objects[$id] : null;
+        $id = $node->getAttribute('id');
+        $obj = (\in_array($id, $dec->objects, true)) ? $dec->objects[$id] : null;
 
         if (!isset($obj)) {
             if (isset($into)) {
                 $obj = $into;
             } else {
-                $tmp = get_class($this->template);
+                $tmp = \get_class($this->template);
                 $obj = new $tmp();
             }
 
@@ -104,42 +118,42 @@ class mxStylesheetCodec extends mxObjectCodec
         $node = $node->firstChild;
 
         while (isset($node)) {
-            if (!$this->processInclude($dec, $node, $obj) &&
-                $node->nodeName == "add") {
-                $as = $node->getAttribute("as");
+            if (!$this->processInclude($dec, $node, $obj)
+                && 'add' == $node->nodeName) {
+                $as = $node->getAttribute('as');
 
-                if (strlen($as) > 0) {
-                    $extend = $node->getAttribute("extend");
+                if ('' !== $as) {
+                    $extend = $node->getAttribute('extend');
 
-                    $style = (strlen($extend) > 0 &&
-                        isset($obj->styles[$extend])) ?
-                        array_slice($obj->styles[$extend], 0) :
+                    $style = ('' !== $extend
+                        && isset($obj->styles[$extend])) ?
+                        \array_slice($obj->styles[$extend], 0) :
                         null;
 
                     if (!isset($style)) {
-                        $style = array();
+                        $style = [];
                     }
 
                     $entry = $node->firstChild;
 
                     while (isset($entry)) {
-                        if ($entry->nodeType == XML_ELEMENT_NODE) {
-                            $key = $entry->getAttribute("as");
+                        if (\XML_ELEMENT_NODE == $entry->nodeType) {
+                            $key = $entry->getAttribute('as');
 
-                            if ($entry->nodeName == "add") {
+                            if ('add' == $entry->nodeName) {
                                 $text = $entry->textContent;
                                 $value = null;
 
-                                if (isset($text) && strlen($text) > 0) {
+                                if (isset($text) && '' !== $text) {
                                     $value = mxUtils::evaluate($text);
                                 } else {
-                                    $value = $entry->getAttribute("value");
+                                    $value = $entry->getAttribute('value');
                                 }
 
-                                if ($value != null) {
+                                if (null != $value) {
                                     $style[$key] = $value;
                                 }
-                            } elseif ($entry->nodeName == "remove") {
+                            } elseif ('remove' == $entry->nodeName) {
                                 unset($style[$key]);
                             }
                         }

@@ -1,41 +1,53 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Util;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxUtils
 {
     /**
-     * Class: mxUtils
+     * Class: mxUtils.
      *
      * Helper methods.
      *
      * Function: getLabelSize
      *
      * Returns the size of the given label.
+     *
+     * @param mixed $label
+     * @param mixed $style
      */
     public static function getLabelSize($label, $style)
     {
-        $fontSize = mxUtils::getValue(
+        $fontSize = self::getValue(
             $style,
             mxConstants::$STYLE_FONTSIZE,
             mxConstants::$DEFAULT_FONTSIZE
         );
-        $fontFamily = mxUtils::getValue(
+        $fontFamily = self::getValue(
             $style,
             mxConstants::$STYLE_FONTFAMILY,
             mxConstants::$DEFAULT_FONTFAMILY
         );
 
-        return mxUtils::getSizeForString($label, $fontSize, $fontFamily);
+        return self::getSizeForString($label, $fontSize, $fontFamily);
     }
 
     /**
-     * Function: getLabelPaintBounds
+     * Function: getLabelPaintBounds.
      *
      * Returns the paint bounds for the given label.
+     *
+     * @param mixed $label
+     * @param mixed $style
+     * @param mixed $isHtml
+     * @param mixed $offset
+     * @param mixed $vertexBounds
+     * @param mixed $scale
      */
     public static function getLabelPaintBounds(
         $label,
@@ -45,7 +57,7 @@ class mxUtils
         $vertexBounds,
         $scale
     ) {
-        $size = mxUtils::getLabelSize($label, $style);
+        $size = self::getLabelSize($label, $style);
 
         $x = $offset->x;
         $y = $offset->y;
@@ -56,16 +68,16 @@ class mxUtils
             $x += $vertexBounds->x;
             $y += $vertexBounds->y;
 
-            if (mxUtils::getValue($style, mxConstants::$STYLE_SHAPE, "") ==
+            if (self::getValue($style, mxConstants::$STYLE_SHAPE, '') ==
                 mxConstants::$SHAPE_SWIMLANE) {
                 // Limits the label to the swimlane title
-                $start = mxUtils::getNumber(
+                $start = self::getNumber(
                     $style,
                     mxConstants::$STYLE_STARTSIZE,
                     mxConstants::$DEFAULT_STARTSIZE
                 ) * $scale;
 
-                if (mxUtils::getValue($style, mxConstants::$STYLE_HORIZONTAL, true)) {
+                if (self::getValue($style, mxConstants::$STYLE_HORIZONTAL, true)) {
                     $width += $vertexBounds->width;
                     $height += $start;
                 } else {
@@ -78,7 +90,7 @@ class mxUtils
             }
         }
 
-        return mxUtils::getScaledLabelBounds(
+        return self::getScaledLabelBounds(
             $x,
             $y,
             $size,
@@ -90,13 +102,21 @@ class mxUtils
     }
 
     /**
-     * Function: getScaledLabelBounds
+     * Function: getScaledLabelBounds.
      *
      * Returns the bounds for a label for the given location and size, taking
      * into account the alignment and spacing in the specified style, as well
      * as the width and height of the rectangle that contains the label.
      * (For edge labels this width and height is 0.) The scale is used to scale
      * the given size and the spacings in the specified style.
+     *
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $size
+     * @param mixed $outerWidth
+     * @param mixed $outerHeight
+     * @param mixed $style
+     * @param mixed $scale
      */
     public static function getScaledLabelBounds($x, $y, $size, $outerWidth, $outerHeight, $style, $scale)
     {
@@ -108,28 +128,28 @@ class mxUtils
         $height = $size->height * $scale;
 
         // Gets the global spacing and orientation
-        $horizontal = mxUtils::getValue($style, mxConstants::$STYLE_HORIZONTAL, true);
-        $spacing = mxUtils::getNumber($style, mxConstants::$STYLE_SPACING) * $scale;
+        $horizontal = self::getValue($style, mxConstants::$STYLE_HORIZONTAL, true);
+        $spacing = self::getNumber($style, mxConstants::$STYLE_SPACING) * $scale;
 
         // Gets the alignment settings
-        $align = mxUtils::getValue(
+        $align = self::getValue(
             $style,
             mxConstants::$STYLE_ALIGN,
             mxConstants::$ALIGN_CENTER
         );
-        $valign = mxUtils::getValue(
+        $valign = self::getValue(
             $style,
             mxConstants::$STYLE_VERTICAL_ALIGN,
             mxConstants::$ALIGN_MIDDLE
         );
 
         // Gets the vertical spacing
-        $top = mxUtils::getNumber($style, mxConstants::$STYLE_SPACING_TOP) * $scale;
-        $bottom = mxUtils::getNumber($style, mxConstants::$STYLE_SPACING_BOTTOM) * $scale;
+        $top = self::getNumber($style, mxConstants::$STYLE_SPACING_TOP) * $scale;
+        $bottom = self::getNumber($style, mxConstants::$STYLE_SPACING_BOTTOM) * $scale;
 
         // Gets the horizontal spacing
-        $left = mxUtils::getNumber($style, mxConstants::$STYLE_SPACING_LEFT) * $scale;
-        $right = mxUtils::getNumber($style, mxConstants::$STYLE_SPACING_RIGHT) * $scale;
+        $left = self::getNumber($style, mxConstants::$STYLE_SPACING_LEFT) * $scale;
+        $right = self::getNumber($style, mxConstants::$STYLE_SPACING_RIGHT) * $scale;
 
         // Applies the orientation to the spacings and dimension
         if (!$horizontal) {
@@ -145,22 +165,22 @@ class mxUtils
         }
 
         // Computes the position of the label for the horizontal alignment
-        if (($horizontal && $align == mxConstants::$ALIGN_CENTER) ||
-            (!$horizontal && $valign == mxConstants::$ALIGN_MIDDLE)) {
+        if (($horizontal && $align == mxConstants::$ALIGN_CENTER)
+            || (!$horizontal && $valign == mxConstants::$ALIGN_MIDDLE)) {
             $x += ($outerWidth - $width) / 2 + $left - $right;
-        } elseif (($horizontal && $align == mxConstants::$ALIGN_RIGHT) ||
-            (!$horizontal && $valign == mxConstants::$ALIGN_BOTTOM)) {
+        } elseif (($horizontal && $align == mxConstants::$ALIGN_RIGHT)
+            || (!$horizontal && $valign == mxConstants::$ALIGN_BOTTOM)) {
             $x += $outerWidth - $width - $spacing - $right;
         } else {
             $x += $spacing + $left;
         }
 
         // Computes the position of the label for the vertical alignment
-        if ((!$horizontal && $align == mxConstants::$ALIGN_CENTER) ||
-            ($horizontal && $valign == mxConstants::$ALIGN_MIDDLE)) {
+        if ((!$horizontal && $align == mxConstants::$ALIGN_CENTER)
+            || ($horizontal && $valign == mxConstants::$ALIGN_MIDDLE)) {
             $y += ($outerHeight - $height) / 2 + $top - $bottom;
-        } elseif ((!$horizontal && $align == mxConstants::$ALIGN_LEFT) ||
-            ($horizontal && $valign == mxConstants::$ALIGN_BOTTOM)) {
+        } elseif ((!$horizontal && $align == mxConstants::$ALIGN_LEFT)
+            || ($horizontal && $valign == mxConstants::$ALIGN_BOTTOM)) {
             $y += $outerHeight - $height - $spacing - $bottom;
         } else {
             $y += $spacing + $top;
@@ -170,7 +190,7 @@ class mxUtils
     }
 
     /**
-     * Function: getSizeForString
+     * Function: getSizeForString.
      *
      * Returns an <mxRectangle> with the size (width and height in pixels) of
      * the given string. The string may contain HTML markup. Newlines should be
@@ -184,37 +204,41 @@ class mxUtils
      * fontFamily - String that specifies the name of the font famil.y Default
      * is <mxConstants.DEFAULT_FONTFAMILY>.
      *
+     * @param mixed      $text
+     * @param mixed      $fontSize
+     * @param null|mixed $fontFamily
      */
     public static function getSizeForString($text, $fontSize = 0, $fontFamily = null)
     {
-        if (is_string($text) && strlen($text) > 0) {
-            if ($fontSize == 0) {
+        if (\is_string($text) && '' !== $text) {
+            if (0 == $fontSize) {
                 $fontSize = mxConstants::$DEFAULT_FONTSIZE;
             }
 
-            if ($fontFamily == null) {
+            if (null == $fontFamily) {
                 $fontFamily = mxConstants::$DEFAULT_FONTFAMILY;
             }
 
             $lines = explode("\n", $text);
-            $lineCount = sizeof($lines);
+            $lineCount = \count($lines);
 
-            if (mxConstants::$TTF_ENABLED &&
-                function_exists("imagettfbbox")) {
+            if (mxConstants::$TTF_ENABLED
+                && \function_exists('imagettfbbox')) {
                 $bbox = imagettfbbox($fontSize * mxConstants::$TTF_SIZEFACTOR, 0, $fontFamily, $text);
                 $textWidth = $bbox[2] - $bbox[0];
                 $textHeight = ($fontSize + mxConstants::$DEFAULT_LINESPACING) * $lineCount;
 
                 return new mxRectangle(0, 0, $textWidth, $textHeight);
-            } elseif (function_exists("imageFontHeight") &&
-                function_exists("imageFontWidth")) {
-                $font = mxUtils::getFixedFontSize($fontSize, $fontFamily);
-                $textHeight = (imageFontHeight($font) + mxConstants::$DEFAULT_LINESPACING) * $lineCount;
-                $charWidth = imageFontWidth($font);
+            }
+            if (\function_exists('imageFontHeight')
+                && \function_exists('imageFontWidth')) {
+                $font = self::getFixedFontSize($fontSize, $fontFamily);
+                $textHeight = (imagefontheight($font) + mxConstants::$DEFAULT_LINESPACING) * $lineCount;
+                $charWidth = imagefontwidth($font);
                 $textWidth = 0;
 
-                for ($i = 0; $i < sizeof($lines); $i++) {
-                    $textWidth = max($textWidth, $charWidth * strlen($lines[$i]));
+                for ($i = 0; $i < \count($lines); ++$i) {
+                    $textWidth = max($textWidth, $charWidth * \strlen($lines[$i]));
                 }
 
                 return new mxRectangle(0, 0, $textWidth, $textHeight);
@@ -225,10 +249,14 @@ class mxUtils
     }
 
     /**
-     * Function: flipImage
+     * Function: flipImage.
      *
      * Flips the given image horizontally and/or vertically and returns a new
      * image instance.
+     *
+     * @param mixed $img
+     * @param mixed $flipH
+     * @param mixed $flipV
      */
     public static function flipImage($img, $flipH, $flipV)
     {
@@ -253,8 +281,8 @@ class mxUtils
         $dst = imagecreatetruecolor($w, $h);
 
         // Fills the background with transparent white
-        $bg = ImageColorAllocateAlpha($dst, 255, 255, 255, 127);
-        ImageFill($dst, 0, 0, $bg);
+        $bg = imagecolorallocatealpha($dst, 255, 255, 255, 127);
+        imagefill($dst, 0, 0, $bg);
 
         if (imagecopyresampled($dst, $img, 0, 0, $sx, $sy, $w, $h, $sw, $sh)) {
             return $dst;
@@ -264,32 +292,37 @@ class mxUtils
     }
 
     /**
-     * Function: toRadians
+     * Function: toRadians.
      *
      * Converts the given degree to radians.
+     *
+     * @param mixed $deg
      */
     public static function toRadians($deg)
     {
-        return pi() * $deg / 180;
+        return M_PI * $deg / 180;
     }
 
     /**
-     * Function: getBoundingBox
+     * Function: getBoundingBox.
      *
      * Returns the bounding box for the rotated rectangle.
+     *
+     * @param mixed $rect
+     * @param mixed $rotation
      */
     public static function getBoundingBox($rect, $rotation)
     {
         $result = null;
 
-        if ($rect != null && $rotation != null && $rotation != 0) {
-            $rad = mxUtils::toRadians($rotation);
+        if (null != $rect && null != $rotation && 0 != $rotation) {
+            $rad = self::toRadians($rotation);
             $cos = cos($rad);
             $sin = sin($rad);
 
             $cx = new mxPoint(
                 $rect->x + $rect->width / 2,
-                $rect->y  + $rect->height / 2
+                $rect->y + $rect->height / 2
             );
 
             $p1 = new mxPoint($rect->x, $rect->y);
@@ -297,10 +330,10 @@ class mxUtils
             $p3 = new mxPoint($p2->x, $rect->y + $rect->height);
             $p4 = new mxPoint($rect->x, $p3->y);
 
-            $p1 = mxUtils::getRotatedPoint($p1, $cos, $sin, $cx);
-            $p2 = mxUtils::getRotatedPoint($p2, $cos, $sin, $cx);
-            $p3 = mxUtils::getRotatedPoint($p3, $cos, $sin, $cx);
-            $p4 = mxUtils::getRotatedPoint($p4, $cos, $sin, $cx);
+            $p1 = self::getRotatedPoint($p1, $cos, $sin, $cx);
+            $p2 = self::getRotatedPoint($p2, $cos, $sin, $cx);
+            $p3 = self::getRotatedPoint($p3, $cos, $sin, $cx);
+            $p4 = self::getRotatedPoint($p4, $cos, $sin, $cx);
 
             $result = new mxRectangle($p1->x, $p1->y, 0, 0);
             $result->add(new mxRectangle($p2->x, $p2->y, 0, 0));
@@ -312,13 +345,18 @@ class mxUtils
     }
 
     /**
-     * Function: getRotatedPoint
+     * Function: getRotatedPoint.
      *
      * Rotates the given point by the given cos and sin.
+     *
+     * @param mixed      $pt
+     * @param mixed      $cos
+     * @param mixed      $sin
+     * @param null|mixed $cx
      */
     public static function getRotatedPoint($pt, $cos, $sin, $cx = null)
     {
-        $cx = ($cx != null) ? $cx : new mxPoint();
+        $cx = (null != $cx) ? $cx : new mxPoint();
 
         $x = $pt->x - $c->x;
         $y = $pt->y - $c->y;
@@ -330,21 +368,25 @@ class mxUtils
     }
 
     /**
-     * Function: translatePoints
+     * Function: translatePoints.
      *
      * Creates a new list of new points obtained by translating the points in
      * the given list by the given vector. Elements that are not mxPoints are
      * added to the result as-is.
+     *
+     * @param mixed $pts
+     * @param mixed $dx
+     * @param mixed $dy
      */
     public static function translatePoints($pts, $dx, $dy)
     {
         $result = null;
 
-        if ($pts != null) {
-            $result = array();
-            $pointCount = sizeof($pts);
+        if (null != $pts) {
+            $result = [];
+            $pointCount = \count($pts);
 
-            for ($i = 0; $i < $pointCount; $i++) {
+            for ($i = 0; $i < $pointCount; ++$i) {
                 $obj = $pts[$i];
 
                 if ($obj instanceof mxPoint) {
@@ -353,9 +395,9 @@ class mxUtils
                     $point->x += $dx;
                     $point->y += $dy;
 
-                    array_push($result, $point);
+                    $result[] = $point;
                 } else {
-                    array_push($result, $obj);
+                    $result[] = $obj;
                 }
             }
         }
@@ -364,7 +406,7 @@ class mxUtils
     }
 
     /**
-     * Function: contains
+     * Function: contains.
      *
      * Returns true if the specified point (x, y) is contained in the given rectangle.
      *
@@ -373,15 +415,19 @@ class mxUtils
      * bounds - <mxRectangle> that represents the area.
      * x - X-coordinate of the point.
      * y - Y-coordinate of the point.
+     *
+     * @param mixed $state
+     * @param mixed $x
+     * @param mixed $y
      */
     public static function contains($state, $x, $y)
     {
-        return ($state->x <= $x && $state->x + $state->width >= $x &&
-                $state->y <= $y && $state->y + $state->height >= $y);
+        return $state->x <= $x && $state->x + $state->width >= $x
+                && $state->y <= $y && $state->y + $state->height >= $y;
     }
 
     /**
-     * Function: intersection
+     * Function: intersection.
      *
      * Returns the intersection of two lines as an <mxPoint>.
      *
@@ -395,20 +441,29 @@ class mxUtils
      * y2 - Y-coordinate of the second line's startpoint.
      * x3 - X-coordinate of the second line's endpoint.
      * y3 - Y-coordinate of the second line's endpoint.
+     *
+     * @param mixed $x0
+     * @param mixed $y0
+     * @param mixed $x1
+     * @param mixed $y1
+     * @param mixed $x2
+     * @param mixed $y2
+     * @param mixed $x3
+     * @param mixed $y3
      */
     public static function intersection($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3)
     {
-        $denom = (($y3 - $y2)*($x1 - $x0)) - (($x3 - $x2)*($y1 - $y0));
-        $nume_a = (($x3 - $x2)*($y0 - $y2)) - (($y3 - $y2)*($x0 - $x2));
-        $nume_b = (($x1 - $x0)*($y0 - $y2)) - (($y1 - $y0)*($x0 - $x2));
+        $denom = (($y3 - $y2) * ($x1 - $x0)) - (($x3 - $x2) * ($y1 - $y0));
+        $nume_a = (($x3 - $x2) * ($y0 - $y2)) - (($y3 - $y2) * ($x0 - $x2));
+        $nume_b = (($x1 - $x0) * ($y0 - $y2)) - (($y1 - $y0) * ($x0 - $x2));
 
         $ua = $nume_a / $denom;
         $ub = $nume_b / $denom;
 
         if ($ua >= 0.0 && $ua <= 1.0 && $ub >= 0.0 && $ub <= 1.0) {
             // Get the intersection point
-            $intersectionX = $x0 + $ua*($x1 - $x0);
-            $intersectionY = $y0 + $ua*($y1 - $y0);
+            $intersectionX = $x0 + $ua * ($x1 - $x0);
+            $intersectionY = $y0 + $ua * ($y1 - $y0);
 
             return new mxPoint($intersectionX, $intersectionY);
         }
@@ -418,7 +473,7 @@ class mxUtils
     }
 
     /**
-     * Function: encodeImage
+     * Function: encodeImage.
      *
      * Encodes the given image using the GD image encoding routines.
      * Supported formats are gif, jpg and png (default).
@@ -427,20 +482,24 @@ class mxUtils
      *
      * image - GD image to be encoded.
      * format - String that defines the encoding format. Default is png.
+     *
+     * @param mixed      $image
+     * @param null|mixed $format
      */
-    public static function encodeImage($image, $format=null)
+    public static function encodeImage($image, $format = null)
     {
-        if ($format == "gif") {
-            return imageGif($image);
-        } elseif ($format == "jpg") {
-            return imageJpeg($image);
-        } else {
-            return imagePng($image);
+        if ('gif' == $format) {
+            return imagegif($image);
         }
+        if ('jpg' == $format) {
+            return imagejpeg($image);
+        }
+
+        return imagepng($image);
     }
 
     /**
-     * Function: getStylename
+     * Function: getStylename.
      *
      * Returns the stylename in a style of the form [stylename;|key=value;] or
      * an empty string if the given style does not contain a stylename.
@@ -448,23 +507,25 @@ class mxUtils
      * Parameters:
      *
      * style - String of the form [stylename;|key=value;].
+     *
+     * @param mixed $style
      */
     public static function getStylename($style)
     {
         if (isset($style)) {
-            $pairs = explode(";", $style);
+            $pairs = explode(';', $style);
             $stylename = $pairs[0];
 
-            if (strpos($stylename, "=") === false) {
+            if (false === strpos($stylename, '=')) {
                 return $stylename;
             }
         }
 
-        return "";
+        return '';
     }
 
     /**
-     * Function: getStylenames
+     * Function: getStylenames.
      *
      * Returns the stylenames in a style of the form [stylename;|key=value;] or
      * an empty array if the given style does not contain any stylenames.
@@ -472,17 +533,19 @@ class mxUtils
      * Parameters:
      *
      * style - String of the form [stylename;|key=value;].
+     *
+     * @param mixed $style
      */
     public static function getStylenames($style)
     {
-        $result = array();
+        $result = [];
 
         if (isset($style)) {
-            $pairs = explode(";", $style);
+            $pairs = explode(';', $style);
 
-            for ($i = 0; $i < sizeof($pairs); $i++) {
-                if (strpos($pairs[$i], "=") === false) {
-                    array_push($result, $pairs[$i]);
+            for ($i = 0; $i < \count($pairs); ++$i) {
+                if (false === strpos($pairs[$i], '=')) {
+                    $result[] = $pairs[$i];
                 }
             }
         }
@@ -491,25 +554,28 @@ class mxUtils
     }
 
     /**
-     * Function: indexOfStylename
+     * Function: indexOfStylename.
      *
      * Returns the index of the given stylename in the given style. This
      * returns -1 if the given stylename does not occur (as a stylename) in the
      * given style, otherwise it returns the index of the first character.
+     *
+     * @param mixed $style
+     * @param mixed $stylename
      */
     public static function indexOfStylename($style, $stylename)
     {
-        if (isset($style) && isset($stylename)) {
-            $tokens = explode(";", $style);
-            $tokenCount = sizeof($tokens);
+        if (isset($style, $stylename)) {
+            $tokens = explode(';', $style);
+            $tokenCount = \count($tokens);
             $pos = 0;
 
-            for ($i = 0; $i < $tokenCount; $i++) {
+            for ($i = 0; $i < $tokenCount; ++$i) {
                 if ($tokens[$i] == $stylename) {
                     return $pos;
                 }
 
-                $pos += strlen($tokens[$i]) + 1;
+                $pos += \strlen($tokens[$i]) + 1;
             }
         }
 
@@ -517,18 +583,21 @@ class mxUtils
     }
 
     /**
-     * Function: addStylename
+     * Function: addStylename.
      *
      * Adds the specified stylename to the given style if it does not already
      * contain the stylename.
+     *
+     * @param mixed $style
+     * @param mixed $stylename
      */
     public static function addStylename($style, $stylename)
     {
-        if (mxUtils::indexOfStylename($style, $stylename) < 0) {
+        if (self::indexOfStylename($style, $stylename) < 0) {
             if (!isset($style)) {
-                $style = "";
-            } elseif (strlen($style) > 0 && $style[strlen($style) - 1] != ";") {
-                $style .= ";";
+                $style = '';
+            } elseif ('' !== $style && ';' != $style[\strlen($style) - 1]) {
+                $style .= ';';
             }
 
             $style .= $stylename;
@@ -538,59 +607,64 @@ class mxUtils
     }
 
     /**
-     * Function: removeStylename
+     * Function: removeStylename.
      *
      * Removes all occurrences of the specified stylename in the given style
      * and returns the updated style. Trailing semicolons are preserved.
+     *
+     * @param mixed $style
+     * @param mixed $stylename
      */
     public static function removeStylename($style, $stylename)
     {
-        $result = "";
+        $result = '';
 
         if (isset($style)) {
-            $tokens = explode(";", $style);
-            $tokenCount = sizeof($tokens);
+            $tokens = explode(';', $style);
+            $tokenCount = \count($tokens);
 
-            for ($i = 0; $i < $tokenCount; $i++) {
+            for ($i = 0; $i < $tokenCount; ++$i) {
                 if ($tokens[$i] != $stylename) {
-                    $result .= $tokens[$i].";";
+                    $result .= $tokens[$i].';';
                 }
             }
         }
 
-        $len = strlen($result);
+        $len = \strlen($result);
 
         return ($len > 1) ? substr($result, 0, $len - 1) : $result;
     }
 
     /**
-     * Function: removeAllStylenames
+     * Function: removeAllStylenames.
      *
      * Removes all stylenames from the given style and returns the updated
      * style.
+     *
+     * @param mixed $style
      */
     public static function removeAllStylenames($style)
     {
-        $result = "";
+        $result = '';
 
         if (isset($style)) {
-            $tokens = explode(";", $style);
-            $tokenCount = sizeof($tokens);
+            $tokens = explode(';', $style);
+            $tokenCount = \count($tokens);
 
-            for ($i = 0; $i < $tokenCount; $i++) {
-                if (strpos($tokens[$i], "=") !== false) {
-                    $result .= $tokens[$i].";";
+            for ($i = 0; $i < $tokenCount; ++$i) {
+                if (false !== strpos($tokens[$i], '=')) {
+                    $result .= $tokens[$i].';';
                 }
             }
         }
 
-        $len = strlen($result);
+        $len = \strlen($result);
 
         return ($len > 1) ? substr($result, 0, $len - 1) : $result;
     }
 
     /**
-     * Function: setCellStyles
+     * Function: setCellStyles.
      *
      * Assigns the value for the given key in the styles of the given cells, or
      * removes the key from the styles if the value is null.
@@ -601,15 +675,21 @@ class mxUtils
      * cells - Array of <mxCells> to be updated.
      * key - Key of the style to be changed.
      * value - New value for the given key.
+     *
+     * @param mixed $model
+     * @param mixed $cells
+     * @param mixed $key
+     * @param mixed $value
      */
-    public static function setCellStyles($model, $cells, $key, $value)
+    public static function setCellStyles($model, $cells, $key, $value): void
     {
-        if ($cells != null && sizeof($cells) > 0) {
+        if (null != $cells && \count($cells) > 0) {
             $model->beginUpdate();
+
             try {
-                for ($i=0; $i < sizeof($cells); $i++) {
+                for ($i = 0; $i < \count($cells); ++$i) {
                     if (isset($cells[$i])) {
-                        $style = mxUtils::setStyle(
+                        $style = self::setStyle(
                             $model->getStyle($cells[$i]),
                             $key,
                             $value
@@ -619,14 +699,15 @@ class mxUtils
                 }
             } catch (\Exception $e) {
                 $model->endUpdate();
-                throw($e);
+
+                throw ($e);
             }
             $model->endUpdate();
         }
     }
 
     /**
-     * Function: setStyle
+     * Function: setStyle.
      *
      * Adds or removes the given key, value pair to the style and returns the
      * new style. If value is null or zero length then the key is removed from
@@ -637,34 +718,38 @@ class mxUtils
      * style - String of the form stylename[;key=value]
      * key - Key of the style to be changed.
      * value - New value for the given key.
+     *
+     * @param mixed $style
+     * @param mixed $key
+     * @param mixed $value
      */
     public static function setStyle($style, $key, $value)
     {
-        $isValue = $value != null && (!is_string($value) ||
-            strlen($value) > 0);
+        $isValue = null != $value && (!\is_string($value)
+            || '' !== $value);
 
-        if (strlen($style) == 0) {
+        if (0 == \strlen($style)) {
             if ($isValue) {
-                $style = "$key=$value";
+                $style = "{$key}={$value}";
             }
         } else {
-            $index = strpos($style, "$key=");
+            $index = strpos($style, "{$key}=");
 
-            if ($index === false) {
+            if (false === $index) {
                 if ($isValue) {
-                    $sep = ($style[strlen($style) - 1] == ";") ? "" : ";";
-                    $style = "{$style}$sep{$key}=$value";
+                    $sep = (';' == $style[\strlen($style) - 1]) ? '' : ';';
+                    $style = "{$style}$sep{$key}={$value}";
                 }
             } else {
-                $tmp = ($isValue) ? "$key=$value" : "";
-                $cont = strpos($style, ";", $index);
+                $tmp = ($isValue) ? "{$key}={$value}" : '';
+                $cont = strpos($style, ';', $index);
 
                 if (!$isValue) {
-                    $cont++;
+                    ++$cont;
                 }
 
                 $style = substr($style, 0, $index).$tmp.
-                    (($cont > $index) ? substr($style, $cont) : "");
+                    (($cont > $index) ? substr($style, $cont) : '');
             }
         }
 
@@ -672,7 +757,7 @@ class mxUtils
     }
 
     /**
-     * Function: setCellStyleFlags
+     * Function: setCellStyleFlags.
      *
      * Sets or toggles the flag bit for the given key in the cell's styles.
      * If value is null then the flag is toggled.
@@ -696,15 +781,22 @@ class mxUtils
      * key - Key of the style to be changed.
      * flag - Integer for the bit to be changed.
      * value - Optional boolean value for the flag.
+     *
+     * @param mixed $model
+     * @param mixed $cells
+     * @param mixed $key
+     * @param mixed $flag
+     * @param mixed $value
      */
-    public static function setCellStyleFlags($model, $cells, $key, $flag, $value)
+    public static function setCellStyleFlags($model, $cells, $key, $flag, $value): void
     {
-        if ($cells != null && sizeof($cells) > 0) {
+        if (null != $cells && \count($cells) > 0) {
             $model->beginUpdate();
+
             try {
-                for ($i=0; $i < sizeof($cells); $i++) {
+                for ($i = 0; $i < \count($cells); ++$i) {
                     if (isset($cells[$i])) {
-                        $style = mxUtils::setStyleFlag(
+                        $style = self::setStyleFlag(
                             $model->getStyle($cells[$i]),
                             $key,
                             $flag,
@@ -715,14 +807,15 @@ class mxUtils
                 }
             } catch (\Exception $e) {
                 $model->endUpdate();
-                throw($e);
+
+                throw ($e);
             }
             $model->endUpdate();
         }
     }
 
     /**
-     * Function: setStyleFlag
+     * Function: setStyleFlag.
      *
      * Sets or removes the given key from the specified style and returns the
      * new style. If value is null then the flag is toggled.
@@ -733,46 +826,51 @@ class mxUtils
      * key - Key of the style to be changed.
      * flag - Integer for the bit to be changed.
      * value - Optional boolean value for the given flag.
+     *
+     * @param mixed $style
+     * @param mixed $key
+     * @param mixed $flag
+     * @param mixed $value
      */
     public static function setStyleFlag($style, $key, $flag, $value)
     {
-        if (strlen($style) == 0) {
-            if ($value == null || $value === true) {
-                $style = "$key=$flag";
+        if (0 == \strlen($style)) {
+            if (null == $value || true === $value) {
+                $style = "{$key}={$flag}";
             } else {
-                $style = "$key=0";
+                $style = "{$key}=0";
             }
         } else {
-            $index = strpos($style, "$key=");
+            $index = strpos($style, "{$key}=");
 
-            if ($index === false) {
-                $sep = ($style[strlen($style) - 1] == ";") ? "" : ";";
+            if (false === $index) {
+                $sep = (';' == $style[\strlen($style) - 1]) ? '' : ';';
 
-                if ($value == null || $value === true) {
-                    $style = "{$style}$sep{$key}=$flag";
+                if (null == $value || true === $value) {
+                    $style = "{$style}$sep{$key}={$flag}";
                 } else {
                     $style = "{$style}$sep{$key}=0";
                 }
             } else {
-                $cont = strpos($style, ";", $index);
-                $tmp = "";
+                $cont = strpos($style, ';', $index);
+                $tmp = '';
 
-                if ($cont === false) {
-                    $tmp  = substr($style, $index+strlen($key)+1);
+                if (false === $cont) {
+                    $tmp = substr($style, $index + \strlen($key) + 1);
                 } else {
-                    $tmp  = substr($style, $index+strlen($key)+1, $cont);
+                    $tmp = substr($style, $index + \strlen($key) + 1, $cont);
                 }
 
-                if ($value == null) {
+                if (null == $value) {
                     $tmp = $tmp ^ $flag;
-                } elseif ($value === true) {
+                } elseif (true === $value) {
                     $tmp = $tmp | $flag;
                 } else {
                     $tmp = $tmp & ~$flag;
                 }
 
-                $style = substr($style, 0, $index)."$key=$tmp".
-                    (($cont >= 0) ? substr($style, $cont) : "");
+                $style = substr($style, 0, $index)."{$key}={$tmp}".
+                    (($cont >= 0) ? substr($style, $cont) : '');
             }
         }
 
@@ -780,7 +878,7 @@ class mxUtils
     }
 
     /**
-     * Function: getValue
+     * Function: getValue.
      *
      * Returns the value for key in dictionary or the given default value if no
      * value is defined for the key.
@@ -790,8 +888,12 @@ class mxUtils
      * dict - Dictionary that contains the key, value pairs.
      * key - Key whose value should be returned.
      * default - Default value to return if the key is undefined. Default is null.
+     *
+     * @param mixed      $dict
+     * @param mixed      $key
+     * @param null|mixed $default
      */
-    public static function getValue($dict, $key, $default=null)
+    public static function getValue($dict, $key, $default = null)
     {
         $value = null;
 
@@ -805,7 +907,7 @@ class mxUtils
     }
 
     /**
-     * Function: getNumber
+     * Function: getNumber.
      *
      * Returns the value for key in dictionary or 0 if no value is defined for
      * the key.
@@ -816,14 +918,18 @@ class mxUtils
      * key - Key whose value should be returned.
      * default - Optional default value to return if no value is defined for
      * the given key. Default is 0.
+     *
+     * @param mixed $dict
+     * @param mixed $key
+     * @param mixed $default
      */
-    public static function getNumber($dict, $key, $default=0)
+    public static function getNumber($dict, $key, $default = 0)
     {
-        return mxUtils::getValue($dict, $key, $default);
+        return self::getValue($dict, $key, $default);
     }
 
     /**
-     * Function: indexOf
+     * Function: indexOf.
      *
      * Returns the index of obj in array or -1 if the array does not contains
      * the given object.
@@ -832,13 +938,16 @@ class mxUtils
      *
      * array - Array to check for the given obj.
      * obj - Object to find in the given array.
+     *
+     * @param mixed $array
+     * @param mixed $object
      */
     public static function indexOf($array, $object)
     {
-        if ($array != null) {
-            $len = sizeof($array);
+        if (null != $array) {
+            $len = \count($array);
 
-            for ($i = 0; $i < $len; $i++) {
+            for ($i = 0; $i < $len; ++$i) {
                 if ($array[$i] === $object) {
                     return $i;
                 }
@@ -849,13 +958,15 @@ class mxUtils
     }
 
     /**
-     * Function: readFile
+     * Function: readFile.
      *
      * Reads the given filename into a string. Shortcut for file_get_contents.
      *
      * Parameters:
      *
      * filename - The name of the file to read.
+     *
+     * @param mixed $filename
      */
     public static function readFile($filename)
     {
@@ -863,7 +974,7 @@ class mxUtils
     }
 
     /**
-     * Function: isNode
+     * Function: isNode.
      *
      * Returns true if the given value is an XML node with the node name
      * and if the optional attribute has the specified value.
@@ -877,22 +988,29 @@ class mxUtils
      * nodeName - String that specifies the node name.
      * attributeName - Optional attribute name to check.
      * attributeValue - Optional attribute value to check.
+     *
+     * @param mixed      $value
+     * @param null|mixed $nodeName
+     * @param null|mixed $attributeName
+     * @param null|mixed $attributeValue
      */
     public static function isNode($value, $nodeName = null, $attributeName = null, $attributeValue = null)
     {
-        if ($value != null && ($nodeName == null ||
-            strcasecmp($value->nodeName, $nodeName) == 0)) {
-            return $attributeName == null ||
-                $value->getAttribute($attributeName) == $attributeValue;
+        if (null != $value && (null == $nodeName
+            || 0 == strcasecmp($value->nodeName, $nodeName))) {
+            return null == $attributeName
+                || $value->getAttribute($attributeName) == $attributeValue;
         }
 
         return false;
     }
 
     /**
-     * Function: loadImage
+     * Function: loadImage.
      *
      * Loads an image from the local filesystem, a data URI or any other URL.
+     *
+     * @param mixed $url
      */
     public static function loadImage($url)
     {
@@ -900,15 +1018,15 @@ class mxUtils
 
         if (isset($url)) {
             // Parses data URIs of the form data:image/format;base64,xxx
-            if (strpos($url, "data:image/") === 0) {
-                $comma = strpos($url, ",");
-                $data = base64_decode(substr($url, $comma + 1));
+            if (0 === strpos($url, 'data:image/')) {
+                $comma = strpos($url, ',');
+                $data = base64_decode(substr($url, $comma + 1), true);
                 $img = imagecreatefromstring($data);
-            } elseif (preg_match("/.jpg/i", "$url")) {
+            } elseif (preg_match('/.jpg/i', "{$url}")) {
                 $img = imagecreatefromjpeg($url);
-            } elseif (preg_match("/.png/i", "$url")) {
+            } elseif (preg_match('/.png/i', "{$url}")) {
                 $img = imagecreatefrompng($url);
-            } elseif (preg_match("/.gif/i", "$url")) {
+            } elseif (preg_match('/.gif/i', "{$url}")) {
                 $img = imagecreatefromgif($url);
             }
         }
@@ -917,43 +1035,47 @@ class mxUtils
     }
 
     /**
-     * Function: createXmlDocument
+     * Function: createXmlDocument.
      *
      * Returns a new, empty XML document.
      */
     public static function createXmlDocument()
     {
-        return new \DOMDocument("1.0");
+        return new \DOMDocument('1.0');
     }
 
     /**
-     * Function: loadXmlDocument
+     * Function: loadXmlDocument.
      *
      * Returns a new DOM document for the given URI.
+     *
+     * @param mixed $uri
      */
     public static function loadXmlDocument($uri)
     {
-        $doc = mxUtils::createXmlDocument();
+        $doc = self::createXmlDocument();
         $doc->load($uri);
 
         return $doc;
     }
 
     /**
-     * Function: parseXml
+     * Function: parseXml.
      *
      * Returns a new DOM document for the given XML string.
+     *
+     * @param mixed $xml
      */
     public static function parseXml($xml)
     {
-        $doc = mxUtils::createXmlDocument();
+        $doc = self::createXmlDocument();
         $doc->loadXML($xml);
 
         return $doc;
     }
 
     /**
-     * Function getXml
+     * Function getXml.
      *
      * Returns the XML of the given node as a string.
      *
@@ -962,27 +1084,32 @@ class mxUtils
      * node - DOM node to return the XML for.
      * linefeed - Optional string that linefeeds are converted into. Default is
      * &#xa;
+     *
+     * @param mixed $node
+     * @param mixed $linefeed
      */
-    public static function getXml($node, $linefeed = "&#xa;")
+    public static function getXml($node, $linefeed = '&#xa;')
     {
         // SaveXML converts linefeeds to &#10; internally
-        return str_replace("&#10;", "&#xa;", $node->ownerDocument->saveXML($node));
+        return str_replace('&#10;', '&#xa;', $node->ownerDocument->saveXML($node));
     }
 
     /**
-     * Function: evaluate
+     * Function: evaluate.
      *
      * Evaluates an expression to a class member. The range of supported
      * expressions is limited to static class members with a dot-notation,
      * such as mxEdgeStyle.ElbowConnector.
+     *
+     * @param mixed $expression
      */
     public static function evaluate($expression)
     {
-        $pos = strpos($expression, ".");
+        $pos = strpos($expression, '.');
 
-        if ($pos !== false) {
+        if (false !== $pos) {
             $class = substr($expression, 0, $pos);
-            $field = substr($expression, $pos+1);
+            $field = substr($expression, $pos + 1);
             $vars = get_class_vars($class);
 
             if (isset($vars[$field])) {
@@ -990,14 +1117,18 @@ class mxUtils
             }
         }
 
-        return eval("return ".$expression.";");
+        return eval('return '.$expression.';');
     }
 
     /**
-     * Function: findNode
+     * Function: findNode.
      *
      * Returns the first node where attr equals value.
      * This implementation does not use XPath.
+     *
+     * @param mixed $node
+     * @param mixed $attr
+     * @param mixed $value
      */
     public static function findNode($node, $attr, $value)
     {
@@ -1010,7 +1141,7 @@ class mxUtils
         $node = $node->firstChild;
 
         while (isset($node)) {
-            $result = mxUtils::findNode($node, $attr, $value);
+            $result = self::findNode($node, $attr, $value);
 
             if (isset($result)) {
                 return $result;
@@ -1023,13 +1154,15 @@ class mxUtils
     }
 
     /**
-     * Function: getTrueTypeFont
+     * Function: getTrueTypeFont.
      *
      * Returns the truetype font to be used to draw the text with the given style.
+     *
+     * @param mixed $style
      */
     public static function getTrueTypeFont($style)
     {
-        return mxUtils::getValue(
+        return self::getValue(
             $style,
             mxConstants::$STYLE_FONTFAMILY,
             mxConstants::$DEFAULT_FONTFAMILY
@@ -1037,11 +1170,13 @@ class mxUtils
     }
 
     /**
-     * Function: getTrueTypeFontSize
+     * Function: getTrueTypeFontSize.
      *
      * Returns the truetype font size to be used to draw the text with the
      * given style. This returns the fontSize in the style of the default
      * fontsize multiplied with <ttfSizeFactor>.
+     *
+     * @param mixed $size
      */
     public static function getTrueTypeFontSize($size)
     {
@@ -1049,11 +1184,15 @@ class mxUtils
     }
 
     /**
-     * Function: getFixedFontSize
+     * Function: getFixedFontSize.
      *
      * Returns the fixed font size for GD (1 t0 5) for the given font properties
+     *
+     * @param mixed      $fontSize
+     * @param mixed      $fontFamily
+     * @param null|mixed $fontStyle
      */
-    public static function getFixedFontSize($fontSize, $fontFamily, $fontStyle=null)
+    public static function getFixedFontSize($fontSize, $fontFamily, $fontStyle = null)
     {
         $font = 5;
 
@@ -1071,16 +1210,16 @@ class mxUtils
     }
 
     /**
-     * Function: stackTrace
+     * Function: stackTrace.
      *
      * Prints a simple stack trace in the error log.
      */
-    public static function stackTrace()
+    public static function stackTrace(): void
     {
         $arr = debug_backtrace();
 
         foreach ($arr as $value) {
-            error_log($value["class"].".".$value["function"]);
+            error_log($value['class'].'.'.$value['function']);
         }
     }
 }

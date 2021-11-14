@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Io;
 
 use Mxgraph\Model\mxCell;
-use Mxgraph\Model\mxGeometry;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxCellCodec extends mxObjectCodec
 {
     /**
-     * Class: mxCellCodec
+     * Class: mxCellCodec.
      *
      * Codec for <mxCell>s. This class is created and registered
      * dynamically at load time and used implicitely via <mxCodec>
@@ -47,30 +48,41 @@ class mxCellCodec extends mxObjectCodec
      * idrefs - Optional array of fieldnames to be converted to/from
      * references.
      * mapping - Optional mapping from field- to attributenames.
+     *
+     * @param mixed $template
      */
     public function __construct($template)
     {
-        parent::__construct($template, array("children", "edges", "states",
-            "overlay", "mxTransient"), array("parent",
-            "source", "target"));
+        parent::__construct($template, ['children', 'edges', 'states',
+            'overlay', 'mxTransient', ], ['parent',
+                'source', 'target', ]);
     }
 
     /**
      * Override <mxObjectCodec.isExcluded>.
+     *
+     * @param mixed $obj
+     * @param mixed $attr
+     * @param mixed $value
+     * @param mixed $isWrite
      */
     public function isExcluded($obj, $attr, $value, $isWrite)
     {
-        return parent::isExcluded($obj, $attr, $value, $isWrite) ||
-                ($isWrite && $attr == "value" && is_object($value) &&
-               get_class($value) == "DOMElement");
+        return parent::isExcluded($obj, $attr, $value, $isWrite)
+                || ($isWrite && 'value' == $attr && \is_object($value)
+               && 'DOMElement' == \get_class($value));
     }
 
     /**
      * Override <mxObjectCodec.afterEncode>.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $node
      */
     public function afterEncode($enc, $obj, $node)
     {
-        if (is_object($obj->value) && get_class($obj->value) == "DOMElement") {
+        if (\is_object($obj->value) && 'DOMElement' == \get_class($obj->value)) {
             // Wraps the graphical annotation up in the
             // user object (inversion) by putting the
             // result of the default encoding into
@@ -84,9 +96,9 @@ class mxCellCodec extends mxObjectCodec
             // Moves the id attribute to the outermost
             // XML node, namely the node which denotes
             // the object boundaries in the file.
-            $id = $tmp->getAttribute("id");
-            $node->setAttribute("id", $id);
-            $tmp->removeAttribute("id");
+            $id = $tmp->getAttribute('id');
+            $node->setAttribute('id', $id);
+            $tmp->removeAttribute('id');
         }
 
         return $node;
@@ -94,6 +106,10 @@ class mxCellCodec extends mxObjectCodec
 
     /**
      * Override <mxObjectCodec.beforeDecode>.
+     *
+     * @param mixed $dec
+     * @param mixed $node
+     * @param mixed $obj
      */
     public function beforeDecode($dec, $node, &$obj)
     {
@@ -111,10 +127,10 @@ class mxCellCodec extends mxObjectCodec
                 // Removes annotation and whitespace from node
                 $tmp2 = $tmp->previousSibling;
 
-                while (isset($tmp2) && $tmp2->nodeType == XML_TEXT_NODE) {
+                while (isset($tmp2) && \XML_TEXT_NODE == $tmp2->nodeType) {
                     $tmp3 = $tmp2->previousSibling;
 
-                    if (strlen(trim($tmp2->textContent)) == 0) {
+                    if (0 == \strlen(trim($tmp2->textContent))) {
                         $tmp2->parentNode->removeChild($tmp2);
                     }
 
@@ -124,10 +140,10 @@ class mxCellCodec extends mxObjectCodec
                 // Removes more whitespace
                 $tmp2 = $tmp->nextSibling;
 
-                while (isset($tmp2) && $tmp2->nodeType == XML_TEXT_NODE) {
+                while (isset($tmp2) && \XML_TEXT_NODE == $tmp2->nodeType) {
                     $tmp3 = $tmp2->previousSibling;
 
-                    if (strlen(trim($tmp2->textContent)) == 0) {
+                    if (0 == \strlen(trim($tmp2->textContent))) {
                         $tmp2->parentNode->removeChild($tmp2);
                     }
 
@@ -141,25 +157,25 @@ class mxCellCodec extends mxObjectCodec
 
             // Creates the user object out of the XML node
             $obj->value = $node->cloneNode(true);
-            $id = $obj->value->getAttribute("id");
+            $id = $obj->value->getAttribute('id');
 
-            if (strlen($id) > 0) {
+            if ('' !== $id) {
                 $obj->setId($id);
-                $obj->value->removeAttribute("id");
+                $obj->value->removeAttribute('id');
             }
         } else {
-            $obj->setId($node->getAttribute("id"));
+            $obj->setId($node->getAttribute('id'));
         }
 
         // Preprocesses and removes all Id-references
         // in order to use the correct encoder (this)
         // for the known references to cells (all).
         if (isset($inner)) {
-            for ($i = 0; $i < sizeof($this->idrefs); $i++) {
+            for ($i = 0; $i < \count($this->idrefs); ++$i) {
                 $attr = $this->idrefs[$i];
                 $ref = $inner->getAttribute($attr);
 
-                if (strlen($ref) > 0) {
+                if ('' !== $ref) {
                     $inner->removeAttribute($attr);
                     $object = (isset($dec->objects[$ref])) ? $dec->objects[$ref] : null;
 
@@ -182,7 +198,7 @@ class mxCellCodec extends mxObjectCodec
                         }
                     }
 
-                    $obj->$attr = $object;
+                    $obj->{$attr} = $object;
                 }
             }
         }

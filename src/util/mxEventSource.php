@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Util;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxEventSource
 {
     /**
-     * Class: mxEventSource
+     * Class: mxEventSource.
      *
      * Base class for all event sources.
      *
@@ -19,36 +21,41 @@ class mxEventSource
     public $eventListeners;
 
     /**
-     * Function: addListener
+     * Function: addListener.
      *
      * Adds a listener for the given event name. Note that the method of the
      * listener object must have the same name as the event it's being added
      * for. This is different from other language implementations of this
      * class.
+     *
+     * @param mixed $name
+     * @param mixed $listener
      */
-    public function addListener($name, $listener)
+    public function addListener($name, $listener): void
     {
-        if ($this->eventListeners == null) {
-            $this->eventListeners = array();
+        if (null == $this->eventListeners) {
+            $this->eventListeners = [];
         }
 
-        array_push($this->eventListeners, $name);
-        array_push($this->eventListeners, $listener);
+        $this->eventListeners[] = $name;
+        $this->eventListeners[] = $listener;
     }
 
     /**
-     * Function: fireEvent
+     * Function: fireEvent.
      *
      * Fires the event for the specified name.
+     *
+     * @param mixed $event
      */
-    public function fireEvent($event)
+    public function fireEvent($event): void
     {
-        if ($this->eventListeners != null) {
+        if (null != $this->eventListeners) {
             $name = $event->getName();
 
-            for ($i = 0; $i < sizeof($this->eventListeners); $i += 2) {
+            for ($i = 0; $i < \count($this->eventListeners); $i += 2) {
                 if ($this->eventListeners[$i] == $name) {
-                    $this->eventListeners[$i+1]->$name($event);
+                    $this->eventListeners[$i + 1]->{$name}($event);
                 }
             }
         }

@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Io;
 
 use Mxgraph\Util\mxLog;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxObjectCodec
 {
     /**
-     * Class: mxObjectCodec
+     * Class: mxObjectCodec.
      *
      * XML codec for PHP object graphs.
      *
@@ -30,7 +32,7 @@ class mxObjectCodec
     public $template;
 
     /**
-     * Variable: exclude
+     * Variable: exclude.
      *
      * Array containing the variable names that should be
      * ignored by the codec.
@@ -38,7 +40,7 @@ class mxObjectCodec
     public $exclude;
 
     /**
-     * Variable: idrefs
+     * Variable: idrefs.
      *
      * Array containing the variable names that should be
      * turned into or converted from references. See
@@ -47,21 +49,21 @@ class mxObjectCodec
     public $idrefs;
 
     /**
-     * Variable: mapping
+     * Variable: mapping.
      *
      * Maps from from fieldnames to XML attribute names.
      */
     public $mapping;
 
     /**
-     * Variable: reverse
+     * Variable: reverse.
      *
      * Maps from from XML attribute names to fieldnames.
      */
     public $reverse;
 
     /**
-     * Constructor: mxObjectCodec
+     * Constructor: mxObjectCodec.
      *
      * Constructs a new codec for the specified template object.
      * The variables in the optional exclude array are ignored by
@@ -77,12 +79,17 @@ class mxObjectCodec
      * idrefs - Optional array of fieldnames to be converted to/from
      * references.
      * mapping - Optional mapping from field- to attributenames.
+     *
+     * @param mixed $template
+     * @param mixed $exclude
+     * @param mixed $idrefs
+     * @param mixed $mapping
      */
     public function __construct(
         $template,
-        $exclude = array(),
-        $idrefs = array(),
-        $mapping = array()
+        $exclude = [],
+        $idrefs = [],
+        $mapping = []
     ) {
         $this->template = $template;
 
@@ -90,7 +97,7 @@ class mxObjectCodec
         $this->idrefs = $idrefs;
         $this->mapping = $mapping;
 
-        $this->reverse = array();
+        $this->reverse = [];
 
         foreach ($mapping as $key => $value) {
             $this->reverse[$value] = $key;
@@ -98,7 +105,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: getName
+     * Function: getName.
      *
      * Creates a new instance of the template for this codec.
      */
@@ -108,36 +115,37 @@ class mxObjectCodec
     }
 
     /**
-     * Function: cloneTemplate
+     * Function: cloneTemplate.
      *
      * Creates a new instance of the template for this codec.
      */
     public function cloneTemplate()
     {
-        if (is_array($this->template)) {
-            return array();
-        } else {
-            $tmp = get_class($this->template);
-
-            return new $tmp();
+        if (\is_array($this->template)) {
+            return [];
         }
+        $tmp = \get_class($this->template);
+
+        return new $tmp();
     }
 
     /**
-     * Function: getFieldName
+     * Function: getFieldName.
      *
      * Returns the fieldname for the given attributename.
      * Looks up the value in the <reverse> mapping or returns
      * the input if there is no reverse mapping for the
      * given name.
+     *
+     * @param mixed $attributename
      */
     public function getFieldName($attributename)
     {
-        if ($attributename != null) {
-            $mapped = ((in_array($attributename, $this->reverse))) ?
+        if (null != $attributename) {
+            $mapped = ((\in_array($attributename, $this->reverse, true))) ?
                 $this->reverse[$attributename] : null;
 
-            if ($mapped != null) {
+            if (null != $mapped) {
                 $attributename = $mapped;
             }
         }
@@ -146,16 +154,18 @@ class mxObjectCodec
     }
 
     /**
-     * Function: getAttributeName
+     * Function: getAttributeName.
      *
      * Returns the attributename for the given fieldname.
      * Looks up the value in the <mapping> or returns
      * the input if there is no mapping for the
      * given name.
+     *
+     * @param mixed $fieldname
      */
     public function getAttributeName($fieldname)
     {
-        if (isset($fieldname) && isset($this->mapping[$fieldname])) {
+        if (isset($fieldname, $this->mapping[$fieldname])) {
             $fieldname = $this->mapping[$fieldname];
         }
 
@@ -163,7 +173,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: isExcluded
+     * Function: isExcluded.
      *
      * Returns true if the given attribute is to be ignored by the codec. This
      * implementation returns true if the given fieldname is in <exclude> or
@@ -176,6 +186,11 @@ class mxObjectCodec
      * value - Value of the field.
      * write - Boolean indicating if the field is being encoded or decoded.
      * Write is true if the field is being encoded, else it is being decoded.
+     *
+     * @param mixed $obj
+     * @param mixed $attr
+     * @param mixed $value
+     * @param mixed $write
      */
     public function isExcluded($obj, $attr, $value, $write)
     {
@@ -183,7 +198,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: isReference
+     * Function: isReference.
      *
      * Returns true if the given fieldname is to be treated
      * as a textual reference (ID). This implementation returns
@@ -196,6 +211,11 @@ class mxObjectCodec
      * value - Value of the field.
      * write - Boolean indicating if the field is being encoded or decoded.
      * Write is true if the field is being encoded, else it is being decoded.
+     *
+     * @param mixed $obj
+     * @param mixed $attr
+     * @param mixed $value
+     * @param mixed $write
      */
     public function isReference($obj, $attr, $value, $write)
     {
@@ -203,7 +223,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: encode
+     * Function: encode.
      *
      * Encodes the specified object and returns a node
      * representing then given object. Calls <beforeEncode>
@@ -243,6 +263,9 @@ class mxObjectCodec
      *
      * enc - <mxCodec> that controls the encoding process.
      * obj - Object to be encoded.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
      */
     public function encode($enc, $obj)
     {
@@ -254,13 +277,14 @@ class mxObjectCodec
 
             return $this->afterEncode($enc, $obj, $node);
         } catch (\Exception $e) {
-            print_R($e->getMessage().  ":" . $this->getName());
-            die();
+            print_r($e->getMessage().':'.$this->getName());
+
+            exit();
         }
     }
 
     /**
-     * Function: encodeObject
+     * Function: encodeObject.
      *
      * Encodes the value of each member in then given obj
      * into the given node using <encodeValue>.
@@ -270,23 +294,27 @@ class mxObjectCodec
      * enc - <mxCodec> that controls the encoding process.
      * obj - Object to be encoded.
      * node - XML node that contains the encoded object.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $node
      */
-    public function encodeObject($enc, $obj, $node)
+    public function encodeObject($enc, $obj, $node): void
     {
-        $enc->setAttribute($node, "id", $enc->getId($obj));
+        $enc->setAttribute($node, 'id', $enc->getId($obj));
 
-        if (is_array($obj)) {
-            $count = sizeof($obj);
+        if (\is_array($obj)) {
+            $count = \count($obj);
 
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < $count; ++$i) {
                 $this->encodeValue($enc, $obj, null, $obj[$i], $node);
             }
         } else {
             $vars = get_object_vars($obj);
 
             foreach ($vars as $name => $value) {
-                if ($value != null &&
-                    !$this->isExcluded($obj, $name, $value, true)) {
+                if (null != $value
+                    && !$this->isExcluded($obj, $name, $value, true)) {
                     if (is_numeric($name)) {
                         unset($name);
                     }
@@ -298,7 +326,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: encodeValue
+     * Function: encodeValue.
      *
      * Converts the given value according to the mappings
      * and id-refs in this codec and uses <writeAttribute>
@@ -311,23 +339,30 @@ class mxObjectCodec
      * name - XML node that contains the encoded object.
      * value - Value of the property to be encoded.
      * node - XML node that contains the encoded object.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $name
+     * @param mixed $value
+     * @param mixed $node
      */
-    public function encodeValue($enc, $obj, $name, $value, $node)
+    public function encodeValue($enc, $obj, $name, $value, $node): void
     {
-        if ($value != null) {
+        if (null != $value) {
             if ($this->isReference($obj, $name, $value, true)) {
                 $tmp = $enc->getId($value);
 
                 if (!isset($tmp)) {
-                    mxLog::warn("mxObjectCodec.encode: No ID for value of ".
-                        $this->getName().".$name of type ".get_class($value));
+                    mxLog::warn('mxObjectCodec.encode: No ID for value of '.
+                        $this->getName().".{$name} of type ".\get_class($value));
+
                     return; // exit
                 }
 
                 $value = $tmp;
             }
 
-            $defaults = (is_object($this->template)) ? get_object_vars($this->template) : null;
+            $defaults = (\is_object($this->template)) ? get_object_vars($this->template) : null;
             $defaultValue = (isset($defaults[$name])) ? $defaults[$name] : null;
 
             // Checks if the value is a named default value
@@ -339,35 +374,47 @@ class mxObjectCodec
     }
 
     /**
-     * Function: writeAttribute
+     * Function: writeAttribute.
      *
      * Writes the given value into node using <writePrimitiveAttribute>
      * or <writeComplexAttribute> depending on the type of the value.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $attr
+     * @param mixed $value
+     * @param mixed $node
      */
-    public function writeAttribute($enc, $obj, $attr, $value, $node)
+    public function writeAttribute($enc, $obj, $attr, $value, $node): void
     {
-        if (!is_object($value) && !is_array($value) /* primitive type */) {
+        if (!\is_object($value) && !\is_array($value) /* primitive type */) {
             $this->writePrimitiveAttribute($enc, $obj, $attr, $value, $node);
-        } else /* complex type */
+        } else // complex type
         {
             $this->writeComplexAttribute($enc, $obj, $attr, $value, $node);
         }
     }
 
     /**
-     * Function: writePrimitiveAttribute
+     * Function: writePrimitiveAttribute.
      *
      * Writes the given value as an attribute of the given node.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $attr
+     * @param mixed $value
+     * @param mixed $node
      */
-    public function writePrimitiveAttribute($enc, $obj, $attr, $value, $node)
+    public function writePrimitiveAttribute($enc, $obj, $attr, $value, $node): void
     {
         $value = $this->convertValueToXml($value);
 
         if (!isset($attr)) {
-            $child = $enc->document->createElement("add");
+            $child = $enc->document->createElement('add');
 
             // TODO: Handle "as" attribute for maps here
-            $enc->setAttribute($child, "value", $value);
+            $enc->setAttribute($child, 'value', $value);
             $node->appendChild($child);
         } else {
             $enc->setAttribute($node, $attr, $value);
@@ -375,30 +422,38 @@ class mxObjectCodec
     }
 
     /**
-     * Function: writeComplexAttribute
+     * Function: writeComplexAttribute.
      *
      * Writes the given value as a child node of the given node.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $attr
+     * @param mixed $value
+     * @param mixed $node
      */
-    public function writeComplexAttribute($enc, $obj, $attr, $value, $node)
+    public function writeComplexAttribute($enc, $obj, $attr, $value, $node): void
     {
         $child = $enc->encode($value);
 
         if (isset($child)) {
             if (isset($attr)) {
-                $child->setAttribute("as", $attr);
+                $child->setAttribute('as', $attr);
             }
 
             $node->appendChild($child);
         } else {
-            mxLog::warn("mxObjectCodec.encode: No node for value of ".
-                $this->getName().".$attr");
+            mxLog::warn('mxObjectCodec.encode: No node for value of '.
+                $this->getName().".{$attr}");
         }
     }
 
     /**
-     * Function: convertValueToXml
+     * Function: convertValueToXml.
      *
      * Returns the given value without applying a conversion.
+     *
+     * @param mixed $value
      */
     public function convertValueToXml($value)
     {
@@ -406,10 +461,12 @@ class mxObjectCodec
     }
 
     /**
-     * Function: convertValueFromXml
+     * Function: convertValueFromXml.
      *
      * Returns the given value. In PHP there is no need to convert the
      * boolean strings "0" and "1" to their numeric / boolean values.
+     *
+     * @param mixed $value
      */
     public function convertValueFromXml($value)
     {
@@ -417,7 +474,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: beforeEncode
+     * Function: beforeEncode.
      *
      * Hook for subclassers to pre-process the object before
      * encoding. This returns the input object. The return
@@ -429,6 +486,10 @@ class mxObjectCodec
      * enc - <mxCodec> that controls the encoding process.
      * obj - Object to be encoded.
      * node - XML node to encode the object into.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $node
      */
     public function beforeEncode($enc, $obj, $node)
     {
@@ -436,7 +497,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: afterEncode
+     * Function: afterEncode.
      *
      * Hook for subclassers to post-process the node
      * for the given object after encoding and return the
@@ -449,6 +510,10 @@ class mxObjectCodec
      * enc - <mxCodec> that controls the encoding process.
      * obj - Object to be encoded.
      * node - XML node that represents the default encoding.
+     *
+     * @param mixed $enc
+     * @param mixed $obj
+     * @param mixed $node
      */
     public function afterEncode($enc, $obj, $node)
     {
@@ -456,7 +521,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: decode
+     * Function: decode.
      *
      * Parses the given node into the object or returns a new object
      * representing the given node.
@@ -508,13 +573,17 @@ class mxObjectCodec
      * dec - <mxCodec> that controls the decoding process.
      * node - XML node to be decoded.
      * into - Optional objec to encode the node into.
+     *
+     * @param mixed      $dec
+     * @param mixed      $node
+     * @param null|mixed $into
      */
     public function decode($dec, $node, &$into = null)
     {
-        $id = $node->getAttribute("id");
+        $id = $node->getAttribute('id');
         $obj = null;
 
-        if (array_key_exists($id, $dec->objects)) {
+        if (\array_key_exists($id, $dec->objects)) {
             $obj = $dec->objects[$id];
         }
 
@@ -525,7 +594,7 @@ class mxObjectCodec
                 $obj = $this->cloneTemplate();
             }
 
-            if (strlen($id) > 0) {
+            if ('' !== $id) {
                 $dec->putObject($id, $obj);
             }
         }
@@ -537,11 +606,15 @@ class mxObjectCodec
     }
 
     /**
-     * Function: decodeNode
+     * Function: decodeNode.
      *
      * Calls <decodeAttributes> and <decodeChildren> for the given node.
+     *
+     * @param mixed $dec
+     * @param mixed $node
+     * @param mixed $obj
      */
-    public function decodeNode($dec, $node, &$obj)
+    public function decodeNode($dec, $node, &$obj): void
     {
         if (isset($node)) {
             $this->decodeAttributes($dec, $node, $obj);
@@ -550,31 +623,39 @@ class mxObjectCodec
     }
 
     /**
-     * Function: decodeAttributes
+     * Function: decodeAttributes.
      *
      * Decodes all attributes of the given node using <decodeAttribute>.
+     *
+     * @param mixed $dec
+     * @param mixed $node
+     * @param mixed $obj
      */
-    public function decodeAttributes($dec, $node, &$obj)
+    public function decodeAttributes($dec, $node, &$obj): void
     {
         $attrs = $node->attributes;
 
-        if ($attrs != null) {
-            for ($i = 0; $i < $attrs->length; $i++) {
+        if (null != $attrs) {
+            for ($i = 0; $i < $attrs->length; ++$i) {
                 $this->decodeAttribute($dec, $attrs->item($i), $obj);
             }
         }
     }
 
     /**
-     * Function: decodeAttribute
+     * Function: decodeAttribute.
      *
      * Reads the given attribute into the specified object.
+     *
+     * @param mixed $dec
+     * @param mixed $attr
+     * @param mixed $obj
      */
-    public function decodeAttribute($dec, $attr, &$obj)
+    public function decodeAttribute($dec, $attr, &$obj): void
     {
         $name = $attr->nodeName;
 
-        if ($name != "as" && $name != "id") {
+        if ('as' != $name && 'id' != $name) {
             // Converts the string true and false to their boolean values.
             // This may require an additional check on the obj to see if
             // the existing field is a boolean value or uninitialized, in
@@ -586,8 +667,9 @@ class mxObjectCodec
                 $tmp = $dec->getObject($value);
 
                 if (!isset($tmp)) {
-                    mxLog::warn("mxObjectCodec.decode: No object for ".
-                        $this->getName().".$fieldname=$value");
+                    mxLog::warn('mxObjectCodec.decode: No object for '.
+                        $this->getName().".{$fieldname}={$value}");
+
                     return; // exit
                 }
 
@@ -596,25 +678,29 @@ class mxObjectCodec
 
             if (!$this->isExcluded($obj, $fieldname, $value, false)) {
                 //mxLog.debug(mxCodecRegistry::getName($obj)."$name=$value");
-                $obj->$fieldname = $value;
+                $obj->{$fieldname} = $value;
             }
         }
     }
 
     /**
-     * Function: decodeChildren
+     * Function: decodeChildren.
      *
      * Decodec all children of the given node using <decodeChild>.
+     *
+     * @param mixed $dec
+     * @param mixed $node
+     * @param mixed $obj
      */
-    public function decodeChildren($dec, $node, &$obj)
+    public function decodeChildren($dec, $node, &$obj): void
     {
         $child = $node->firstChild;
 
-        while ($child != null) {
+        while (null != $child) {
             $tmp = $child->nextSibling;
 
-            if ($child->nodeType == XML_ELEMENT_NODE &&
-                !$this->processInclude($dec, $child, $obj)) {
+            if (\XML_ELEMENT_NODE == $child->nodeType
+                && !$this->processInclude($dec, $child, $obj)) {
                 $this->decodeChild($dec, $child, $obj);
             }
 
@@ -623,21 +709,25 @@ class mxObjectCodec
     }
 
     /**
-     * Function: decodeChild
+     * Function: decodeChild.
      *
      * Reads the specified child into the given object.
+     *
+     * @param mixed $dec
+     * @param mixed $child
+     * @param mixed $obj
      */
-    public function decodeChild($dec, $child, &$obj)
+    public function decodeChild($dec, $child, &$obj): void
     {
-        $fieldname = $this->getFieldName($child->getAttribute("as"));
+        $fieldname = $this->getFieldName($child->getAttribute('as'));
 
-        if (!isset($fieldname) ||
-            !$this->isExcluded($obj, $fieldname, $child, false)) {
+        if (!isset($fieldname)
+            || !$this->isExcluded($obj, $fieldname, $child, false)) {
             $template = $this->getFieldTemplate($obj, $fieldname, $child);
             $value = null;
 
-            if ($child->nodeName == "add") {
-                $value = $child->getAttribute("value");
+            if ('add' == $child->nodeName) {
+                $value = $child->getAttribute('value');
 
                 if (!isset($value)) {
                     // TODO: Evaluate text content
@@ -653,7 +743,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: getFieldTemplate
+     * Function: getFieldTemplate.
      *
      * Returns the template instance for the given field. This returns the
      * value of the field, null if the value is an array or an empty collection
@@ -661,13 +751,17 @@ class mxObjectCodec
      * field for a new instance. For strongly typed languages it may be
      * required to override this to return the correct collection instance
      * based on the encoded child.
+     *
+     * @param mixed $obj
+     * @param mixed $fieldname
+     * @param mixed $child
      */
     public function getFieldTemplate(&$obj, $fieldname, $child)
     {
-        $template = (is_object($obj)) ? $obj->$fieldname : null;
+        $template = (\is_object($obj)) ? $obj->{$fieldname} : null;
 
         // Non-empty arrays are replaced completely
-        if (is_array($template) && count($template) > 0) {
+        if (\is_array($template) && \count($template) > 0) {
             $template = null;
         }
 
@@ -675,7 +769,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: addObjectValue
+     * Function: addObjectValue.
      *
      * Sets the decoded child node as a value of the given object. If the
      * object is a map, then the value is added with the given fieldname as a
@@ -683,21 +777,26 @@ class mxObjectCodec
      * else, if the object is a collection, the value is added to the
      * collection. For strongly typed languages it may be required to
      * override this with the correct code to add an entry to an object.
+     *
+     * @param mixed $obj
+     * @param mixed $fieldname
+     * @param mixed $value
+     * @param mixed $template
      */
-    public function addObjectValue(&$obj, $fieldname, $value, $template)
+    public function addObjectValue(&$obj, $fieldname, $value, $template): void
     {
-        if ($value !== null && ($template == null || $value != $template)) {
-            if (isset($fieldname) && strlen($fieldname) > 0) {
-                $obj->$fieldname = $value;
+        if (null !== $value && (null == $template || $value != $template)) {
+            if (isset($fieldname) && '' !== $fieldname) {
+                $obj->{$fieldname} = $value;
             } else {
-                array_push($obj, $value);
+                $obj[] = $value;
             }
             //mxLog.debug('Decoded '+mxUtils.getFunctionName(obj.constructor)+'.'+fieldname+': '+value);
         }
     }
 
     /**
-     * Function: processInclude
+     * Function: processInclude.
      *
      * Returns true if the given node is an include directive and
      * executes the include by decoding the XML document. Returns
@@ -708,11 +807,15 @@ class mxObjectCodec
      * dec - <mxCodec> that controls the encoding/decoding process.
      * node - XML node to be checked.
      * into - Optional object to pass-thru to the codec.
+     *
+     * @param mixed $dec
+     * @param mixed $node
+     * @param mixed $into
      */
     public function processInclude($dec, $node, $into)
     {
-        if ($node->nodeName == "include") {
-            $name = $node->getAttribute("name");
+        if ('include' == $node->nodeName) {
+            $name = $node->getAttribute('name');
 
             if (isset($name)) {
                 try {
@@ -733,7 +836,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: beforeDecode
+     * Function: beforeDecode.
      *
      * Hook for subclassers to pre-process the node for
      * the specified object and return the node to be
@@ -749,6 +852,10 @@ class mxObjectCodec
      * dec - <mxCodec> that controls the decoding process.
      * node - XML node to be decoded.
      * obj - Object to encode the node into.
+     *
+     * @param mixed $dec
+     * @param mixed $node
+     * @param mixed $obj
      */
     public function beforeDecode($dec, $node, &$obj)
     {
@@ -756,7 +863,7 @@ class mxObjectCodec
     }
 
     /**
-     * Function: afterDecode
+     * Function: afterDecode.
      *
      * Hook for subclassers to post-process the object after
      * decoding. This implementation returns the given object
@@ -768,6 +875,10 @@ class mxObjectCodec
      * enc - <mxCodec> that controls the encoding process.
      * node - XML node to be decoded.
      * obj - Object that represents the default decoding.
+     *
+     * @param mixed $dec
+     * @param mixed $node
+     * @param mixed $obj
      */
     public function afterDecode($dec, $node, &$obj)
     {
@@ -775,4 +886,4 @@ class mxObjectCodec
     }
 }
 
-mxCodecRegistry::register(new mxObjectCodec(array()));
+mxCodecRegistry::register(new mxObjectCodec([]));

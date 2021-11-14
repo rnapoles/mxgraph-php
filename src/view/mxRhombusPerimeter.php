@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -20,7 +20,10 @@ use Mxgraph\Util\mxUtils;
 class mxRhombusPerimeter implements mxPerimeterFunction
 {
     /**
-     *
+     * @param mixed $bounds
+     * @param mixed $vertex
+     * @param mixed $next
+     * @param mixed $orthogonal
      */
     public function apply($bounds, $vertex, $next, $orthogonal)
     {
@@ -39,15 +42,15 @@ class mxRhombusPerimeter implements mxPerimeterFunction
         if ($cx == $px) {
             if ($cy > $py) {
                 return new mxPoint($cx, $y); // top
-            } else {
-                return new mxPoint($cx, $y + $h); // bottom
             }
+
+            return new mxPoint($cx, $y + $h); // bottom
         } elseif ($cy == $py) {
             if ($cx > $px) {
                 return new mxPoint($x, $cy); // left
-            } else {
-                return new mxPoint($x + $w, $cy); // right
             }
+
+            return new mxPoint($x + $w, $cy); // right
         }
 
         $tx = $cx;
@@ -75,18 +78,18 @@ class mxRhombusPerimeter implements mxPerimeterFunction
                     $x,
                     $cy
                 );
-            } else {
-                return mxUtils::intersection(
-                    $px,
-                    $py,
-                    $tx,
-                    $ty,
-                    $cx,
-                    $y + $h,
-                    $x,
-                    $cy
-                );
             }
+
+            return mxUtils::intersection(
+                $px,
+                $py,
+                $tx,
+                $ty,
+                $cx,
+                $y + $h,
+                $x,
+                $cy
+            );
         } elseif ($py < $cy) {
             return mxUtils::intersection(
                 $px,
@@ -98,17 +101,17 @@ class mxRhombusPerimeter implements mxPerimeterFunction
                 $x + $w,
                 $cy
             );
-        } else {
-            return mxUtils::intersection(
-                $px,
-                $py,
-                $tx,
-                $ty,
-                $cx,
-                $y + $h,
-                $x + $w,
-                $cy
-            );
         }
+
+        return mxUtils::intersection(
+            $px,
+            $py,
+            $tx,
+            $ty,
+            $cx,
+            $y + $h,
+            $x + $w,
+            $cy
+        );
     }
 }

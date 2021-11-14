@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Canvas;
 
 use Mxgraph\Util\mxConstants;
@@ -7,19 +9,19 @@ use Mxgraph\Util\mxPoint;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxGdCanvas
 {
     /**
-     * Variable: antialias
+     * Variable: antialias.
      *
      * Specifies if image aspect should be preserved in drawImage. Default is true.
      */
     public static $PRESERVE_IMAGE_ASPECT = true;
 
     /**
-     * Class: mxGdCanvas
+     * Class: mxGdCanvas.
      *
      * Canvas for drawing graphs using the GD library. This class requires GD
      * support (GDLib). Note that rounded corners, gradients and word wrapping
@@ -33,14 +35,14 @@ class mxGdCanvas
     public $antialias = false;
 
     /**
-     * Variable: enableTtf
+     * Variable: enableTtf.
      *
      * Specifies if truetype fonts are enabled if available. Default is <mxConstants.TTF_ENABLED>.
      */
     public $enableTtf;
 
     /**
-     * Variable: shadowColor
+     * Variable: shadowColor.
      *
      * Holds the color object for the shadow color defined in
      * <mxConstants.W3C_SHADOWCOLOR>.
@@ -54,56 +56,62 @@ class mxGdCanvas
     public $imageBasePath;
 
     /**
-     * Variable: imageCache
+     * Variable: imageCache.
      *
      * Holds the image cache.
      */
-    public $imageCache = array();
+    public $imageCache = [];
 
     /**
-     * Variable: image
+     * Variable: image.
      *
      * Holds the image.
      */
     public $image;
 
     /**
-     * Variable: height
+     * Variable: height.
      *
      * Holds the height.
      */
     public $scale;
 
     /**
-     * Constructor: mxGdCanvas
+     * Constructor: mxGdCanvas.
      *
      * Constructs a new GD canvas. Use a HTML color definition for
      * the optional background parameter, eg. white or #FFFFFF.
      * The buffered <image> is only created if the given
      * width and height are greater than 0.
+     *
+     * @param mixed      $width
+     * @param mixed      $height
+     * @param mixed      $scale
+     * @param null|mixed $background
+     * @param mixed      $imageBasePath
      */
     public function __construct(
         $width = 0,
         $height = 0,
         $scale = 1,
         $background = null,
-        $imageBasePath = ""
+        $imageBasePath = ''
     ) {
         $this->enableTtf = mxConstants::$TTF_ENABLED;
         $this->imageBasePath = $imageBasePath;
         $this->scale = $scale;
 
         if ($width > 0 && $height > 0) {
-            $this->image = @imageCreateTrueColor($width, $height);
+            $this->image = @imagecreatetruecolor($width, $height);
 
-            if ($this->antialias &&
-                function_exists("imageantialias")) {
+            if ($this->antialias
+                && \function_exists('imageantialias')) {
                 imageantialias($this->image, true);
             }
 
             if (isset($background)) {
                 $color = $this->getColor($background);
-                imageFilledRectangle(
+                imagefilledrectangle(
                     $this->image,
                     0,
                     0,
@@ -118,15 +126,17 @@ class mxGdCanvas
     }
 
     /**
-     * Function: loadImage
+     * Function: loadImage.
      *
      * Returns an image instance for the given URL. If the URL has
      * been loaded before than an instance of the same instance is
      * returned as in the previous call.
+     *
+     * @param mixed $image
      */
     public function loadImage($image)
     {
-        $img = (array_key_exists($image, $this->imageCache)) ? $this->imageCache[$image] : null;
+        $img = (\array_key_exists($image, $this->imageCache)) ? $this->imageCache[$image] : null;
 
         if (!isset($img)) {
             $img = mxUtils::loadImage($image);
@@ -140,20 +150,22 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawCell
+     * Function: drawCell.
      *
      * Draws the given cell state.
+     *
+     * @param mixed $state
      */
-    public function drawCell($state)
+    public function drawCell($state): void
     {
         $style = $state->style;
 
-        if ($state->absolutePoints != null && sizeof($state->absolutePoints) > 1) {
+        if (null != $state->absolutePoints && \count($state->absolutePoints) > 1) {
             $dashed = mxUtils::getNumber($style, mxConstants::$STYLE_DASHED);
             $stroke = mxUtils::getValue($style, mxConstants::$STYLE_STROKECOLOR);
             $strokeWidth = mxUtils::getNumber($style, mxConstants::$STYLE_STROKEWIDTH, 1) * $this->scale;
 
-            if ($stroke == "none") {
+            if ('none' == $stroke) {
                 $stroke = null;
             }
 
@@ -198,7 +210,7 @@ class mxGdCanvas
             }
 
             // Draws the end marker
-            $len = sizeof($pts);
+            $len = \count($pts);
             $marker = mxUtils::getValue($style, mxConstants::$STYLE_ENDARROW);
 
             $pe = $pts[$len - 1];
@@ -235,7 +247,7 @@ class mxGdCanvas
             // Draws the line segments
             $pt = $p0;
 
-            for ($i = 1; $i < $len - 1; $i++) {
+            for ($i = 1; $i < $len - 1; ++$i) {
                 $tmp = $pts[$i];
                 $this->drawLine($pt->x, $pt->y, $tmp->x, $tmp->y, $stroke, $dashed);
                 $pt = $tmp;
@@ -253,7 +265,7 @@ class mxGdCanvas
             $h = $state->height;
 
             // Draws the vertex
-            if (mxUtils::getValue($style, mxConstants::$STYLE_SHAPE, "") !=
+            if (mxUtils::getValue($style, mxConstants::$STYLE_SHAPE, '') !=
                 mxConstants::$SHAPE_SWIMLANE) {
                 $this->drawShape($x, $y, $w, $h, $style);
             } else {
@@ -264,28 +276,30 @@ class mxGdCanvas
                 ) * $this->scale;
 
                 // Removes some styles to draw the content area
-                $cloned = array_slice($style, 0);
+                $cloned = \array_slice($style, 0);
                 $cloned[mxConstants::$STYLE_FILLCOLOR] = $cloned[mxConstants::$STYLE_SWIMLANE_FILLCOLOR];
-                unset($cloned[mxConstants::$STYLE_GRADIENTCOLOR]);
-                unset($cloned[mxConstants::$STYLE_ROUNDED]);
+                unset($cloned[mxConstants::$STYLE_GRADIENTCOLOR], $cloned[mxConstants::$STYLE_ROUNDED]);
 
                 // TODO: Clone style, remove fill and rounded and take into account
                 // the label orientation
                 //if (mxUtils::getValue($style, mxConstants::$STYLE_HORIZONTAL, true))
-                {
-                    $this->drawShape($x, $y, $w, $h, $cloned);
-                    $this->drawShape($x, $y, $w, min($h, $start), $style);
-                }
+
+                $this->drawShape($x, $y, $w, $h, $cloned);
+                $this->drawShape($x, $y, $w, min($h, $start), $style);
             }
         }
     }
 
     /**
-     * Function: drawLabel
+     * Function: drawLabel.
      *
      * Draws the given label.
+     *
+     * @param mixed $text
+     * @param mixed $state
+     * @param mixed $html
      */
-    public function drawLabel($text, $state, $html = false)
+    public function drawLabel($text, $state, $html = false): void
     {
         $bounds = $state->labelBounds;
 
@@ -300,9 +314,15 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawMarker
+     * Function: drawMarker.
      *
      * Draws the specified marker.
+     *
+     * @param mixed $type
+     * @param mixed $p0
+     * @param mixed $pe
+     * @param mixed $size
+     * @param mixed $stroke
      */
     public function drawMarker($type, $p0, $pe, $size, $stroke)
     {
@@ -312,7 +332,7 @@ class mxGdCanvas
         $dx = $pe->x - $p0->x;
         $dy = $pe->y - $p0->y;
 
-        $dist = max(1, sqrt($dx*$dx+$dy*$dy));
+        $dist = max(1, sqrt($dx * $dx + $dy * $dy));
         $absSize = $size * $this->scale;
         $nx = $dx * $absSize / $dist;
         $ny = $dy * $absSize / $dist;
@@ -321,11 +341,11 @@ class mxGdCanvas
         $pe->x -= $nx / (2 * $size);
         $pe->y -= $ny / (2 * $size);
 
-        if ($type == mxConstants::$ARROW_CLASSIC ||
-            $type == mxConstants::$ARROW_BLOCK) {
-            $poly = array($pe->x, $pe->y,
+        if ($type == mxConstants::$ARROW_CLASSIC
+            || $type == mxConstants::$ARROW_BLOCK) {
+            $poly = [$pe->x, $pe->y,
                 $pe->x - $nx - $ny / 2,
-                $pe->y - $ny + $nx / 2);
+                $pe->y - $ny + $nx / 2, ];
 
             if ($type == mxConstants::$ARROW_CLASSIC) {
                 array_push($poly, $pe->x - $nx * 3 / 4, $pe->y - $ny * 3 / 4);
@@ -340,7 +360,7 @@ class mxGdCanvas
             $ny *= 1.2;
 
             $this->drawLine(
-                $pe->x - $nx -  $ny / 2,
+                $pe->x - $nx - $ny / 2,
                 $pe->y - $ny + $nx / 2,
                 $pe->x - $nx / 6,
                 $pe->y - $ny / 6,
@@ -371,10 +391,10 @@ class mxGdCanvas
             $nx *= 1.2;
             $ny *= 1.2;
 
-            $poly = array($pe->x + $nx / 2, $pe->y + $ny / 2,
+            $poly = [$pe->x + $nx / 2, $pe->y + $ny / 2,
                 $pe->x - $ny / 2, $pe->y + $nx / 2,
                 $pe->x - $nx / 2, $pe->y - $ny / 2,
-                $pe->x + $ny, $pe->y - $nx / 2);
+                $pe->x + $ny, $pe->y - $nx / 2, ];
             $this->drawPolygon($poly, $stroke, $stroke, false);
         }
 
@@ -382,7 +402,7 @@ class mxGdCanvas
     }
 
     /**
-     * Function: getImage
+     * Function: getImage.
      *
      * Returns an image that represents this canvas.
      */
@@ -392,25 +412,29 @@ class mxGdCanvas
     }
 
     /**
-     * Function: setImage
+     * Function: setImage.
      *
      * Sets the image that represents the canvas.
+     *
+     * @param mixed $img
      */
-    public function setImage($img)
+    public function setImage($img): void
     {
         $this->image = $img;
     }
 
     /**
-     * Function: getImageForStyle
+     * Function: getImageForStyle.
      *
      * Returns an image that represents this canvas.
+     *
+     * @param mixed $style
      */
     public function getImageForStyle($style)
     {
-        $filename = mxUtils::getValue($style, mxConstants::$STYLE_IMAGE, "");
+        $filename = mxUtils::getValue($style, mxConstants::$STYLE_IMAGE, '');
 
-        if ($filename != null && strpos($filename, "/") > 0) {
+        if (null != $filename && strpos($filename, '/') > 0) {
             $filename = $this->imageBasePath.$filename;
         }
 
@@ -418,43 +442,56 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawLine
+     * Function: drawLine.
      *
      * Draws the given line.
+     *
+     * @param mixed      $x0
+     * @param mixed      $y0
+     * @param mixed      $x1
+     * @param mixed      $y1
+     * @param null|mixed $stroke
+     * @param mixed      $dashed
      */
-    public function drawLine($x0, $y0, $x1, $y1, $stroke = null, $dashed = false)
+    public function drawLine($x0, $y0, $x1, $y1, $stroke = null, $dashed = false): void
     {
-        $stroke = $this->getColor($stroke, "black");
+        $stroke = $this->getColor($stroke, 'black');
 
         if ($dashed) {
             // ImageDashedLine only works for vertical lines and
             // ImageSetStyle doesnt work with antialiasing.
-            if ($this->antialias &&
-                function_exists("imageantialias")) {
+            if ($this->antialias
+                && \function_exists('imageantialias')) {
                 imageantialias($this->image, false);
             }
 
-            $st = array($stroke, $stroke, $stroke, $stroke,
-                IMG_COLOR_TRANSPARENT, IMG_COLOR_TRANSPARENT,
-                IMG_COLOR_TRANSPARENT, IMG_COLOR_TRANSPARENT);
-            imageSetStyle($this->image, $st);
-            imageLine($this->image, $x0, $y0, $x1, $y1, IMG_COLOR_STYLED);
+            $st = [$stroke, $stroke, $stroke, $stroke,
+                \IMG_COLOR_TRANSPARENT, \IMG_COLOR_TRANSPARENT,
+                \IMG_COLOR_TRANSPARENT, \IMG_COLOR_TRANSPARENT, ];
+            imagesetstyle($this->image, $st);
+            imageline($this->image, $x0, $y0, $x1, $y1, \IMG_COLOR_STYLED);
 
-            if ($this->antialias &&
-                function_exists("imageantialias")) {
+            if ($this->antialias
+                && \function_exists('imageantialias')) {
                 imageantialias($this->image, true);
             }
         } else {
-            imageLine($this->image, $x0, $y0, $x1, $y1, $stroke);
+            imageline($this->image, $x0, $y0, $x1, $y1, $stroke);
         }
     }
 
     /**
-     * Function: drawShape
+     * Function: drawShape.
      *
      * Draws the given shape.
+     *
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $style
      */
-    public function drawShape($x, $y, $w, $h, $style)
+    public function drawShape($x, $y, $w, $h, $style): void
     {
         // Draws the shape
         $shape = mxUtils::getValue($style, mxConstants::$STYLE_SHAPE);
@@ -468,15 +505,15 @@ class mxGdCanvas
         $stroke = mxUtils::getValue($style, $strokeStyle);
         $fill = mxUtils::getValue($style, $fillStyle);
 
-        if ($stroke == "none") {
+        if ('none' == $stroke) {
             $stroke = null;
         }
 
-        if ($fill == "none") {
+        if ('none' == $fill) {
             $fill = null;
         }
 
-        if ($fill != null || $stroke != null || $image) {
+        if (null != $fill || null != $stroke || $image) {
             $shadow = mxUtils::getValue($style, mxConstants::$STYLE_SHADOW);
             $strokeWidth = mxUtils::getValue($style, mxConstants::$STYLE_STROKEWIDTH, 1) * $this->scale;
 
@@ -528,8 +565,8 @@ class mxGdCanvas
                 if ($image) {
                     $img = $this->getImageForStyle($style);
 
-                    if ($img != null) {
-                        $aspect = mxGdCanvas::$PRESERVE_IMAGE_ASPECT;
+                    if (null != $img) {
+                        $aspect = self::$PRESERVE_IMAGE_ASPECT;
                         $flipH = mxUtils::getValue($style, mxConstants::$STYLE_IMAGE_FLIPH, 0);
                         $flipV = mxUtils::getValue($style, mxConstants::$STYLE_IMAGE_FLIPV, 0);
 
@@ -541,7 +578,7 @@ class mxGdCanvas
                 if ($shape == mxConstants::$SHAPE_LABEL) {
                     $image = $this->getImageForStyle($style);
 
-                    if ($image != null) {
+                    if (null != $image) {
                         $imgAlign = mxUtils::getValue($style, mxConstants::$STYLE_IMAGE_ALIGN);
                         $imgValign = mxUtils::getValue($style, mxConstants::$STYLE_IMAGE_VERTICAL_ALIGN);
                         $imgWidth = mxUtils::getNumber(
@@ -588,18 +625,23 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawPolygon
+     * Function: drawPolygon.
      *
      * Draws the given polygon.
+     *
+     * @param mixed      $points
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
      */
-    public function drawPolygon($points, $fill = null, $stroke = null, $shadow = false)
+    public function drawPolygon($points, $fill = null, $stroke = null, $shadow = false): void
     {
         if (isset($this->image)) {
-            $n = sizeof($points) / 2;
+            $n = \count($points) / 2;
 
             if (isset($fill)) {
                 if ($shadow) {
-                    imageFilledPolygon(
+                    imagefilledpolygon(
                         $this->image,
                         $this->offset($points),
                         $n,
@@ -608,20 +650,30 @@ class mxGdCanvas
                 }
 
                 $fill = $this->getColor($fill);
-                imageFilledPolygon($this->image, $points, $n, $fill);
+                imagefilledpolygon($this->image, $points, $n, $fill);
             }
 
             if (isset($stroke)) {
                 $stroke = $this->getColor($stroke);
-                imagePolygon($this->image, $points, $n, $stroke);
+                imagepolygon($this->image, $points, $n, $stroke);
             }
         }
     }
 
     /**
-     * Function: drawRect
+     * Function: drawRect.
      *
      * Draws then given rectangle. Rounded is currently ignored.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
+     * @param mixed      $rounded
+     * @param mixed      $dashed
      */
     public function drawRect(
         $x,
@@ -633,11 +685,11 @@ class mxGdCanvas
         $shadow = false,
         $rounded = false,
         $dashed = false
-    ) {
+    ): void {
         // TODO: Rounded rectangles
         if (isset($fill)) {
             if ($shadow) {
-                imageFilledRectangle(
+                imagefilledrectangle(
                     $this->image,
                     $x + mxConstants::$SHADOW_OFFSETX,
                     $y + mxConstants::$SHADOW_OFFSETY,
@@ -648,7 +700,7 @@ class mxGdCanvas
             }
 
             $fill = $this->getColor($fill);
-            imageFilledRectangle($this->image, $x, $y, $x + $w, $y + $h, $fill);
+            imagefilledrectangle($this->image, $x, $y, $x + $w, $y + $h, $fill);
         }
 
         if (isset($stroke)) {
@@ -659,21 +711,29 @@ class mxGdCanvas
                 $this->drawLine($x, $y + $h, $x, $y, $stroke, $dashed);
             } else {
                 $stroke = $this->getColor($stroke);
-                imageRectangle($this->image, $x, $y, $x + $w, $y + $h, $stroke);
+                imagerectangle($this->image, $x, $y, $x + $w, $y + $h, $stroke);
             }
         }
     }
 
     /**
-     * Function: drawOval
+     * Function: drawOval.
      *
      * Draws then given ellipse.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
      */
-    public function drawOval($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false)
+    public function drawOval($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false): void
     {
         if (isset($fill)) {
             if ($shadow) {
-                imageFilledEllipse(
+                imagefilledellipse(
                     $this->image,
                     $x + $w / 2 + mxConstants::$SHADOW_OFFSETX,
                     $y + $h / 2 + mxConstants::$SHADOW_OFFSETY,
@@ -684,7 +744,7 @@ class mxGdCanvas
             }
 
             $fill = $this->getColor($fill);
-            imageFilledEllipse(
+            imagefilledellipse(
                 $this->image,
                 $x + $w / 2,
                 $y + $h / 2,
@@ -696,7 +756,7 @@ class mxGdCanvas
 
         if (isset($stroke)) {
             $stroke = $this->getColor($stroke);
-            imageEllipse(
+            imageellipse(
                 $this->image,
                 $x + $w / 2,
                 $y + $h / 2,
@@ -708,25 +768,42 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawRhombus
+     * Function: drawRhombus.
      *
      * Draws then given rhombus.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
      */
-    public function drawRhombus($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false)
+    public function drawRhombus($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false): void
     {
         $halfWidth = $x + $w / 2;
         $halfHeight = $y + $h / 2;
 
-        $points = array($halfWidth, $y, $x + $w, $halfHeight,
-            $halfWidth, $y + $h, $x, $halfHeight, $halfWidth, $y);
+        $points = [$halfWidth, $y, $x + $w, $halfHeight,
+            $halfWidth, $y + $h, $x, $halfHeight, $halfWidth, $y, ];
 
         $this->drawPolygon($points, $fill, $stroke, $shadow);
     }
 
     /**
-     * Function: drawTriangle
+     * Function: drawTriangle.
      *
      * Draws then given triangle.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
+     * @param null|mixed $direction
      */
     public function drawTriangle(
         $x,
@@ -737,28 +814,37 @@ class mxGdCanvas
         $stroke = null,
         $shadow = false,
         $direction = null
-    ) {
+    ): void {
         if ($direction == mxConstants::$DIRECTION_NORTH) {
-            $points = array($x, $y + $h, $x + $w / 2, $y,
-                $x + $w, $y + $h, $x, $y + $h);
+            $points = [$x, $y + $h, $x + $w / 2, $y,
+                $x + $w, $y + $h, $x, $y + $h, ];
         } elseif ($direction == mxConstants::$DIRECTION_SOUTH) {
-            $points = array($x, $y, $x + $w / 2, $y + $h,
-                $x + $w, $y, $x, $y);
+            $points = [$x, $y, $x + $w / 2, $y + $h,
+                $x + $w, $y, $x, $y, ];
         } elseif ($direction == mxConstants::$DIRECTION_WEST) {
-            $points = array($x + $w, $y, $x, $y + $h / 2,
-                $x + $w, $y + $h, $x + $w, $y);
+            $points = [$x + $w, $y, $x, $y + $h / 2,
+                $x + $w, $y + $h, $x + $w, $y, ];
         } else { // east
-            $points = array($x, $y, $x + $w, $y + $h / 2,
-                $x, $y + $h, $x, $y);
+            $points = [$x, $y, $x + $w, $y + $h / 2,
+                $x, $y + $h, $x, $y, ];
         }
 
         $this->drawPolygon($points, $fill, $stroke, $shadow);
     }
 
     /**
-     * Function: drawHexagon
+     * Function: drawHexagon.
      *
      * Draws then given haxagon.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
+     * @param null|mixed $direction
      */
     public function drawHexagon(
         $x,
@@ -769,27 +855,35 @@ class mxGdCanvas
         $stroke = null,
         $shadow = false,
         $direction = null
-    ) {
-        if ($direction == mxConstants::$DIRECTION_NORTH ||
-            $direction == mxConstants::$DIRECTION_SOUTH) {
-            $points = array($x + 0.5 * $w, $y, $x + $w, $y + 0.25 * $h,
+    ): void {
+        if ($direction == mxConstants::$DIRECTION_NORTH
+            || $direction == mxConstants::$DIRECTION_SOUTH) {
+            $points = [$x + 0.5 * $w, $y, $x + $w, $y + 0.25 * $h,
                 $x + $w, $y + 0.75 * $h, $x + 0.5 * $w, $y + $h,
-                $x, $y + 0.75 * $h, $x, $y + 0.25 * $h);
+                $x, $y + 0.75 * $h, $x, $y + 0.25 * $h, ];
         } else {
-            $points = array($x + 0.25 * $w, $y, $x + 0.75 * $w, $y,
+            $points = [$x + 0.25 * $w, $y, $x + 0.75 * $w, $y,
                 $x + $w, $y + 0.5 * $h, $x + 0.75 * $w, $y + $h,
-                $x + 0.25 * $w, $y + $h, $x, $y + 0.5 * $h);
+                $x + 0.25 * $w, $y + $h, $x, $y + 0.5 * $h, ];
         }
 
         $this->drawPolygon($points, $fill, $stroke, $shadow);
     }
 
     /**
-     * Function: drawCylinder
+     * Function: drawCylinder.
      *
      * Draws then given cylinder.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
      */
-    public function drawCylinder($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false)
+    public function drawCylinder($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false): void
     {
         $h4 = $h / 4;
         $h8 = $h4 / 2;
@@ -808,100 +902,125 @@ class mxGdCanvas
         }
 
         // Hides lower arc for filled cylinder
-        if (isset($fill) && isset($stroke)) {
+        if (isset($fill, $stroke)) {
             $this->drawRect($x + 1, $y + $h - $h4, $w - 2, $h8, $fill, null, false);
         }
     }
 
     /**
-     * Function: drawCloud
+     * Function: drawCloud.
      *
      * Draws then given cloud.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
      */
-    public function drawCloud($x, $y, $w, $h, $fill = null, $stroke = null, $shadow=false)
+    public function drawCloud($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false): void
     {
         if (isset($fill)) {
             if ($shadow) {
                 $dx = mxConstants::$SHADOW_OFFSETX;
                 $dy = mxConstants::$SHADOW_OFFSETY;
 
-                imageFilledEllipse($this->image, $x + 0.2 * $w + $dx, $y + 0.42 * $h + $dy, 0.3 * $w, 0.29 * $h, $this->shadowColor);
-                imageFilledEllipse($this->image, $x + 0.4 * $w + $dx, $y + 0.25 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
-                imageFilledEllipse($this->image, $x + 0.75 * $w + $dx, $y + 0.35 * $h + $dy, 0.5 * $w, 0.4 * $h, $this->shadowColor);
-                imageFilledEllipse($this->image, $x + 0.2 * $w + $dx, $y + 0.65 * $h + $dy, 0.3 * $w, 0.3 * $h, $this->shadowColor);
-                imageFilledEllipse($this->image, $x + 0.55 * $w + $dx, $y + 0.62 * $h + $dy, 0.6 * $w, 0.6 * $h, $this->shadowColor);
-                imageFilledEllipse($this->image, $x + 0.88 * $w + $dx, $y + 0.63 * $h + $dy, 0.3 * $w, 0.3 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.2 * $w + $dx, $y + 0.42 * $h + $dy, 0.3 * $w, 0.29 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.4 * $w + $dx, $y + 0.25 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.75 * $w + $dx, $y + 0.35 * $h + $dy, 0.5 * $w, 0.4 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.2 * $w + $dx, $y + 0.65 * $h + $dy, 0.3 * $w, 0.3 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.55 * $w + $dx, $y + 0.62 * $h + $dy, 0.6 * $w, 0.6 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.88 * $w + $dx, $y + 0.63 * $h + $dy, 0.3 * $w, 0.3 * $h, $this->shadowColor);
             }
 
             $fill = $this->getColor($fill);
-            imageFilledEllipse($this->image, $x + 0.2 * $w, $y + 0.42 * $h, 0.3 * $w, 0.29 * $h, $fill);
-            imageFilledEllipse($this->image, $x + 0.4 * $w, $y + 0.25 * $h, 0.4 * $w, 0.4 * $h, $fill);
-            imageFilledEllipse($this->image, $x + 0.75 * $w, $y + 0.35 * $h, 0.5 * $w, 0.4 * $h, $fill);
-            imageFilledEllipse($this->image, $x + 0.2 * $w, $y + 0.65 * $h, 0.3 * $w, 0.3 * $h, $fill);
-            imageFilledEllipse($this->image, $x + 0.55 * $w, $y + 0.62 * $h, 0.6 * $w, 0.6 * $h, $fill);
-            imageFilledEllipse($this->image, $x + 0.88 * $w, $y + 0.63 * $h, 0.3 * $w, 0.3 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.2 * $w, $y + 0.42 * $h, 0.3 * $w, 0.29 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.4 * $w, $y + 0.25 * $h, 0.4 * $w, 0.4 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.75 * $w, $y + 0.35 * $h, 0.5 * $w, 0.4 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.2 * $w, $y + 0.65 * $h, 0.3 * $w, 0.3 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.55 * $w, $y + 0.62 * $h, 0.6 * $w, 0.6 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.88 * $w, $y + 0.63 * $h, 0.3 * $w, 0.3 * $h, $fill);
         }
 
         if (isset($stroke)) {
             $stroke = $this->getColor($stroke);
-            imageArc($this->image, $x + 0.2 * $w, $y + 0.42 * $h, 0.3 * $w, 0.29 * $h, 125, 270, $stroke);
-            imageArc($this->image, $x + 0.4 * $w, $y + 0.25 * $h, 0.4 * $w, 0.4 * $h, 170, 345, $stroke);
-            imageArc($this->image, $x + 0.75 * $w, $y + 0.35 * $h, 0.5 * $w, 0.4 * $h, 230, 55, $stroke);
-            imageArc($this->image, $x + 0.2 * $w, $y + 0.65 * $h, 0.3 * $w, 0.3 * $h, 50, 235, $stroke);
-            imageArc($this->image, $x + 0.55 * $w, $y + 0.62 * $h, 0.6 * $w, 0.6 * $h, 33, 145, $stroke);
-            imageArc($this->image, $x + 0.88 * $w, $y + 0.63 * $h, 0.3 * $w, 0.3 * $h, 290, 120, $stroke);
+            imagearc($this->image, $x + 0.2 * $w, $y + 0.42 * $h, 0.3 * $w, 0.29 * $h, 125, 270, $stroke);
+            imagearc($this->image, $x + 0.4 * $w, $y + 0.25 * $h, 0.4 * $w, 0.4 * $h, 170, 345, $stroke);
+            imagearc($this->image, $x + 0.75 * $w, $y + 0.35 * $h, 0.5 * $w, 0.4 * $h, 230, 55, $stroke);
+            imagearc($this->image, $x + 0.2 * $w, $y + 0.65 * $h, 0.3 * $w, 0.3 * $h, 50, 235, $stroke);
+            imagearc($this->image, $x + 0.55 * $w, $y + 0.62 * $h, 0.6 * $w, 0.6 * $h, 33, 145, $stroke);
+            imagearc($this->image, $x + 0.88 * $w, $y + 0.63 * $h, 0.3 * $w, 0.3 * $h, 290, 120, $stroke);
         }
     }
 
     /**
-     * Function: drawActor
+     * Function: drawActor.
      *
      * Draws then given cloud.
+     *
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $fill
+     * @param null|mixed $stroke
+     * @param mixed      $shadow
      */
-    public function drawActor($x, $y, $w, $h, $fill = null, $stroke = null, $shadow=false)
+    public function drawActor($x, $y, $w, $h, $fill = null, $stroke = null, $shadow = false): void
     {
         if (isset($fill)) {
             if ($shadow) {
                 $dx = mxConstants::$SHADOW_OFFSETX;
                 $dy = mxConstants::$SHADOW_OFFSETY;
 
-                imageFilledEllipse($this->image, $x + 0.5 * $w + $dx, $y + 0.2 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
-                imageFilledEllipse($this->image, $x + 0.2 * $w + $dx, $y + 0.6 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
-                imageFilledEllipse($this->image, $x + 0.8 * $w + $dx, $y + 0.6 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
-                imageFilledRectangle($this->image, $x + 0.2 * $w + $dx, $y + 0.4 * $h + $dy, $x + 0.8 * $w + $dx, $y + 0.6 * $h + $dy, $this->shadowColor);
-                imageFilledRectangle($this->image, $x + $dx, $y + 0.6 * $h + $dy, $x + $w + $dx, $y + $h + $dy, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.5 * $w + $dx, $y + 0.2 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.2 * $w + $dx, $y + 0.6 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
+                imagefilledellipse($this->image, $x + 0.8 * $w + $dx, $y + 0.6 * $h + $dy, 0.4 * $w, 0.4 * $h, $this->shadowColor);
+                imagefilledrectangle($this->image, $x + 0.2 * $w + $dx, $y + 0.4 * $h + $dy, $x + 0.8 * $w + $dx, $y + 0.6 * $h + $dy, $this->shadowColor);
+                imagefilledrectangle($this->image, $x + $dx, $y + 0.6 * $h + $dy, $x + $w + $dx, $y + $h + $dy, $this->shadowColor);
             }
 
             $fill = $this->getColor($fill);
-            imageFilledEllipse($this->image, $x + 0.5 * $w, $y + 0.2 * $h, 0.4 * $w, 0.4 * $h, $fill);
-            imageFilledEllipse($this->image, $x + 0.2 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, $fill);
-            imageFilledEllipse($this->image, $x + 0.8 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, $fill);
-            imageFilledRectangle($this->image, $x + 0.2 * $w, $y + 0.4 * $h, $x + 0.8 * $w, $y + 0.6 * $h, $fill);
-            imageFilledRectangle($this->image, $x, $y + 0.6 * $h, $x + $w, $y + $h, $fill);
+            imagefilledellipse($this->image, $x + 0.5 * $w, $y + 0.2 * $h, 0.4 * $w, 0.4 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.2 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, $fill);
+            imagefilledellipse($this->image, $x + 0.8 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, $fill);
+            imagefilledrectangle($this->image, $x + 0.2 * $w, $y + 0.4 * $h, $x + 0.8 * $w, $y + 0.6 * $h, $fill);
+            imagefilledrectangle($this->image, $x, $y + 0.6 * $h, $x + $w, $y + $h, $fill);
         }
 
-        if ($stroke != null) {
+        if (null != $stroke) {
             $stroke = $this->getColor($stroke);
-            imageEllipse($this->image, $x + 0.5 * $w, $y + 0.2 * $h, 0.4 * $w, 0.4 * $h, $stroke);
-            imageLine($this->image, $x + 0.2 * $w, $y + 0.4 * $h, $x + 0.8 * $w, $y + 0.4 * $h, $stroke);
-            imageArc($this->image, $x + 0.2 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, 180, 270, $stroke);
-            imageArc($this->image, $x + 0.8 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, 270, 360, $stroke);
-            imageLine($this->image, $x, $y + 0.6 * $h, $x, $y + $h, $stroke);
-            imageLine($this->image, $x, $y + $h, $x + $w, $y + $h, $stroke);
-            imageLine($this->image, $x + $w, $y + $h, $x + $w, $y + 0.6 * $h, $stroke);
+            imageellipse($this->image, $x + 0.5 * $w, $y + 0.2 * $h, 0.4 * $w, 0.4 * $h, $stroke);
+            imageline($this->image, $x + 0.2 * $w, $y + 0.4 * $h, $x + 0.8 * $w, $y + 0.4 * $h, $stroke);
+            imagearc($this->image, $x + 0.2 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, 180, 270, $stroke);
+            imagearc($this->image, $x + 0.8 * $w, $y + 0.6 * $h, 0.4 * $w, 0.4 * $h, 270, 360, $stroke);
+            imageline($this->image, $x, $y + 0.6 * $h, $x, $y + $h, $stroke);
+            imageline($this->image, $x, $y + $h, $x + $w, $y + $h, $stroke);
+            imageline($this->image, $x + $w, $y + $h, $x + $w, $y + 0.6 * $h, $stroke);
         }
     }
 
     /**
-     * Function: drawImage
+     * Function: drawImage.
      *
      * Draws a given image.
+     *
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $image
+     * @param mixed $aspect
+     * @param mixed $flipH
+     * @param mixed $flipV
      */
-    public function drawImage($x, $y, $w, $h, $image, $aspect = true, $flipH = false, $flipV = false)
+    public function drawImage($x, $y, $w, $h, $image, $aspect = true, $flipH = false, $flipV = false): void
     {
         $img = $this->loadImage($image);
 
-        if ($img != null) {
+        if (null != $img) {
             $iw = imagesx($img);
             $ih = imagesy($img);
 
@@ -916,7 +1035,7 @@ class mxGdCanvas
                 $x0 = ($w - $iw * $s) / 2;
                 $y0 = ($h - $ih * $s) / 2;
 
-                imageCopyResized(
+                imagecopyresized(
                     $this->image,
                     $img,
                     $x0 + $x,
@@ -929,7 +1048,7 @@ class mxGdCanvas
                     $ih
                 );
             } else {
-                imageCopyResized(
+                imagecopyresized(
                     $this->image,
                     $img,
                     $x,
@@ -946,25 +1065,32 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawText
+     * Function: drawText.
+     *
+     * @param mixed $string
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $style
      */
-    public function drawText($string, $x, $y, $w, $h, $style)
+    public function drawText($string, $x, $y, $w, $h, $style): void
     {
-        if (gettype($string) == "string" && strlen($string) > 0) {
+        if ('string' == \gettype($string) && '' !== $string) {
             // Draws the label background and border
             $bg = mxUtils::getValue($style, mxConstants::$STYLE_LABEL_BACKGROUNDCOLOR);
             $border = mxUtils::getValue($style, mxConstants::$STYLE_LABEL_BORDERCOLOR);
 
-            if ($bg != null || $border != null) {
+            if (null != $bg || null != $border) {
                 $bounds->width += 2;
                 $bounds->x -= 2;
-                $bounds->y -= 1;
+                --$bounds->y;
 
                 $this->drawRect($x, $y, $w, $h, $bg, $border, false);
             }
 
             // Draws the label string
-            if ($this->enableTtf && function_exists("imagettftext")) {
+            if ($this->enableTtf && \function_exists('imagettftext')) {
                 $this->drawTtfText($string, $x, $y, $w, $h, $style);
             } else {
                 $this->drawFixedText($string, $x, $y, $w, $h, $style);
@@ -973,9 +1099,11 @@ class mxGdCanvas
     }
 
     /**
-     * Function: getTrueTypeFont
+     * Function: getTrueTypeFont.
      *
      * Returns the truetype font to be used to draw the text with the given style.
+     *
+     * @param mixed $style
      */
     public function getTrueTypeFont($style)
     {
@@ -983,11 +1111,13 @@ class mxGdCanvas
     }
 
     /**
-     * Function: getTrueTypeFontSize
+     * Function: getTrueTypeFontSize.
      *
      * Returns the truetype font size to be used to draw the text with the
      * given style. This returns the fontSize in the style of the default
      * fontsize multiplied with <ttfSizeFactor>.
+     *
+     * @param mixed $style
      */
     public function getTrueTypeFontSize($style)
     {
@@ -1001,12 +1131,19 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawTtfText
+     * Function: drawTtfText.
+     *
+     * @param mixed $string
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $style
      */
-    public function drawTtfText($string, $x, $y, $w, $h, $style)
+    public function drawTtfText($string, $x, $y, $w, $h, $style): void
     {
         $lines = explode("\n", $string);
-        $lineCount = sizeof($lines);
+        $lineCount = \count($lines);
 
         if ($lineCount > 0) {
             // Gets the orientation and alignment
@@ -1033,7 +1170,7 @@ class mxGdCanvas
 
             // Gets the color
             $fontColor = mxUtils::getValue($style, mxConstants::$STYLE_FONTCOLOR);
-            $color = $this->getColor($fontColor, "black");
+            $color = $this->getColor($fontColor, 'black');
 
             $dy = ((($horizontal) ? $h : $w) - 2 * mxConstants::$LABEL_INSET) / $lineCount;
 
@@ -1045,7 +1182,7 @@ class mxGdCanvas
             }
 
             // Draws the text line by line
-            for ($i = 0; $i < $lineCount; $i++) {
+            for ($i = 0; $i < $lineCount; ++$i) {
                 $left = $x;
                 $top = $y;
                 $tmp = imagettfbbox($fontSize, 0, $font, $lines[$i]);
@@ -1087,33 +1224,54 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawTtxTextLine
+     * Function: drawTtxTextLine.
      *
      * Draws a single line of the given true type font text. The w and h are
      * the width and height of the complete text box that contains this line.
+     *
+     * @param mixed $line
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $color
+     * @param mixed $fontSize
+     * @param mixed $font
+     * @param mixed $rot
      */
-    public function drawTtfTextLine($line, $x, $y, $w, $h, $color, $fontSize, $font, $rot)
+    public function drawTtfTextLine($line, $x, $y, $w, $h, $color, $fontSize, $font, $rot): void
     {
         imagettftext($this->image, $fontSize, $rot, $x, $y, $color, $font, $line);
     }
 
     /**
-     * Function: getFixedFontSize
+     * Function: getFixedFontSize.
      *
      * Returns the fixed font size for GD (1 t0 5) for the given font properties
+     *
+     * @param mixed      $fontSize
+     * @param mixed      $fontFamily
+     * @param null|mixed $fontStyle
      */
-    public function getFixedFontSize($fontSize, $fontFamily, $fontStyle=null)
+    public function getFixedFontSize($fontSize, $fontFamily, $fontStyle = null)
     {
         return mxUtils::getFixedFontSize($fontSize, $fontFamily);
     }
 
     /**
-     * Function: drawString
+     * Function: drawString.
+     *
+     * @param mixed $string
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $style
      */
-    public function drawFixedText($string, $x, $y, $w, $h, $style)
+    public function drawFixedText($string, $x, $y, $w, $h, $style): void
     {
         $lines = explode("\n", $string);
-        $lineCount = sizeof($lines);
+        $lineCount = \count($lines);
 
         if ($lineCount > 0) {
             // Gets the orientation and alignment
@@ -1156,16 +1314,16 @@ class mxGdCanvas
 
             // Gets the color
             $fontColor = mxUtils::getValue($style, mxConstants::$STYLE_FONTCOLOR);
-            $color = $this->getColor($fontColor, "black");
+            $color = $this->getColor($fontColor, 'black');
 
-            $dx = imageFontWidth($font);
+            $dx = imagefontwidth($font);
             $dy = ((($horizontal) ? $h : $w) - 2 * mxConstants::$LABEL_INSET) / $lineCount;
 
             // Draws the text line by line
-            for ($i = 0; $i < $lineCount; $i++) {
+            for ($i = 0; $i < $lineCount; ++$i) {
                 $left = $x;
                 $top = $y;
-                $lineWidth = strlen($lines[$i]) * $dx;
+                $lineWidth = \strlen($lines[$i]) * $dx;
 
                 if ($align == mxConstants::$ALIGN_CENTER) {
                     if ($horizontal) {
@@ -1200,14 +1358,21 @@ class mxGdCanvas
     }
 
     /**
-     * Function: drawFixedTextLine
+     * Function: drawFixedTextLine.
      *
      * Draws the given fixed text line.
+     *
+     * @param mixed $text
+     * @param mixed $font
+     * @param mixed $left
+     * @param mixed $top
+     * @param mixed $color
+     * @param mixed $horizontal
      */
-    public function drawFixedTextLine($text, $font, $left, $top, $color, $horizontal = true)
+    public function drawFixedTextLine($text, $font, $left, $top, $color, $horizontal = true): void
     {
         if ($horizontal) {
-            imageString(
+            imagestring(
                 $this->image,
                 $font,
                 $left,
@@ -1216,7 +1381,7 @@ class mxGdCanvas
                 $color
             );
         } else {
-            imageStringUp(
+            imagestringup(
                 $this->image,
                 $font,
                 $left,
@@ -1228,11 +1393,14 @@ class mxGdCanvas
     }
 
     /**
-     * Function: getColor
+     * Function: getColor.
      *
      * Allocates the given color and returns a reference to it. Supported
      * color names are black, red, green, blue, orange, yellow, pink,
      * turqoise, white, gray and any hex codes between 000000 and FFFFFF.
+     *
+     * @param mixed      $hex
+     * @param null|mixed $default
      */
     public function getColor($hex, $default = null)
     {
@@ -1243,35 +1411,35 @@ class mxGdCanvas
         $result = null;
         $hex = strtolower($hex);
 
-        if ($hex == "black") {
-            $result = imageColorAllocate($this->image, 0, 0, 0);
-        } elseif ($hex == "red") {
-            $result = imageColorAllocate($this->image, 255, 0, 0);
-        } elseif ($hex == "green") {
-            $result = imageColorAllocate($this->image, 0, 255, 0);
-        } elseif ($hex == "blue") {
-            $result = imageColorAllocate($this->image, 0, 0, 255);
-        } elseif ($hex == "orange") {
-            $result = imageColorAllocate($this->image, 255, 128, 64);
-        } elseif ($hex == "yellow") {
-            $result = imageColorAllocate($this->image, 255, 255, 0);
-        } elseif ($hex == "pink") {
-            $result = imageColorAllocate($this->image, 255, 0, 255);
-        } elseif ($hex == "turqoise") {
-            $result = imageColorAllocate($this->image, 0, 255, 255);
-        } elseif ($hex == "white") {
-            $result = imageColorAllocate($this->image, 255, 255, 255);
-        } elseif ($hex == "gray") {
-            $result = imageColorAllocate($this->image, 128, 128, 128);
-        } elseif ($hex == "none") {
+        if ('black' == $hex) {
+            $result = imagecolorallocate($this->image, 0, 0, 0);
+        } elseif ('red' == $hex) {
+            $result = imagecolorallocate($this->image, 255, 0, 0);
+        } elseif ('green' == $hex) {
+            $result = imagecolorallocate($this->image, 0, 255, 0);
+        } elseif ('blue' == $hex) {
+            $result = imagecolorallocate($this->image, 0, 0, 255);
+        } elseif ('orange' == $hex) {
+            $result = imagecolorallocate($this->image, 255, 128, 64);
+        } elseif ('yellow' == $hex) {
+            $result = imagecolorallocate($this->image, 255, 255, 0);
+        } elseif ('pink' == $hex) {
+            $result = imagecolorallocate($this->image, 255, 0, 255);
+        } elseif ('turqoise' == $hex) {
+            $result = imagecolorallocate($this->image, 0, 255, 255);
+        } elseif ('white' == $hex) {
+            $result = imagecolorallocate($this->image, 255, 255, 255);
+        } elseif ('gray' == $hex) {
+            $result = imagecolorallocate($this->image, 128, 128, 128);
+        } elseif ('none' == $hex) {
             $result = null;
         } else {
-            $rgb = array_map("hexdec", explode("|", wordwrap(substr($hex, 1), 2, "|", 1)));
+            $rgb = array_map('hexdec', explode('|', wordwrap(substr($hex, 1), 2, '|', 1)));
 
-            if (sizeof($rgb) > 2) {
-                $result = imageColorAllocate($this->image, $rgb[0], $rgb[1], $rgb[2]);
+            if (\count($rgb) > 2) {
+                $result = imagecolorallocate($this->image, $rgb[0], $rgb[1], $rgb[2]);
             } else {
-                $result = imageColorAllocate($this->image, 0, 0, 0);
+                $result = imagecolorallocate($this->image, 0, 0, 0);
             }
         }
 
@@ -1279,16 +1447,20 @@ class mxGdCanvas
     }
 
     /**
-     * Function: offset
+     * Function: offset.
      *
      * Creates a new array of x, y sequences where the each coordinate is
      * translated by dx and dy, respectively.
+     *
+     * @param mixed      $points
+     * @param null|mixed $dx
+     * @param null|mixed $dy
      */
     public function offset($points, $dx = null, $dy = null)
     {
-        $result = array();
+        $result = [];
 
-        if ($points != null) {
+        if (null != $points) {
             if (!isset($dx)) {
                 $dx = mxConstants::$SHADOW_OFFSETX;
             }
@@ -1297,9 +1469,9 @@ class mxGdCanvas
                 $dy = mxConstants::$SHADOW_OFFSETY;
             }
 
-            for ($i = 0; $i < sizeof($points) - 1; $i = $i + 2) {
-                array_push($result, $points[$i] + $dx);
-                array_push($result, $points[$i + 1] + $dy);
+            for ($i = 0; $i < \count($points) - 1; $i = $i + 2) {
+                $result[] = $points[$i] + $dx;
+                $result[] = $points[$i + 1] + $dy;
             }
         }
 
@@ -1307,19 +1479,23 @@ class mxGdCanvas
     }
 
     /**
-     * Destructor: destroy
+     * Destructor: destroy.
      *
      * Destroys all allocated resources.
      */
-    public function destroy()
+    public function destroy(): void
     {
-        imageDestroy($this->image);
+        imagedestroy($this->image);
     }
 
     /**
-     * Function: drawGraph
+     * Function: drawGraph.
      *
      * Draws the given graph using this canvas.
+     *
+     * @param mixed      $graph
+     * @param null|mixed $clip
+     * @param null|mixed $bg
      */
     public static function drawGraph($graph, $clip = null, $bg = null)
     {
@@ -1335,12 +1511,11 @@ class mxGdCanvas
         $width = round($clip->width + $clip->x) + 1;
         $height = round($clip->width + $clip->x) + 1;
 
-        $canvas = new mxGdCanvas($width, $height, $graph->view->scale, $bg);
+        $canvas = new self($width, $height, $graph->view->scale, $bg);
 
         $graph->drawGraph($canvas);
-        $image = $canvas->getImage();
-        //TODO: $canvas->destroy();
 
-        return $image;
+        return $canvas->getImage();
+        //TODO: $canvas->destroy();
     }
 }

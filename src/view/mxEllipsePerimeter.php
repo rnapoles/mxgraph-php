@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -19,7 +19,10 @@ use Mxgraph\Util\mxPoint;
 class mxEllipsePerimeter implements mxPerimeterFunction
 {
     /**
-     *
+     * @param mixed $bounds
+     * @param mixed $vertex
+     * @param mixed $next
+     * @param mixed $orthogonal
      */
     public function apply($bounds, $vertex, $next, $orthogonal)
     {
@@ -37,16 +40,17 @@ class mxEllipsePerimeter implements mxPerimeterFunction
         $dx = (int) ($px - $cx);
         $dy = (int) ($py - $cy);
 
-        if ($dx == 0 && $dy != 0) {
+        if (0 == $dx && 0 != $dy) {
             return new mxPoint($cx, $cy + $b * $dy / abs($dy));
-        } elseif ($dx == 0 && $dy == 0) {
+        }
+        if (0 == $dx && 0 == $dy) {
             return new mxPoint($px, $py);
         }
 
         if ($orthogonal) {
             if ($py >= $y && $py <= $y + $bounds->height) {
                 $ty = $py - $cy;
-                $tx = sqrt($a*$a*(1-($ty*$ty)/($b*$b)));
+                $tx = sqrt($a * $a * (1 - ($ty * $ty) / ($b * $b)));
 
                 if (is_nan($tx)) {
                     $tx = 0;
@@ -56,12 +60,12 @@ class mxEllipsePerimeter implements mxPerimeterFunction
                     $tx = -$tx;
                 }
 
-                return new mxPoint($cx+$tx, $py);
+                return new mxPoint($cx + $tx, $py);
             }
 
             if ($px >= $x && $px <= $x + $bounds->width) {
                 $tx = $px - $cx;
-                $ty = sqrt($b*$b*(1-($tx*$tx)/($a*$a)));
+                $ty = sqrt($b * $b * (1 - ($tx * $tx) / ($a * $a)));
 
                 if (is_nan($ty)) {
                     $ty = 0;
@@ -90,10 +94,10 @@ class mxEllipsePerimeter implements mxPerimeterFunction
         $xout2 = (-$f - $det) / (2 * $e);
         $yout1 = $d * $xout1 + $h;
         $yout2 = $d * $xout2 + $h;
-        $dist1 = sqrt(pow($xout1 - $px, 2)
-            + pow($yout1 - $py, 2));
-        $dist2 = sqrt(pow($xout2 - $px, 2)
-            + pow($yout2 - $py, 2));
+        $dist1 = sqrt(($xout1 - $px) ** 2
+            + ($yout1 - $py) ** 2);
+        $dist2 = sqrt(($xout2 - $px) ** 2
+            + ($yout2 - $py) ** 2);
 
         // Correct solution
         $xout = 0;

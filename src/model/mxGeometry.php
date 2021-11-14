@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Model;
 
 use Mxgraph\Util\mxRectangle;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxGeometry extends mxRectangle
 {
     /**
-     * Class: mxGeometry
+     * Class: mxGeometry.
      *
      * Represents the geometry of a cell. For vertices, the geometry consists
      * of the x- and y-location, as well as the width and height. For edges,
@@ -24,7 +26,7 @@ class mxGeometry extends mxRectangle
     public static $TRANSLATE_CONTROL_POINTS = true;
 
     /**
-     * Variable: alternateBounds
+     * Variable: alternateBounds.
      *
      * Stores alternate values for x, y, width and height in a rectangle.
      * Default is null.
@@ -32,7 +34,7 @@ class mxGeometry extends mxRectangle
     public $alternateBounds;
 
     /**
-     * Variable: sourcePoint
+     * Variable: sourcePoint.
      *
      * Defines the source point of the edge. This is used if the corresponding
      * edge does not have a source vertex. Otherwise it is ignored. Default is
@@ -41,7 +43,7 @@ class mxGeometry extends mxRectangle
     public $sourcePoint;
 
     /**
-     * Variable: targetPoint
+     * Variable: targetPoint.
      *
      * Defines the target point of the edge. This is used if the corresponding
      * edge does not have a target vertex. Otherwise it is ignored. Default is
@@ -50,7 +52,7 @@ class mxGeometry extends mxRectangle
     public $targetPoint;
 
     /**
-     * Variable: points
+     * Variable: points.
      *
      * Array of <mxPoints> which specifies the control points along the edge.
      * These points are the intermediate points on the edge, for the endpoints
@@ -60,7 +62,7 @@ class mxGeometry extends mxRectangle
     public $points;
 
     /**
-     * Variable: offset
+     * Variable: offset.
      *
      * Holds the offset of the label for edges. This is the absolute vector
      * between the center of the edge and the top, left point of the label.
@@ -69,7 +71,7 @@ class mxGeometry extends mxRectangle
     public $offset;
 
     /**
-     * Variable: relative
+     * Variable: relative.
      *
      * Specifies if the coordinates in the geometry are to be interpreted as
      * relative coordinates. Default is false. This is used to mark a geometry
@@ -79,18 +81,23 @@ class mxGeometry extends mxRectangle
     public $relative = false;
 
     /**
-     * Constructor: mxGeometry
+     * Constructor: mxGeometry.
      *
      * Constructs a new object to describe the size and location
      * of a vertex or the control points of an edge.
+     *
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $width
+     * @param mixed $height
      */
-    public function __construct($x=0, $y=0, $width=0, $height=0)
+    public function __construct($x = 0, $y = 0, $width = 0, $height = 0)
     {
         parent::__construct($x, $y, $width, $height);
     }
 
     /**
-     * Function: getTerminalPoint
+     * Function: getTerminalPoint.
      *
      * Returns the <mxPoint> representing the source or target point of this
      * edge. This is only used if the edge has no source or target vertex.
@@ -99,6 +106,8 @@ class mxGeometry extends mxRectangle
      *
      * isSource - Boolean that specifies if the source or target point
      * should be returned.
+     *
+     * @param mixed $isSource
      */
     public function getTerminalPoint($isSource)
     {
@@ -106,7 +115,7 @@ class mxGeometry extends mxRectangle
     }
 
     /**
-     * Function: setTerminalPoint
+     * Function: setTerminalPoint.
      *
      * Sets the <sourcePoint> or <targetPoint> to the given <mxPoint> and
      * returns the new point.
@@ -116,6 +125,9 @@ class mxGeometry extends mxRectangle
      * point - Point to be used as the new source or target point.
      * isSource - Boolean that specifies if the source or target point
      * should be set.
+     *
+     * @param mixed $point
+     * @param mixed $isSource
      */
     public function setTerminalPoint($point, $isSource)
     {
@@ -129,7 +141,7 @@ class mxGeometry extends mxRectangle
     }
 
     /**
-     * Function: translate
+     * Function: translate.
      *
      * Translates the geometry by the specified amount. That is, <x> and <y>
      * of the geometry, the <sourcePoint>, <targetPoint> and all elements of
@@ -141,8 +153,11 @@ class mxGeometry extends mxRectangle
      *
      * dx - Integer that specifies the x-coordinate of the translation.
      * dy - Integer that specifies the y-coordinate of the translation.
+     *
+     * @param mixed $dx
+     * @param mixed $dy
      */
-    public function translate($dx, $dy)
+    public function translate($dx, $dy): void
     {
         // Translates the geometry
         if (!$this->relative) {
@@ -151,23 +166,23 @@ class mxGeometry extends mxRectangle
         }
 
         // Translates the source point
-        if ($this->sourcePoint != null) {
+        if (null != $this->sourcePoint) {
             $this->sourcePoint->x += $dx;
             $this->sourcePoint->y += $dy;
         }
 
         // Translates the target point
-        if ($this->targetPoint != null) {
+        if (null != $this->targetPoint) {
             $this->targetPoint->x += $dx;
             $this->targetPoint->y += $dy;
         }
 
         // Translate the control points
-        if (mxGeometry::$TRANSLATE_CONTROL_POINTS &&
-            $this->points != null) {
-            $count = sizeof($this->points);
+        if (self::$TRANSLATE_CONTROL_POINTS
+            && null != $this->points) {
+            $count = \count($this->points);
 
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < $count; ++$i) {
                 $pt = $this->points[i];
 
                 $pt->x += $dx;
@@ -177,39 +192,39 @@ class mxGeometry extends mxRectangle
     }
 
     /**
-     * Function: copy
+     * Function: copy.
      *
      * Returns a copy of this <mxGeometry>.
      */
     public function copy()
     {
-        $clone = new mxGeometry($this->x, $this->y, $this->width, $this->height);
+        $clone = new self($this->x, $this->y, $this->width, $this->height);
 
         // Clones the points
-        if ($this->points != null) {
-            $clone->points = array();
+        if (null != $this->points) {
+            $clone->points = [];
 
-            for ($i = 0; $i < sizeof($this->points); $i++) {
-                array_push($clone->points, $this->points[$i]->copy());
+            for ($i = 0; $i < \count($this->points); ++$i) {
+                $clone->points[] = $this->points[$i]->copy();
             }
         }
 
         // Clones the alternatebounds
-        if ($this->alternateBounds != null) {
+        if (null != $this->alternateBounds) {
             $clone->alternateBounds = $this->alternateBounds->copy();
         }
 
         // Clones the offset
-        if ($this->offset != null) {
+        if (null != $this->offset) {
             $clone->offset = $this->offset->copy();
         }
 
         // Clones the source and targetpoint
-        if ($this->sourcePoint != null) {
+        if (null != $this->sourcePoint) {
             $clone->sourcePoint = $this->sourcePoint->copy();
         }
 
-        if ($this->targetPoint != null) {
+        if (null != $this->targetPoint) {
             $clone->targetPoint = $this->targetPoint->copy();
         }
 

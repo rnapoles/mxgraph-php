@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\View;
 
 use Mxgraph\Util\mxPoint;
 use Mxgraph\Util\mxRectangle;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxCellState extends mxRectangle
 {
     /**
-     * Class: mxCellState
+     * Class: mxCellState.
      *
      * Represents the current state of a cell in a given <mxGraphView>.
      *
@@ -22,14 +24,14 @@ class mxCellState extends mxRectangle
     public $view;
 
     /**
-     * Variable: cell
+     * Variable: cell.
      *
      * Reference to the <mxCell> that is represented by this state.
      */
     public $cell;
 
     /**
-     * Variable: style
+     * Variable: style.
      *
      * Contains an array of key, value pairs that represent the style of the
      * cell.
@@ -37,14 +39,14 @@ class mxCellState extends mxRectangle
     public $style;
 
     /**
-     * Variable: invalid
+     * Variable: invalid.
      *
      * Specifies if the state is invalid. Default is true.
      */
     public $invalid = true;
 
     /**
-     * Variable: origin
+     * Variable: origin.
      *
      * <mxPoint> that holds the origin for all child cells. Default is a new
      * empty <mxPoint>.
@@ -52,7 +54,7 @@ class mxCellState extends mxRectangle
     public $origin;
 
     /**
-     * Variable: absolutePoints
+     * Variable: absolutePoints.
      *
      * Holds an array of <mxPoints> that represent the absolute points of an
      * edge.
@@ -60,7 +62,7 @@ class mxCellState extends mxRectangle
     public $absolutePoints;
 
     /**
-     * Variable: absoluteOffset
+     * Variable: absoluteOffset.
      *
      * <mxPoint> that holds the absolute offset. For edges, this is the
      * absolute coordinates of the label position. For vertices, this is the
@@ -69,21 +71,21 @@ class mxCellState extends mxRectangle
     public $absoluteOffset;
 
     /**
-     * Variable: terminalDistance
+     * Variable: terminalDistance.
      *
      * Caches the distance between the end points for an edge.
      */
     public $terminalDistance;
 
     /**
-     * Variable: length
+     * Variable: length.
      *
      * Caches the length of an edge.
      */
     public $length;
 
     /**
-     * Variable: segments
+     * Variable: segments.
      *
      * Array of numbers that represent the cached length of each segment of the
      * edge.
@@ -91,21 +93,21 @@ class mxCellState extends mxRectangle
     public $segments;
 
     /**
-     * Variable: labelBounds
+     * Variable: labelBounds.
      *
      * Holds the rectangle which contains the label.
      */
     public $labelBounds;
 
     /**
-     * Variable: boundingBox
+     * Variable: boundingBox.
      *
      * Holds the largest rectangle which contains all rendering for this cell.
      */
     public $boundingBox;
 
     /**
-     * Constructor: mxCellState
+     * Constructor: mxCellState.
      *
      * Constructs a new object that represents the current state of the given
      * cell in the specified view.
@@ -115,6 +117,10 @@ class mxCellState extends mxRectangle
      * view - <mxGraphView> that contains the state.
      * cell - <mxCell> that this state represents.
      * style - Array of key, value pairs that constitute the style.
+     *
+     * @param null|mixed $view
+     * @param null|mixed $cell
+     * @param null|mixed $style
      */
     public function __construct($view = null, $cell = null, $style = null)
     {
@@ -127,16 +133,18 @@ class mxCellState extends mxRectangle
     }
 
     /**
-     * Function: getPerimeterBounds
+     * Function: getPerimeterBounds.
      *
      * Returns the <mxRectangle> that should be used as the perimeter of the
      * cell.
+     *
+     * @param mixed $border
      */
     public function getPerimeterBounds($border = 0)
     {
         $bounds = new mxRectangle($this->x, $this->y, $this->width, $this->height);
 
-        if ($border != 0) {
+        if (0 != $border) {
             $bounds->grow($border);
         }
 
@@ -144,7 +152,7 @@ class mxCellState extends mxRectangle
     }
 
     /**
-     * Function: copy
+     * Function: copy.
      *
      * Returns a copy of this state where all members are deeply cloned
      * except the view and cell references, which are copied with no
@@ -152,30 +160,30 @@ class mxCellState extends mxRectangle
      */
     public function copy()
     {
-        $clone = new mxCellState($this->view, $this->cell, $this->style);
+        $clone = new self($this->view, $this->cell, $this->style);
 
         // Clones the absolute points
-        if ($this->absolutePoints != null) {
-            $clone->absolutePoints = array();
+        if (null != $this->absolutePoints) {
+            $clone->absolutePoints = [];
 
-            for ($i = 0; $i < sizeof($this->absolutePoints); $i++) {
-                array_push($clone->absolutePoints, $this->absolutePoints[$i]->copy());
+            for ($i = 0; $i < \count($this->absolutePoints); ++$i) {
+                $clone->absolutePoints[] = $this->absolutePoints[$i]->copy();
             }
         }
 
-        if ($this->origin != null) {
+        if (null != $this->origin) {
             $clone->origin = $this->origin->copy();
         }
 
-        if ($this->absoluteOffset != null) {
+        if (null != $this->absoluteOffset) {
             $clone->absoluteOffset = $this->absoluteOffset->copy();
         }
 
-        if ($this->labelBounds != null) {
+        if (null != $this->labelBounds) {
             $clone->labelBounds = $this->labelBounds->copy();
         }
 
-        if ($this->boundingBox != null) {
+        if (null != $this->boundingBox) {
             $clone->boundingBox = $this->boundingBox->copy();
         }
 

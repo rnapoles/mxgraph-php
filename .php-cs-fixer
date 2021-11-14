@@ -2,6 +2,7 @@
 
 $finder = PhpCsFixer\Finder::create()
 	->in(__DIR__ . '/src')
+;
 
 /*
 $config->setRules([
@@ -13,7 +14,9 @@ $config->setRules([
 ;
 */
 
-return new PhpCsFixer\Config();
+$config = new PhpCsFixer\Config();
+
+return $config
 	->setUsingCache(false)
 	->setRiskyAllowed(true)
 	->setRules([
@@ -25,7 +28,6 @@ return new PhpCsFixer\Config();
 		'@PHP70Migration:risky' => true,
 		'@PHP71Migration' => true,
 		'@PHP71Migration:risky' => true,
-		'@PHP72Migration' => true,
 		'@PHP73Migration' => true,
 		'@PHP74Migration' => true,
 
@@ -36,4 +38,5 @@ return new PhpCsFixer\Config();
 		'strict_param' => true,
 		'array_syntax' => ['syntax' => 'short'],
 	])
-
+  ->setFinder($finder)
+;

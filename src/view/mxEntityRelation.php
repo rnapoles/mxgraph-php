@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -19,7 +19,7 @@ use Mxgraph\Util\mxPoint;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Class: mxEntityRelation
+ * Class: mxEntityRelation.
  *
  * Implements an entity relation style for edges (as used in database
  * schema diagrams).  At the time the function is called, the result
@@ -34,9 +34,13 @@ use Mxgraph\Util\mxUtils;
 class mxEntityRelation implements mxEdgeStyleFunction
 {
     /**
-     *
+     * @param mixed $state
+     * @param mixed $source
+     * @param mixed $target
+     * @param mixed $points
+     * @param mixed $result
      */
-    public function apply($state, $source, $target, $points, &$result)
+    public function apply($state, $source, $target, $points, &$result): void
     {
         $view = $state->view;
         $graph = $view->graph;
@@ -48,7 +52,7 @@ class mxEntityRelation implements mxEdgeStyleFunction
 
         $pts = $state->absolutePoints;
         $p0 = $pts[0];
-        $pe = $pts[sizeof($pts) - 1];
+        $pe = $pts[\count($pts) - 1];
 
         $isSourceLeft = false;
 
@@ -61,7 +65,7 @@ class mxEntityRelation implements mxEdgeStyleFunction
 
             if ($sourceGeometry->relative) {
                 $isSourceLeft = $sourceGeometry->x <= 0.5;
-            } elseif ($target != null) {
+            } elseif (null != $target) {
                 $isSourceLeft = $target->x + $target->width < $source->x;
             }
         }
@@ -77,12 +81,12 @@ class mxEntityRelation implements mxEdgeStyleFunction
 
             if ($targetGeometry->relative) {
                 $isTargetLeft = $targetGeometry->x <= 0.5;
-            } elseif ($source != null) {
+            } elseif (null != $source) {
                 $isTargetLeft = $source->x + $source->width < $target->x;
             }
         }
 
-        if (isset($source) && isset($target)) {
+        if (isset($source, $target)) {
             $x0 = ($isSourceLeft) ? $source->x : $source->x + $source->width;
             $y0 = $view->getRoutingCenterY($source);
 
@@ -92,26 +96,26 @@ class mxEntityRelation implements mxEdgeStyleFunction
             $seg = $segment;
 
             $dx = ($isSourceLeft) ? -$seg : $seg;
-            $dep = new mxPoint($x0+$dx, $y0);
-            array_push($result, $dep);
+            $dep = new mxPoint($x0 + $dx, $y0);
+            $result[] = $dep;
 
             $dx = ($isTargetLeft) ? -$seg : $seg;
-            $arr = new mxPoint($xe+$dx, $ye);
+            $arr = new mxPoint($xe + $dx, $ye);
 
             // Adds intermediate points if both go out on same side
             if ($isSourceLeft == $isTargetLeft) {
                 $x = ($isSourceLeft) ?
-                    min($x0, $xe)-$segment :
-                    max($x0, $xe)+$segment;
-                array_push($result, new mxPoint($x, $y0));
-                array_push($result, new mxPoint($x, $ye));
+                    min($x0, $xe) - $segment :
+                    max($x0, $xe) + $segment;
+                $result[] = new mxPoint($x, $y0);
+                $result[] = new mxPoint($x, $ye);
             } elseif (($dep->x < $arr->x) == $isSourceLeft) {
                 $midY = $y0 + ($ye - $y0) / 2;
-                array_push($result, new mxPoint($dep->x, $midY));
-                array_push($result, new mxPoint($arr->x, $midY));
+                $result[] = new mxPoint($dep->x, $midY);
+                $result[] = new mxPoint($arr->x, $midY);
             }
 
-            array_push($result, $arr);
+            $result[] = $arr;
         }
     }
 }

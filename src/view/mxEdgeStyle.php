@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\View;
 
 /**
- *
- * Class: mxEdgeStyle
+ * Class: mxEdgeStyle.
  *
  * Provides various edge styles to be used as the values for
  * <mxConstants.STYLE_EDGE> in a cell style.
@@ -12,7 +13,7 @@ namespace Mxgraph\View;
 class mxEdgeStyle
 {
     /**
-     * Variable: EntityRelation
+     * Variable: EntityRelation.
      *
      * Provides an entity relation style for edges (as used in database
      * schema diagrams).
@@ -20,28 +21,28 @@ class mxEdgeStyle
     public static $EntityRelation;
 
     /**
-     * Variable: Loop
+     * Variable: Loop.
      *
      * Provides a self-reference, aka. loop.
      */
     public static $Loop;
 
     /**
-     * Variable: ElbowConnector
+     * Variable: ElbowConnector.
      *
      * Provides an elbow connector.
      */
     public static $ElbowConnector;
 
     /**
-     * Variable: SideToSide
+     * Variable: SideToSide.
      *
      * Provides a side to side connector.
      */
     public static $SideToSide;
 
     /**
-     * Variable: TopToBottom
+     * Variable: TopToBottom.
      *
      * Provides a top to bottom connector.
      */

@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -19,7 +19,10 @@ use Mxgraph\Util\mxPoint;
 class mxRectanglePerimeter implements mxPerimeterFunction
 {
     /**
-     *
+     * @param mixed $bounds
+     * @param mixed $vertex
+     * @param mixed $next
+     * @param mixed $orthogonal
      */
     public function apply($bounds, $vertex, $next, $orthogonal)
     {
@@ -29,12 +32,12 @@ class mxRectanglePerimeter implements mxPerimeterFunction
         $dy = $next->y - $cy;
         $alpha = atan2($dy, $dx);
         $p = new mxPoint(0, 0);
-        $pi = pi();
+        $pi = M_PI;
         $pi2 = $pi / 2;
         $beta = $pi2 - $alpha;
         $t = atan2($bounds->height, $bounds->width);
 
-        if ($alpha < - $pi + $t || $alpha > $pi - $t) {
+        if ($alpha < -$pi + $t || $alpha > $pi - $t) {
             // Left side
             $p->x = $bounds->x;
             $p->y = $cy - $bounds->width * tan($alpha) / 2;
@@ -53,11 +56,11 @@ class mxRectanglePerimeter implements mxPerimeterFunction
         }
 
         if ($orthogonal) {
-            if ($next->x >= $bounds->x &&
-                $next->x <= $bounds->x + $bounds->width) {
+            if ($next->x >= $bounds->x
+                && $next->x <= $bounds->x + $bounds->width) {
                 $p->x = $next->x;
-            } elseif ($next->y >= $bounds->y &&
-                $next->y <= $bounds->y + $bounds->height) {
+            } elseif ($next->y >= $bounds->y
+                && $next->y <= $bounds->y + $bounds->height) {
                 $p->y = $next->y;
             }
 

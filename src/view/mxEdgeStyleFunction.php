@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -17,7 +17,7 @@ namespace Mxgraph\View;
 interface mxEdgeStyleFunction
 {
     /**
-     * Interface: mxEdgeStyleFunction
+     * Interface: mxEdgeStyleFunction.
      *
      * Defines the requirements for an edge style function.
      *
@@ -40,6 +40,12 @@ interface mxEdgeStyleFunction
      * points - List of relative control points.
      * result - Array of <mxPoints> that represent the actual points of the
      * edge.
+     *
+     * @param mixed $state
+     * @param mixed $source
+     * @param mixed $target
+     * @param mixed $points
+     * @param mixed $result
      */
     public function apply($state, $source, $target, $points, &$result);
 }

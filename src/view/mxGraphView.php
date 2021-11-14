@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\View;
 
 use Mxgraph\Util\mxConstants;
@@ -11,12 +13,12 @@ use Mxgraph\Util\mxRectangle;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxGraphView extends mxEventSource
 {
     /**
-     * Class: mxGraphView
+     * Class: mxGraphView.
      *
      * Implements a view for the graph. Fires scale and translate events
      * if one of the values change.
@@ -38,44 +40,46 @@ class mxGraphView extends mxEventSource
     public $EMPTY_POINT;
 
     /**
-     * Variable: graph
+     * Variable: graph.
      *
      * Holds the <mxGraph>.
      */
     public $graph;
 
     /**
-     * Variable: graphBounds
+     * Variable: graphBounds.
      *
      * Holds the bounds of the current view.
      */
     public $graphBounds;
 
     /**
-     * Variable: scale
+     * Variable: scale.
      *
      * Holds the current scale.
      */
     public $scale = 1;
 
     /**
-     * Variable: translate
+     * Variable: translate.
      *
      * Holds the current translate.
      */
     public $translate;
 
     /**
-     * Variable: states
+     * Variable: states.
      *
      * Maps from cells to states.
      */
-    public $states = array();
+    public $states = [];
 
     /**
-     * Constructor: mxGraphView
+     * Constructor: mxGraphView.
      *
      * Constructs a new view for the specified <mxGraph>.
+     *
+     * @param mixed $graph
      */
     public function __construct($graph)
     {
@@ -86,12 +90,14 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: setScale
+     * Function: setScale.
      *
      * Sets the scale, revalidates the view and fires
      * a scale event.
+     *
+     * @param mixed $scale
      */
-    public function setScale($scale)
+    public function setScale($scale): void
     {
         $previous = $this->scale;
 
@@ -100,30 +106,32 @@ class mxGraphView extends mxEventSource
             $this->revalidate();
         }
 
-        $this->fireEvent(new mxEventObject(mxEvent::$SCALE, "scale", $scale, "previousScale", $previous));
+        $this->fireEvent(new mxEventObject(mxEvent::$SCALE, 'scale', $scale, 'previousScale', $previous));
     }
 
     /**
-     * Function: setTranslate
+     * Function: setTranslate.
      *
      * Sets the translation, revalidates the view and
      * fires a translate event.
+     *
+     * @param mixed $translate
      */
-    public function setTranslate($translate)
+    public function setTranslate($translate): void
     {
         $previous = $this->translate;
 
-        if ($this->translate->x != $translate->x ||
-            $this->translate->y != $translate->y) {
+        if ($this->translate->x != $translate->x
+            || $this->translate->y != $translate->y) {
             $this->translate = $translate;
             $this->revalidate();
         }
 
-        $this->fireEvent(new mxEventObject(mxEvent::$TRANSLATE, "translate", $translate, "previousTranslate", $previous));
+        $this->fireEvent(new mxEventObject(mxEvent::$TRANSLATE, 'translate', $translate, 'previousTranslate', $previous));
     }
 
     /**
-     * Function: getGraphBounds
+     * Function: getGraphBounds.
      *
      * Returns <graphBounds>.
      */
@@ -133,38 +141,43 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: setGraphBounds
+     * Function: setGraphBounds.
      *
      * Sets <graphBounds>.
+     *
+     * @param mixed $value
      */
-    public function setGraphBounds($value)
+    public function setGraphBounds($value): void
     {
         $this->graphBounds = $value;
     }
 
     /**
-     * Function: getBounds
+     * Function: getBounds.
      *
      * Returns the bounding for for an array of cells or null, if no cells are
      * specified.
+     *
+     * @param mixed $cells
+     * @param mixed $boundingBox
      */
     public function getBounds($cells, $boundingBox = false)
     {
-        $cellCount = sizeof($cells);
+        $cellCount = \count($cells);
         $result = null;
 
         if ($cellCount > 0) {
             $model = $this->graph->getModel();
 
-            for ($i = 0; $i < $cellCount; $i++) {
+            for ($i = 0; $i < $cellCount; ++$i) {
                 if ($model->isVertex($cells[$i]) || $model->isEdge($cells[$i])) {
                     $state = $this->getState($cells[$i]);
 
-                    if ($state != null) {
+                    if (null != $state) {
                         $bounds = ($boundingBox) ? $state->boundingBox : $state;
 
-                        if ($bounds != null) {
-                            if ($result == null) {
+                        if (null != $bounds) {
+                            if (null == $result) {
                                 $result = new mxRectangle(
                                     $bounds->x,
                                     $bounds->y,
@@ -184,27 +197,27 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: invalidate
+     * Function: invalidate.
      */
-    public function revalidate()
+    public function revalidate(): void
     {
         $this->invalidate();
         $this->validate();
     }
 
     /**
-     * Function: invalidate
+     * Function: invalidate.
      *
      * Invalidates the cached cell states.
      */
-    public function invalidate()
+    public function invalidate(): void
     {
         // LATER: Invalidate cell states recursively
-        $this->states = array();
+        $this->states = [];
     }
 
     /**
-     * Function: validate
+     * Function: validate.
      *
      * Calls <validateCell> and <validateCellState> and updates the <graphBounds>
      * using <getBoundingBox>. Finally the background is validated using
@@ -214,20 +227,22 @@ class mxGraphView extends mxEventSource
      *
      * cell - Optional <mxCell> to be used as the root of the validation.
      * Default is the root of the model.
+     *
+     * @param null|mixed $cell
      */
-    public function validate($cell = null)
+    public function validate($cell = null): void
     {
         // Checks if cache is invalid
-        if (sizeof($this->states) == 0) {
+        if (0 == \count($this->states)) {
             $graphBounds = $this->getBoundingBox($this->validateCellState(
-                $this->validateCell(($cell != null) ? $cell : $this->graph->model->root)
+                $this->validateCell((null != $cell) ? $cell : $this->graph->model->root)
             ));
-            $this->setGraphBounds(isset($graphBounds) ? $graphBounds : new mxRectangle());
+            $this->setGraphBounds($graphBounds ?? new mxRectangle());
         }
     }
 
     /**
-     * Function: getBoundingBox
+     * Function: getBoundingBox.
      *
      * Returns the bounding box of the shape and the label for the given
      * <mxCellState> and its children if recurse is true.
@@ -237,13 +252,16 @@ class mxGraphView extends mxEventSource
      * state - <mxCellState> whose bounding box should be returned.
      * recurse - Optional boolean indicating if the children should be included.
      * Default is true.
+     *
+     * @param mixed $state
+     * @param mixed $recurse
      */
     public function getBoundingBox($state, $recurse = true)
     {
         $bbox = null;
 
-        if ($state != null) {
-            if ($state->boundingBox != null) {
+        if (null != $state) {
+            if (null != $state->boundingBox) {
                 $bbox = $state->boundingBox->copy();
             }
 
@@ -251,11 +269,11 @@ class mxGraphView extends mxEventSource
                 $model = $this->graph->getModel();
                 $childCount = $model->getChildCount($state->cell);
 
-                for ($i = 0; $i < $childCount; $i++) {
+                for ($i = 0; $i < $childCount; ++$i) {
                     $bounds = $this->getBoundingBox($this->getState($model->getChildAt($state->cell, $i)));
 
-                    if ($bounds != null) {
-                        if ($bbox == null) {
+                    if (null != $bounds) {
+                        if (null == $bbox) {
                             $bbox = $bounds;
                         } else {
                             $bbox->add($bounds);
@@ -269,7 +287,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: validateCell
+     * Function: validateCell.
      *
      * Recursively creates the cell state for the given cell if visible is true and
      * the given cell is visible. If the cell is not visible but the state exists
@@ -280,22 +298,25 @@ class mxGraphView extends mxEventSource
      * cell - <mxCell> whose <mxCellState> should be created.
      * visible - Optional boolean indicating if the cell should be visible. Default
      * is true.
+     *
+     * @param mixed $cell
+     * @param mixed $visible
      */
     public function validateCell($cell, $visible = true)
     {
-        if ($cell != null) {
+        if (null != $cell) {
             $visible = $visible && $this->graph->isCellVisible($cell);
             $state = $this->getState($cell, $visible);
 
-            if ($state != null && !$visible) {
+            if (null != $state && !$visible) {
                 $this->removeState($cell);
             } else {
                 $model = $this->graph->getModel();
                 $childCount = $model->getChildCount($cell);
 
-                for ($i = 0; $i < $childCount; $i++) {
-                    $this->validateCell($model->getChildAt($cell, $i), $visible &&
-                        !$this->graph->isCellCollapsed($cell));
+                for ($i = 0; $i < $childCount; ++$i) {
+                    $this->validateCell($model->getChildAt($cell, $i), $visible
+                        && !$this->graph->isCellCollapsed($cell));
                 }
             }
         }
@@ -304,7 +325,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: validateCellStates
+     * Function: validateCellStates.
      *
      * Validates and repaints the <mxCellState> for the given <mxCell>.
      *
@@ -313,15 +334,18 @@ class mxGraphView extends mxEventSource
      * cell - <mxCell> whose <mxCellState> should be validated.
      * recurse - Optional boolean indicating if the children of the cell should be
      * validated. Default is true.
+     *
+     * @param mixed $cell
+     * @param mixed $recurse
      */
     public function validateCellState($cell, $recurse = true)
     {
         $state = null;
 
-        if ($cell != null) {
+        if (null != $cell) {
             $state = $this->getState($cell);
 
-            if ($state != null) {
+            if (null != $state) {
                 $model = $this->graph->getModel();
 
                 if ($state->invalid) {
@@ -342,7 +366,7 @@ class mxGraphView extends mxEventSource
                 if ($recurse) {
                     $childCount = $model->getChildCount($cell);
 
-                    for ($i = 0; $i < $childCount; $i++) {
+                    for ($i = 0; $i < $childCount; ++$i) {
                         $this->validateCellState($model->getChildAt($cell, $i));
                     }
                 }
@@ -353,7 +377,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateCellState
+     * Function: updateCellState.
      *
      * Updates the given <mxCellState>.
      *
@@ -362,8 +386,12 @@ class mxGraphView extends mxEventSource
      * state - <mxCellState> to be updated.
      * source - <mxCellState> that represents the visible source.
      * target - <mxCellState> that represents the visible target.
+     *
+     * @param mixed $state
+     * @param mixed $source
+     * @param mixed $target
      */
-    public function updateCellState($state, $source, $target)
+    public function updateCellState($state, $source, $target): void
     {
         $state->absoluteOffset->x = 0;
         $state->absoluteOffset->y = 0;
@@ -374,33 +402,33 @@ class mxGraphView extends mxEventSource
         $model = $this->graph->getModel();
         $pState = $this->getState($model->getParent($state->cell));
 
-        if ($pState != null) {
+        if (null != $pState) {
             $state->origin->x += $pState->origin->x;
             $state->origin->y += $pState->origin->y;
         }
 
         $offset = $this->graph->getChildOffsetForCell($state->cell);
 
-        if ($offset != null) {
+        if (null != $offset) {
             $state->origin->x += $offset->x;
             $state->origin->y += $offset->y;
         }
 
         $geo = $this->graph->getCellGeometry($state->cell);
 
-        if ($geo != null) {
+        if (null != $geo) {
             if (!$model->isEdge($state->cell)) {
                 $offset = $geo->offset;
 
-                if ($offset == null) {
+                if (null == $offset) {
                     $offset = $this->EMPTY_POINT;
                 }
 
-                if ($geo->relative && $pState != null) {
+                if ($geo->relative && null != $pState) {
                     if ($model->isEdge($pState->cell)) {
                         $origin = $this->getPoint($pState, $geo);
 
-                        if ($origin != null) {
+                        if (null != $origin) {
                             $state->origin->x += ($origin->x / $this->scale) - $pState->origin->x - $this->translate->x;
                             $state->origin->y += ($origin->y / $this->scale) - $pState->origin->y - $this->translate->y;
                         }
@@ -432,30 +460,38 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateVertexState
+     * Function: updateVertexState.
      *
      * Validates the given cell state.
+     *
+     * @param mixed $state
+     * @param mixed $geo
      */
-    public function updateVertexState($state, $geo)
+    public function updateVertexState($state, $geo): void
     {
         // LATER: Add support for rotation
         $this->updateVertexLabelOffset($state);
     }
 
     /**
-     * Function: updateEdgeState
+     * Function: updateEdgeState.
      *
      * Validates the given cell state.
+     *
+     * @param mixed $state
+     * @param mixed $geo
+     * @param mixed $source
+     * @param mixed $target
      */
-    public function updateEdgeState($state, $geo, $source, $target)
+    public function updateEdgeState($state, $geo, $source, $target): void
     {
         // This will remove edges with no terminals and no terminal points
         // as such edges are invalid and produce NPEs in the edge styles.
         // Also removes connected edges that have no visible terminals.
-        if (($this->graph->model->getTerminal($state->cell, true) != null && $source == null) ||
-            ($source == null && $geo->getTerminalPoint(true) == null) ||
-            ($this->graph->model->getTerminal($state->cell, false) != null && $target == null) ||
-            ($target == null && $geo->getTerminalPoint(false) == null)) {
+        if ((null != $this->graph->model->getTerminal($state->cell, true) && null == $source)
+            || (null == $source && null == $geo->getTerminalPoint(true))
+            || (null != $this->graph->model->getTerminal($state->cell, false) && null == $target)
+            || (null == $target && null == $geo->getTerminalPoint(false))) {
             $this->removeState($state->cell, true);
         } else {
             $this->updateFixedTerminalPoints($state, $source, $target);
@@ -464,7 +500,7 @@ class mxGraphView extends mxEventSource
 
             $pts = $state->absolutePoints;
 
-            if ($pts == null || sizeof($pts) < 1 || $pts[0] == null || $pts[sizeof($pts) - 1] == null) {
+            if (null == $pts || \count($pts) < 1 || null == $pts[0] || null == $pts[\count($pts) - 1]) {
                 // This will remove edges with invalid points from the list of states in the view.
                 // Happens if the one of the terminals and the corresponding terminal point is null.
                 $this->removeState($state->cell, true);
@@ -476,7 +512,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateVertexLabelOffset
+     * Function: updateVertexLabelOffset.
      *
      * Updates the absoluteOffset of the given vertex cell state. This takes
      * into account the label position styles.
@@ -484,8 +520,10 @@ class mxGraphView extends mxEventSource
      * Parameters:
      *
      * state - <mxCellState> whose absolute offset should be updated.
+     *
+     * @param mixed $state
      */
-    public function updateVertexLabelOffset($state)
+    public function updateVertexLabelOffset($state): void
     {
         $horizontal = mxUtils::getValue(
             $state->style,
@@ -513,16 +551,18 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateLabelBounds
+     * Function: updateLabelBounds.
      *
      * Updates the label bounds in the given state.
+     *
+     * @param mixed $state
      */
-    public function updateLabelBounds($state)
+    public function updateLabelBounds($state): void
     {
         $cell = $state->cell;
         $style = $state->style;
 
-        if (mxUtils::getValue($style, mxConstants::$STYLE_OVERFLOW) == "fill") {
+        if ('fill' == mxUtils::getValue($style, mxConstants::$STYLE_OVERFLOW)) {
             $state->labelBounds = new mxRectangle($state->x, $state->y, $state->width, $state->height);
         } else {
             $label = $this->graph->getLabel($cell);
@@ -539,9 +579,11 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateBoundingBox
+     * Function: updateBoundingBox.
      *
      * Updates the bounding box in the given cell state.
+     *
+     * @param mixed $state
      */
     public function updateBoundingBox($state)
     {
@@ -580,7 +622,7 @@ class mxGraphView extends mxEventSource
         }
 
         // Adds extra pixels for the shadow
-        if (mxUtils::getValue($style, mxConstants::$STYLE_SHADOW, false) == true) {
+        if (true == mxUtils::getValue($style, mxConstants::$STYLE_SHADOW, false)) {
             $rect->width += mxConstants::$SHADOW_OFFSETX;
             $rect->height += mxConstants::$SHADOW_OFFSETY;
         }
@@ -588,7 +630,7 @@ class mxGraphView extends mxEventSource
         // Adds oversize images in labels
         if (mxUtils::getValue($style, mxConstants::$STYLE_SHAPE) ==
             mxConstants::$SHAPE_LABEL) {
-            if (mxUtils::getValue($style, mxConstants::$STYLE_IMAGE) != null) {
+            if (null != mxUtils::getValue($style, mxConstants::$STYLE_IMAGE)) {
                 $w = mxUtils::getValue(
                     $style,
                     mxConstants::$STYLE_IMAGE_WIDTH,
@@ -643,7 +685,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateFixedTerminalPoints
+     * Function: updateFixedTerminalPoints.
      *
      * Sets the initial absolute terminal points in the given state before the edge
      * style is computed.
@@ -653,8 +695,12 @@ class mxGraphView extends mxEventSource
      * edge - <mxCellState> whose initial terminal points should be updated.
      * source - <mxCellState> which represents the source terminal.
      * target - <mxCellState> which represents the target terminal.
+     *
+     * @param mixed $edge
+     * @param mixed $source
+     * @param mixed $target
      */
-    public function updateFixedTerminalPoints($edge, $source, $target)
+    public function updateFixedTerminalPoints($edge, $source, $target): void
     {
         $this->updateFixedTerminalPoint(
             $edge,
@@ -671,7 +717,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateFixedTerminalPoint
+     * Function: updateFixedTerminalPoint.
      *
      * Sets the fixed source or target terminal point on the given edge.
      *
@@ -681,8 +727,13 @@ class mxGraphView extends mxEventSource
      * terminal - <mxCellState> which represents the actual terminal.
      * source - Boolean that specifies if the terminal is the source.
      * constraint - <mxConnectionConstraint> that specifies the connection.
+     *
+     * @param mixed $edge
+     * @param mixed $terminal
+     * @param mixed $source
+     * @param mixed $constraint
      */
-    public function updateFixedTerminalPoint($edge, $terminal, $source, $constraint)
+    public function updateFixedTerminalPoint($edge, $terminal, $source, $constraint): void
     {
         $pt = null;
 
@@ -705,31 +756,31 @@ class mxGraphView extends mxEventSource
             }
         }
 
-        if (!is_array($edge->absolutePoints)) {
-            $edge->absolutePoints = array();
+        if (!\is_array($edge->absolutePoints)) {
+            $edge->absolutePoints = [];
         }
 
-        $n = sizeof($edge->absolutePoints);
+        $n = \count($edge->absolutePoints);
 
         if ($source) {
             if ($n > 0) {
                 $state->absolutePoints[0] = $pt;
             } else {
-                array_push($edge->absolutePoints, $pt);
+                $edge->absolutePoints[] = $pt;
             }
         } else {
-            $n = sizeof($edge->absolutePoints);
+            $n = \count($edge->absolutePoints);
 
             if ($n > 1) {
                 $edge->absolutePoints[$n - 1] = $pt;
             } else {
-                array_push($edge->absolutePoints, $pt);
+                $edge->absolutePoints[] = $pt;
             }
         }
     }
 
     /**
-     * Function: updatePoints
+     * Function: updatePoints.
      *
      * Updates the absolute points in the given state using the specified array
      * of <mxPoints> as the relative points.
@@ -740,12 +791,17 @@ class mxGraphView extends mxEventSource
      * points - Array of <mxPoints> that constitute the relative points.
      * source - <mxCellState> that represents the source terminal.
      * target - <mxCellState> that represents the target terminal.
+     *
+     * @param mixed $edge
+     * @param mixed $points
+     * @param mixed $source
+     * @param mixed $target
      */
-    public function updatePoints($edge, $points, $source, $target)
+    public function updatePoints($edge, $points, $source, $target): void
     {
         if (isset($edge)) {
-            $pts = array();
-            array_push($pts, $edge->absolutePoints[0]);
+            $pts = [];
+            $pts[] = $edge->absolutePoints[0];
             $edgeStyle = $this->getEdgeStyle($edge, $points, $source, $target);
 
             if (isset($edgeStyle)) {
@@ -754,25 +810,28 @@ class mxGraphView extends mxEventSource
 
                 $edgeStyle->apply($edge, $src, $trg, $points, $pts);
             } elseif (isset($points)) {
-                for ($i = 0; $i < sizeof($points); $i++) {
+                for ($i = 0; $i < \count($points); ++$i) {
                     if (isset($points[$i])) {
                         $pt = $points[$i]->copy();
-                        array_push($pts, $this->transformControlPoint($edge, $pt));
+                        $pts[] = $this->transformControlPoint($edge, $pt);
                     }
                 }
             }
 
-            $n = sizeof($edge->absolutePoints);
-            array_push($pts, $edge->absolutePoints[$n-1]);
+            $n = \count($edge->absolutePoints);
+            $pts[] = $edge->absolutePoints[$n - 1];
 
             $edge->absolutePoints = $pts;
         }
     }
 
     /**
-     * Function: transformControlPoint
+     * Function: transformControlPoint.
      *
      * Transforms the given control point to an absolute point.
+     *
+     * @param mixed $state
+     * @param mixed $pt
      */
     public function transformControlPoint($state, $pt)
     {
@@ -785,10 +844,15 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getEdgeStyle
+     * Function: getEdgeStyle.
      *
      * Returns the edge style function to be used to render the given edge
      * state.
+     *
+     * @param mixed $edge
+     * @param mixed $points
+     * @param mixed $source
+     * @param mixed $target
      */
     public function getEdgeStyle($edge, $points, $source, $target)
     {
@@ -805,10 +869,10 @@ class mxGraphView extends mxEventSource
         }
 
         // Converts string values to objects
-        if (is_string($edgeStyle)) {
+        if (\is_string($edgeStyle)) {
             $tmp = mxStyleRegistry::getValue($edgeStyle);
 
-            if ($tmp == null && strpos($edgeStyle, ".") !== false) {
+            if (null == $tmp && false !== strpos($edgeStyle, '.')) {
                 $tmp = mxUtils::evaluate($edgeStyle);
             }
 
@@ -823,7 +887,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateFloatingTerminalPoints
+     * Function: updateFloatingTerminalPoints.
      *
      * Updates the terminal points in the given state after the edge style was
      * computed for the edge.
@@ -833,12 +897,16 @@ class mxGraphView extends mxEventSource
      * state - <mxCellState> whose terminal points should be updated.
      * source - <mxCellState> that represents the source terminal.
      * target - <mxCellState> that represents the target terminal.
+     *
+     * @param mixed $state
+     * @param mixed $source
+     * @param mixed $target
      */
-    public function updateFloatingTerminalPoints($state, $source, $target)
+    public function updateFloatingTerminalPoints($state, $source, $target): void
     {
         $pts = $state->absolutePoints;
         $p0 = $pts[0];
-        $pe = $pts[sizeof($pts) - 1];
+        $pe = $pts[\count($pts) - 1];
 
         if (!isset($pe) && isset($target)) {
             $this->updateFloatingTerminalPoint($state, $target, $source, false);
@@ -850,7 +918,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateFloatingTerminalPoint
+     * Function: updateFloatingTerminalPoint.
      *
      * Updates the absolute terminal point in the given state for the given
      * start and end state, where start is the source if source is true.
@@ -861,8 +929,13 @@ class mxGraphView extends mxEventSource
      * start - <mxCellState> for the terminal on "this" side of the edge.
      * end - <mxCellState> for the terminal on the other side of the edge.
      * source - Boolean indicating if start is the source terminal state.
+     *
+     * @param mixed $edge
+     * @param mixed $start
+     * @param mixed $end
+     * @param mixed $source
      */
-    public function updateFloatingTerminalPoint($edge, $start, $end, $source)
+    public function updateFloatingTerminalPoint($edge, $start, $end, $source): void
     {
         $start = $this->getTerminalPort($edge, $start, $source);
         $next = $this->getNextPoint($edge, $end, $source);
@@ -871,12 +944,12 @@ class mxGraphView extends mxEventSource
             mxConstants::$STYLE_SOURCE_PERIMETER_SPACING :
             mxConstants::$STYLE_TARGET_PERIMETER_SPACING);
         $pt = $this->getPerimeterPoint($start, $next, $this->graph->isOrthogonal($edge), $border);
-        $index = ($source) ? 0 : sizeof($edge->absolutePoints) - 1;
+        $index = ($source) ? 0 : \count($edge->absolutePoints) - 1;
         $edge->absolutePoints[$index] = $pt;
     }
 
     /**
-     * Function: getTerminalPort
+     * Function: getTerminalPort.
      *
      * Returns an <mxCellState> that represents the source or target terminal or
      * port for the given edge.
@@ -886,6 +959,10 @@ class mxGraphView extends mxEventSource
      * state - <mxCellState> that represents the state of the edge.
      * terminal - <mxCellState> that represents the terminal.
      * source - Boolean indicating if the given terminal is the source terminal.
+     *
+     * @param mixed $state
+     * @param mixed $terminal
+     * @param mixed $source
      */
     public function getTerminalPort($state, $terminal, $source)
     {
@@ -893,7 +970,7 @@ class mxGraphView extends mxEventSource
                 : mxConstants::$STYLE_TARGET_PORT;
         $id = mxUtils::getValue($state->style, $key);
 
-        if ($id != null) {
+        if (null != $id) {
             $tmp = $this->getState($this->graph->model->getCell($id));
 
             // Only uses ports where a cell state exists
@@ -906,7 +983,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getPerimeterPoint
+     * Function: getPerimeterPoint.
      *
      * Returns an <mxPoint> that defines the location of the intersection point between
      * the perimeter and the line between the center of the shape and the given point.
@@ -920,15 +997,20 @@ class mxGraphView extends mxEventSource
      * of the perimeter and the line between the next and the center point is
      * returned.
      * border - Optional border between the perimeter and the shape.
+     *
+     * @param mixed      $terminal
+     * @param mixed      $next
+     * @param mixed      $orthogonal
+     * @param null|mixed $border
      */
     public function getPerimeterPoint($terminal, $next, $orthogonal, $border = null)
     {
         $point = null;
 
-        if ($terminal != null) {
+        if (null != $terminal) {
             $perimeter = $this->getPerimeterFunction($terminal);
 
-            if (isset($perimeter) && isset($next)) {
+            if (isset($perimeter, $next)) {
                 $bounds = $this->getPerimeterBounds($terminal, $border);
 
                 if ($bounds->width > 0 || $bounds->height > 0) {
@@ -945,13 +1027,15 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getRoutingCenterX
+     * Function: getRoutingCenterX.
      *
      * Returns the x-coordinate of the center point for automatic routing.
+     *
+     * @param mixed $state
      */
     public function getRoutingCenterX($state)
     {
-        $f = ($state->style != null) ? mxUtils::getNumber(
+        $f = (null != $state->style) ? mxUtils::getNumber(
             $state->style,
             mxConstants::$STYLE_ROUTING_CENTER_X
         ) : 0;
@@ -960,13 +1044,15 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getRoutingCenterY
+     * Function: getRoutingCenterY.
      *
      * Returns the y-coordinate of the center point for automatic routing.
+     *
+     * @param mixed $state
      */
     public function getRoutingCenterY($state)
     {
-        $f = ($state->style != null) ? mxUtils::getNumber(
+        $f = (null != $state->style) ? mxUtils::getNumber(
             $state->style,
             mxConstants::$STYLE_ROUTING_CENTER_Y
         ) : 0;
@@ -975,7 +1061,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getPerimeterBounds
+     * Function: getPerimeterBounds.
      *
      * Returns the perimeter bounds for the given terminal, edge pair as an
      * <mxRectangle>.
@@ -984,10 +1070,13 @@ class mxGraphView extends mxEventSource
      *
      * terminal - <mxCellState> that represents the terminal.
      * border - Number that adds a border between the shape and the perimeter.
+     *
+     * @param mixed $terminal
+     * @param mixed $border
      */
     public function getPerimeterBounds($terminal, $border = 0)
     {
-        if ($terminal != null) {
+        if (null != $terminal) {
             $border += mxUtils::getNumber($terminal->style, mxConstants::$STYLE_PERIMETER_SPACING);
         }
 
@@ -995,19 +1084,21 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getPerimeterFunction
+     * Function: getPerimeterFunction.
      *
      * Returns the perimeter function for the given state.
+     *
+     * @param mixed $state
      */
     public function getPerimeterFunction($state)
     {
         $perimeter = mxUtils::getValue($state->style, mxConstants::$STYLE_PERIMETER);
 
         // Converts string values to objects
-        if (is_string($perimeter)) {
+        if (\is_string($perimeter)) {
             $tmp = mxStyleRegistry::getValue($perimeter);
 
-            if ($tmp == null && strpos($perimeter, ".") !== false) {
+            if (null == $tmp && false !== strpos($perimeter, '.')) {
                 $tmp = mxUtils::evaluate($perimeter);
             }
 
@@ -1022,7 +1113,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getNextPoint
+     * Function: getNextPoint.
      *
      * Returns the nearest point in the list of absolute points or the center
      * of the opposite terminal.
@@ -1033,14 +1124,18 @@ class mxGraphView extends mxEventSource
      * opposite - <mxCellState> that represents the opposite terminal.
      * source - Boolean indicating if the next point for the source or target
      * should be returned.
+     *
+     * @param mixed $edge
+     * @param mixed $opposite
+     * @param mixed $source
      */
     public function getNextPoint($edge, $opposite, $source)
     {
         $pts = $edge->absolutePoints;
         $point = null;
 
-        if ($pts != null && sizeof($pts) >= 2) {
-            $count = sizeof($pts);
+        if (null != $pts && \count($pts) >= 2) {
+            $count = \count($pts);
             $index = ($source) ? min(1, $count - 1) : max(0, $count - 2);
             $point = $pts[$index];
         }
@@ -1053,7 +1148,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getVisibleTerminal
+     * Function: getVisibleTerminal.
      *
      * Returns the nearest ancestor terminal that is visible. The edge appears
      * to be connected to this terminal on the display.
@@ -1063,6 +1158,9 @@ class mxGraphView extends mxEventSource
      * edge - <mxCell> whose visible terminal should be returned.
      * source - Boolean that specifies if the source or target terminal
      * should be returned.
+     *
+     * @param mixed $edge
+     * @param mixed $source
      */
     public function getVisibleTerminal($edge, $source)
     {
@@ -1070,9 +1168,9 @@ class mxGraphView extends mxEventSource
         $result = $model->getTerminal($edge, $source);
         $best = $result;
 
-        while ($result != null) {
-            if (!$this->graph->isCellVisible($best)||
-                $this->graph->isCellCollapsed($result)) {
+        while (null != $result) {
+            if (!$this->graph->isCellVisible($best)
+                || $this->graph->isCellCollapsed($result)) {
                 $best = $result;
             }
 
@@ -1088,44 +1186,46 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: updateEdgeBounds
+     * Function: updateEdgeBounds.
      *
      * Updates the bounds of the specified state based on the
      * absolute points in the state.
+     *
+     * @param mixed $state
      */
-    public function updateEdgeBounds($state)
+    public function updateEdgeBounds($state): void
     {
         $points = $state->absolutePoints;
         $p0 = $points[0];
-        $n = sizeof($points);
-        $pe = $points[$n-1];
+        $n = \count($points);
+        $pe = $points[$n - 1];
 
         if ($p0->x != $pe->x || $p0->y != $pe->y) {
             $dx = $pe->x - $p0->x;
             $dy = $pe->y - $p0->y;
-            $state->terminalDistance = sqrt($dx*$dx+$dy*$dy);
+            $state->terminalDistance = sqrt($dx * $dx + $dy * $dy);
         } else {
             $state->terminalDistance = 0;
         }
 
         $length = 0;
-        $segments = array();
+        $segments = [];
         $pt = $p0;
 
-        if ($pt != null) {
+        if (null != $pt) {
             $minX = $pt->x;
             $minY = $pt->y;
             $maxX = $minX;
             $maxY = $minY;
 
-            for ($i = 1; $i < $n; $i++) {
+            for ($i = 1; $i < $n; ++$i) {
                 $tmp = $points[$i];
-                if ($tmp != null) {
+                if (null != $tmp) {
                     $dx = $pt->x - $tmp->x;
                     $dy = $pt->y - $tmp->y;
 
-                    $segment = sqrt($dx*$dx+$dy*$dy);
-                    array_push($segments, $segment);
+                    $segment = sqrt($dx * $dx + $dy * $dy);
+                    $segments[] = $segment;
                     $length += $segment;
                     $pt = $tmp;
 
@@ -1147,7 +1247,7 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getPoint
+     * Function: getPoint.
      *
      * Returns the absolute point on the edge for the given relative
      * <mxGeometry> as an <mxPoint>. The edge is represented by the given
@@ -1157,6 +1257,9 @@ class mxGraphView extends mxEventSource
      *
      * state - <mxCellState> that represents the state of the parent edge.
      * geometry - <mxGeometry> that represents the relative location.
+     *
+     * @param mixed      $state
+     * @param null|mixed $geometry
      */
     public function getPoint($state, $geometry = null)
     {
@@ -1165,7 +1268,7 @@ class mxGraphView extends mxEventSource
 
         if (isset($state->segments) && (!isset($geometry) || $geometry->relative)) {
             $gx = (isset($geometry)) ? $geometry->x / 2 : 0;
-            $pointCount = sizeof($state->absolutePoints);
+            $pointCount = \count($state->absolutePoints);
             $dist = ($gx + 0.5) * $state->length;
             $segments = $state->segments;
             $segment = $segments[0];
@@ -1177,11 +1280,11 @@ class mxGraphView extends mxEventSource
                 $segment = $segments[$index++];
             }
 
-            $factor = ($segment == 0) ? 0 : ($dist - $length) / $segment;
+            $factor = (0 == $segment) ? 0 : ($dist - $length) / $segment;
             $p0 = $state->absolutePoints[$index - 1];
             $pe = $state->absolutePoints[$index];
 
-            if ($p0 != null && $pe != null) {
+            if (null != $p0 && null != $pe) {
                 $gy = 0;
                 $offsetX = 0;
                 $offsetY = 0;
@@ -1198,8 +1301,8 @@ class mxGraphView extends mxEventSource
 
                 $dx = $pe->x - $p0->x;
                 $dy = $pe->y - $p0->y;
-                $nx = ($segment == 0) ? 0 : $dy / $segment;
-                $ny = ($segment == 0) ? 0 : $dx / $segment;
+                $nx = (0 == $segment) ? 0 : $dy / $segment;
+                $ny = (0 == $segment) ? 0 : $dx / $segment;
 
                 $x = $p0->x + $dx * $factor + ($nx * $gy + $offsetX) * $this->scale;
                 $y = $p0->y + $dy * $factor - ($ny * $gy - $offsetY) * $this->scale;
@@ -1217,21 +1320,24 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getState
+     * Function: getState.
      *
      * Returns the cell state for the specified cell. If
      * create is true then the state is created and added
      * to the cache if it does not yet exist.
+     *
+     * @param mixed $cell
+     * @param mixed $create
      */
     public function getState($cell, $create = false)
     {
         $state = null;
 
-        if ($cell != null) {
+        if (null != $cell) {
             $id = $this->getHashCode($cell);
             $state = (isset($this->states[$id])) ? $this->states[$id] : null;
 
-            if ($state == null && $create && $this->graph->isCellVisible($cell)) {
+            if (null == $state && $create && $this->graph->isCellVisible($cell)) {
                 $state = $this->createState($cell);
                 $this->states[$id] = $state;
             }
@@ -1241,22 +1347,24 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getHashCode
+     * Function: getHashCode.
      *
      * Returns a unique string that represents the given instance.
+     *
+     * @param mixed $cell
      */
     public function getHashCode($cell)
     {
         // PHP >= 5.2
-        if (function_exists("spl_object_hash")) {
+        if (\function_exists('spl_object_hash')) {
             return spl_object_hash($cell);
-        } else {
-            return (string) $cell;
         }
+
+        return (string) $cell;
     }
 
     /**
-     * Function: getStates
+     * Function: getStates.
      *
      * Returns the <mxCellStates> for the given array of <mxCells>. The array
      * contains all states that are not null, that is, the returned array may
@@ -1268,22 +1376,24 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: getStates
+     * Function: getStates.
      *
      * Returns the <mxCellStates> for the given array of <mxCells>. The array
      * contains all states that are not null, that is, the returned array may
      * have less elements than the given array.
+     *
+     * @param mixed $cells
      */
     public function getCellStates($cells)
     {
-        $result = array();
-        $count = sizeof($cells);
+        $result = [];
+        $count = \count($cells);
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; ++$i) {
             $state = $this->getState($cells[$i]);
 
-            if ($state != null) {
-                array_push($result, $state);
+            if (null != $state) {
+                $result[] = $state;
             }
         }
 
@@ -1291,9 +1401,12 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: removeState
+     * Function: removeState.
      *
      * Removes and returns the mxCellState for the given cell.
+     *
+     * @param mixed $cell
+     * @param mixed $recurse
      */
     public function removeState($cell, $recurse = false)
     {
@@ -1301,14 +1414,14 @@ class mxGraphView extends mxEventSource
             $model = $this->graph->getModel();
             $childCount = $model->getChildCount($cell);
 
-            for ($i = 0; $i < $childCount; $i++) {
+            for ($i = 0; $i < $childCount; ++$i) {
                 $this->removeState($model->getChildAt($cell, $i), true);
             }
         }
 
         $state = null;
 
-        if ($cell != null) {
+        if (null != $cell) {
             $id = $this->getHashCode($cell);
             $state = $this->states[$id];
             unset($this->states[$id]);
@@ -1318,9 +1431,11 @@ class mxGraphView extends mxEventSource
     }
 
     /**
-     * Function: createState
+     * Function: createState.
      *
      * Creates the state for the specified cell.
+     *
+     * @param mixed $cell
      */
     public function createState($cell)
     {

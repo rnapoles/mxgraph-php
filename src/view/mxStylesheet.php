@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\View;
 
 use Mxgraph\Util\mxConstants;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxStylesheet
 {
     /**
-     * Class: mxStylesheet
+     * Class: mxStylesheet.
      *
      * Defines the appearance of the cells in a graph. See
      * <putCellStyle> for an example of creating a style.
@@ -27,10 +29,10 @@ class mxStylesheet
      *
      * Maps from names to styles.
      */
-    public $styles = array();
+    public $styles = [];
 
     /**
-     * Constructor: mxStylesheet
+     * Constructor: mxStylesheet.
      *
      * Constructs a new stylesheet and assigns default styles.
      */
@@ -41,86 +43,90 @@ class mxStylesheet
     }
 
     /**
-     * Function: createDefaultVertexStyle
+     * Function: createDefaultVertexStyle.
      *
      * Creates and returns the default vertex style.
      */
     public function createDefaultVertexStyle()
     {
-        $style = array();
+        $style = [];
 
         $style[mxConstants::$STYLE_SHAPE] = mxConstants::$SHAPE_RECTANGLE;
         $style[mxConstants::$STYLE_PERIMETER] = mxPerimeter::$RectanglePerimeter;
         $style[mxConstants::$STYLE_VERTICAL_ALIGN] = mxConstants::$ALIGN_MIDDLE;
         $style[mxConstants::$STYLE_ALIGN] = mxConstants::$ALIGN_CENTER;
-        $style[mxConstants::$STYLE_FILLCOLOR] = "#C3D9FF";
-        $style[mxConstants::$STYLE_STROKECOLOR] = "#6482B9";
-        $style[mxConstants::$STYLE_FONTCOLOR] = "#774400";
+        $style[mxConstants::$STYLE_FILLCOLOR] = '#C3D9FF';
+        $style[mxConstants::$STYLE_STROKECOLOR] = '#6482B9';
+        $style[mxConstants::$STYLE_FONTCOLOR] = '#774400';
 
         return $style;
     }
 
     /**
-     * Function: createDefaultEdgeStyle
+     * Function: createDefaultEdgeStyle.
      *
      * Creates and returns the default edge style.
      */
     public function createDefaultEdgeStyle()
     {
-        $style = array();
+        $style = [];
 
         $style[mxConstants::$STYLE_SHAPE] = mxConstants::$SHAPE_CONNECTOR;
         $style[mxConstants::$STYLE_ENDARROW] = mxConstants::$ARROW_CLASSIC;
         $style[mxConstants::$STYLE_VERTICAL_ALIGN] = mxConstants::$ALIGN_MIDDLE;
         $style[mxConstants::$STYLE_ALIGN] = mxConstants::$ALIGN_CENTER;
-        $style[mxConstants::$STYLE_STROKECOLOR] = "#6482B9";
-        $style[mxConstants::$STYLE_FONTCOLOR] = "#446299";
+        $style[mxConstants::$STYLE_STROKECOLOR] = '#6482B9';
+        $style[mxConstants::$STYLE_FONTCOLOR] = '#446299';
 
         return $style;
     }
 
     /**
-     * Function: putDefaultVertexStyle
+     * Function: putDefaultVertexStyle.
      *
      * Sets the default style for vertices.
+     *
+     * @param mixed $style
      */
-    public function putDefaultVertexStyle($style)
+    public function putDefaultVertexStyle($style): void
     {
-        $this->putCellStyle("defaultVertex", $style);
+        $this->putCellStyle('defaultVertex', $style);
     }
 
     /**
-     * Function: putDefaultEdgeStyle
+     * Function: putDefaultEdgeStyle.
      *
      * Sets the default style for edges.
+     *
+     * @param mixed $style
      */
-    public function putDefaultEdgeStyle($style)
+    public function putDefaultEdgeStyle($style): void
     {
-        $this->putCellStyle("defaultEdge", $style);
+        $this->putCellStyle('defaultEdge', $style);
     }
 
     /**
-     * Function: getDefaultVertexStyle
+     * Function: getDefaultVertexStyle.
      *
      * Returns the default style for vertices.
      */
     public function getDefaultVertexStyle()
     {
-        return $this->styles["defaultVertex"];
+        return $this->styles['defaultVertex'];
     }
 
     /**
-     * Function: getDefaultEdgeStyle
+     * Function: getDefaultEdgeStyle.
      *
      * Sets the default style for edges.
      */
     public function getDefaultEdgeStyle()
     {
-        return $this->styles["defaultEdge"];
+        return $this->styles['defaultEdge'];
     }
 
     /**
-     * Function: putCellStyle
+     * Function: putCellStyle.
      *
      * Stores the specified style under the given name.
      *
@@ -154,14 +160,17 @@ class mxStylesheet
      *
      * name - Name for the style to be stored.
      * style - Key, value pairs that define the style.
+     *
+     * @param mixed $name
+     * @param mixed $style
      */
-    public function putCellStyle($name, $style)
+    public function putCellStyle($name, $style): void
     {
         $this->styles[$name] = $style;
     }
 
     /**
-     * Function: getCellStyle
+     * Function: getCellStyle.
      *
      * Returns the cell style for the specified cell or the given defaultStyle
      * if no style can be found for the given stylename.
@@ -171,28 +180,31 @@ class mxStylesheet
      * name - String of the form [(stylename|key=value);] that represents the
      * style.
      * defaultStyle - Default style to be returned if no style can be found.
+     *
+     * @param mixed      $name
+     * @param null|mixed $defaultStyle
      */
     public function getCellStyle($name, $defaultStyle = null)
     {
         $style = $defaultStyle;
 
-        if ($name != null && strlen($name) > 0) {
-            $pairs = explode(";", $name);
+        if (null != $name && '' !== $name) {
+            $pairs = explode(';', $name);
 
             if (isset($pairs)) {
-                if (isset($style) && $name[0] != ';') {
-                    $style = array_slice($style, 0);
+                if (isset($style) && ';' != $name[0]) {
+                    $style = \array_slice($style, 0);
                 } else {
-                    $style = array();
+                    $style = [];
                 }
 
-                for ($i = 0; $i < sizeof($pairs); $i++) {
+                for ($i = 0; $i < \count($pairs); ++$i) {
                     $tmp = $pairs[$i];
-                    $pos = strpos($pairs[$i], "=");
+                    $pos = strpos($pairs[$i], '=');
 
-                    if ($pos !== false) {
+                    if (false !== $pos) {
                         $key = substr($tmp, 0, $pos);
-                        $value = substr($tmp, $pos+1);
+                        $value = substr($tmp, $pos + 1);
 
                         if ($value == mxConstants::$NONE) {
                             unset($style[$key]);

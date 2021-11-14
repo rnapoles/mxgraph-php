@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Io;
 
-use Mxgraph\Model\mxGraphModel;
-
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxCodecRegistry
 {
     /**
-     * Class: mxCodecRegistry
+     * Class: mxCodecRegistry.
      *
      * A class to register codecs for objects.
      *
@@ -18,17 +18,17 @@ class mxCodecRegistry
      *
      * Maps from constructor names to codecs.
      */
-    public static $codecs = array();
+    public static $codecs = [];
 
     /**
-     * Variable: aliases
+     * Variable: aliases.
      *
      * Maps from classnames to codecnames.
      */
-    public static $aliases = array();
+    public static $aliases = [];
 
     /**
-     * Function: register
+     * Function: register.
      *
      * Registers a new codec and associates the name of the template constructor
      * in the codec with the codec object. Automatically creates an alias if the
@@ -37,17 +37,19 @@ class mxCodecRegistry
      * Parameters:
      *
      * codec - <mxObjectCodec> to be registered.
+     *
+     * @param mixed $codec
      */
     public static function register($codec)
     {
         if (isset($codec)) {
             $name = $codec->getName();
-            mxCodecRegistry::$codecs[$name] = $codec;
+            self::$codecs[$name] = $codec;
 
-            $classname = mxCodecRegistry::getName($codec->template);
+            $classname = self::getName($codec->template);
 
             if ($classname != $name) {
-                mxCodecRegistry::addAlias($classname, $name);
+                self::addAlias($classname, $name);
             }
         }
 
@@ -55,16 +57,20 @@ class mxCodecRegistry
     }
 
     /**
-     * Function: addAlias
+     * Function: addAlias.
      *
      * Adds an alias for mapping a classname to a codecname.
+     *
+     * @param mixed $classname
+     * @param mixed $codecname
      */
-    public static function addAlias($classname, $codecname)
+    public static function addAlias($classname, $codecname): void
     {
-        mxCodecRegistry::$aliases[$classname] = $codecname;
+        self::$aliases[$classname] = $codecname;
     }
+
     /**
-     * Function: getCodec
+     * Function: getCodec.
      *
      * Returns a codec that handles objects that are constructed
      * using the given ctor.
@@ -72,32 +78,34 @@ class mxCodecRegistry
      * Parameters:
      *
      * ctor - JavaScript constructor function.
+     *
+     * @param mixed $name
      */
     public static function getCodec($name)
     {
         $codec = null;
 
         if (isset($name)) {
-            if (isset(mxCodecRegistry::$aliases[$name])) {
-                $tmp = mxCodecRegistry::$aliases[$name];
+            if (isset(self::$aliases[$name])) {
+                $tmp = self::$aliases[$name];
 
-                if (strlen($tmp) > 0) {
+                if ('' !== $tmp) {
                     $name = $tmp;
                 }
             }
 
-            $codec = (isset(mxCodecRegistry::$codecs[$name])) ?
-                mxCodecRegistry::$codecs[$name] : null;
+            $codec = (isset(self::$codecs[$name])) ?
+                self::$codecs[$name] : null;
 
             // Registers a new default codec for the given constructor
             // if no codec has been previously defined.
             if (!isset($codec)) {
                 try {
-                    $obj = mxCodecRegistry::getInstanceForName($name);
+                    $obj = self::getInstanceForName($name);
 
                     if (isset($obj)) {
                         $codec = new mxObjectCodec($obj);
-                        mxCodecRegistry::register($codec);
+                        self::register($codec);
                     }
                 } catch (\Exception $e) {
                     // ignore
@@ -109,9 +117,11 @@ class mxCodecRegistry
     }
 
     /**
-     * Function: getInstanceForName
+     * Function: getInstanceForName.
      *
      * Creates and returns a new instance for the given class name.
+     *
+     * @param mixed $name
      */
     public static function getInstanceForName($name)
     {
@@ -120,7 +130,7 @@ class mxCodecRegistry
         }
 
         foreach (get_declared_classes() as $class) {
-            if (substr($class, -strlen($name)) == $name) {
+            if (substr($class, -\strlen($name)) == $name) {
                 return new $class();
             }
         }
@@ -129,21 +139,24 @@ class mxCodecRegistry
     }
 
     /**
-     * Function: getName
+     * Function: getName.
      *
      * Returns the codec name for the given object instance.
      *
      * Parameters:
      *
      * obj - PHP object to return the codec name for.
+     *
+     * @param mixed $obj
      */
     public static function getName($obj)
     {
-        if (is_array($obj)) {
-            return "Array";
+        if (\is_array($obj)) {
+            return 'Array';
         }
 
-        $name = explode("\\", get_class($obj));
+        $name = explode('\\', \get_class($obj));
+
         return array_pop($name);
     }
 }

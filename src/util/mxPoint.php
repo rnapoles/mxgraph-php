@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Util;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxPoint
 {
     /**
-     * Class: mxPoint
+     * Class: mxPoint.
      *
      * Implements a 2-dimensional point with double precision coordinates.
      *
@@ -19,17 +21,20 @@ class mxPoint
     public $x = 0;
 
     /**
-     * Variable: y
+     * Variable: y.
      *
      * Holds the y-coordinate of the point. Default is 0.
      */
     public $y = 0;
 
     /**
-     * Constructor: mxPoint
+     * Constructor: mxPoint.
      *
      * Constructs a new point for the optional x and y coordinates. If no
      * coordinates are given, then the default values for <x> and <y> are used.
+     *
+     * @param mixed $x
+     * @param mixed $y
      */
     public function __construct($x = 0, $y = 0)
     {
@@ -38,27 +43,29 @@ class mxPoint
     }
 
     /**
-     * Function: equals
+     * Function: equals.
      *
      * Returns true if the given object equals this point.
+     *
+     * @param mixed $obj
      */
     public function equals($obj)
     {
-        if ($obj instanceof mxPoint) {
-            return $obj->x == $this->x &&
-                $obj->y == $this->y;
+        if ($obj instanceof self) {
+            return $obj->x == $this->x
+                && $obj->y == $this->y;
         }
 
         return false;
     }
 
     /**
-     * Function: copy
+     * Function: copy.
      *
      * Returns a copy of this <mxPoint>.
      */
     public function copy()
     {
-        return new mxPoint($this->x, $this->y);
+        return new self($this->x, $this->y);
     }
 }

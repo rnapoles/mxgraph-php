@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -17,28 +17,28 @@ namespace Mxgraph\View;
 class mxPerimeter
 {
     /**
-     * Variable: RectanglePerimeter
+     * Variable: RectanglePerimeter.
      *
      * Provides a rectangular perimeter.
      */
     public static $RectanglePerimeter;
 
     /**
-     * Variable: EllipsePerimeter
+     * Variable: EllipsePerimeter.
      *
      * Provides an elliptic perimeter.
      */
     public static $EllipsePerimeter;
 
     /**
-     * Variable: RhombusPerimeter
+     * Variable: RhombusPerimeter.
      *
      * Provides a rhombus (aka diamond) perimeter.
      */
     public static $RhombusPerimeter;
 
     /**
-     * Variable: TrianglePerimeter
+     * Variable: TrianglePerimeter.
      *
      * Provides a triangle perimeter. See <RectanglePerimeter> for a
      * description of the parameters.

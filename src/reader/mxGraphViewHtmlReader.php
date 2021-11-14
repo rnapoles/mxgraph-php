@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Reader;
 
 use Mxgraph\Canvas\mxHtmlCanvas;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
-
 class mxGraphViewHtmlReader extends mxGraphViewImageReader
 {
     /**
-     * Class: mxGraphViewHtmlReader
+     * Class: mxGraphViewHtmlReader.
      *
      * A display XML to HTML converter. This allows to create an image of a graph
      * without having to parse and create the graph model using the XML file
@@ -27,9 +28,11 @@ class mxGraphViewHtmlReader extends mxGraphViewImageReader
     }
 
     /**
-     * Function: createCanvas
+     * Function: createCanvas.
      *
      * Returns the canvas to be used for rendering.
+     *
+     * @param mixed $attrs
      */
     public function createCanvas($attrs)
     {
@@ -37,13 +40,16 @@ class mxGraphViewHtmlReader extends mxGraphViewImageReader
     }
 
     /**
-     * Function: convert
+     * Function: convert.
      *
      * Creates the HTML markup for the given display XML string.
+     *
+     * @param mixed      $string
+     * @param null|mixed $background
      */
     public static function convert($string, $background = null)
     {
-        $viewReader = new mxGraphViewHtmlReader();
+        $viewReader = new self();
 
         $viewReader->read($string);
         $html = $viewReader->canvas->getHtml();
@@ -53,13 +59,16 @@ class mxGraphViewHtmlReader extends mxGraphViewImageReader
     }
 
     /**
-     * Function: convertFile
+     * Function: convertFile.
      *
      * Creates the HTML markup for the given display XML file.
+     *
+     * @param mixed      $filename
+     * @param null|mixed $background
      */
     public static function convertFile($filename, $background = null)
     {
-        $viewReader = new mxGraphViewHtmlReader();
+        $viewReader = new self();
 
         $viewReader->readFile($filename);
         $html = $viewReader->canvas->getHtml();

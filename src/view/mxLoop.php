@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -19,23 +19,27 @@ use Mxgraph\Util\mxPoint;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Class: mxLoop
+ * Class: mxLoop.
  *
  * Implements a self-reference, aka. loop.
  */
 class mxLoop implements mxEdgeStyleFunction
 {
     /**
-     *
+     * @param mixed $state
+     * @param mixed $source
+     * @param mixed $target
+     * @param mixed $points
+     * @param mixed $result
      */
-    public function apply($state, $source, $target, $points, &$result)
+    public function apply($state, $source, $target, $points, &$result): void
     {
-        if ($source != null) {
+        if (null != $source) {
             $view = $state->view;
             $graph = $view->graph;
-            $pt = ($points != null && sizeof($points) > 0) ? $points[0] : null;
+            $pt = (null != $points && \count($points) > 0) ? $points[0] : null;
 
-            if ($pt != null) {
+            if (null != $pt) {
                 $pt = $view->transformControlPoint($state, $pt);
 
                 if (mxUtils::contains($source, $pt->x, $pt->y)) {
@@ -60,8 +64,8 @@ class mxLoop implements mxEdgeStyleFunction
                 mxConstants::$DIRECTION_WEST
             );
 
-            if ($dir == mxConstants::$DIRECTION_NORTH ||
-                $dir == mxConstants::$DIRECTION_SOUTH) {
+            if ($dir == mxConstants::$DIRECTION_NORTH
+                || $dir == mxConstants::$DIRECTION_SOUTH) {
                 $x = $view->getRoutingCenterX($source);
                 $dx = $seg;
             } else {
@@ -69,10 +73,10 @@ class mxLoop implements mxEdgeStyleFunction
                 $dy = $seg;
             }
 
-            if ($pt == null ||
-                $pt->x < $source->x ||
-                $pt->x > $source->x + $source->width) {
-                if ($pt != null) {
+            if (null == $pt
+                || $pt->x < $source->x
+                || $pt->x > $source->x + $source->width) {
+                if (null != $pt) {
                     $x = $pt->x;
                     $dy = max(abs($y - $pt->y), $dy);
                 } else {
@@ -86,15 +90,15 @@ class mxLoop implements mxEdgeStyleFunction
                         $x = $source->x + $source->width + 2 * $dy;
                     }
                 }
-            } elseif ($pt != null) {
+            } elseif (null != $pt) {
                 $x = $view->getRoutingCenterX($source);
                 $dx = max(abs($x - $pt->x), $dy);
                 $y = $pt->y;
                 $dy = 0;
             }
 
-            array_push($result, new mxPoint($x-$dx, $y-$dy));
-            array_push($result, new mxPoint($x+$dx, $y+$dy));
+            $result[] = new mxPoint($x - $dx, $y - $dy);
+            $result[] = new mxPoint($x + $dx, $y + $dy);
         }
     }
 }

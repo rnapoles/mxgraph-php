@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -17,7 +17,7 @@ namespace Mxgraph\View;
 interface mxPerimeterFunction
 {
     /**
-     * Interface: mxPerimeterFunction
+     * Interface: mxPerimeterFunction.
      *
      * Defines the requirements for a perimeter function.
      *
@@ -36,6 +36,11 @@ interface mxPerimeterFunction
      * the perimeter should be returned. If this is false then the intersection
      * of the perimeter and the line between the next and the center point is
      * returned.
+     *
+     * @param mixed $bounds
+     * @param mixed $vertex
+     * @param mixed $next
+     * @param mixed $orthogonal
      */
     public function apply($bounds, $vertex, $next, $orthogonal);
 }

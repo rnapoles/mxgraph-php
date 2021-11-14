@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\View;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxConnectionConstraint
 {
     /**
-     * Class: mxConnectionConstraint
+     * Class: mxConnectionConstraint.
      *
      * Defines an object that contains the constraints about how to connect one
      * side of an edge to its terminal.
@@ -20,7 +22,7 @@ class mxConnectionConstraint
     public $point;
 
     /**
-     * Variable: perimeter
+     * Variable: perimeter.
      *
      * Boolean that specifies if the point should be projected onto the perimeter
      * of the terminal.
@@ -28,7 +30,7 @@ class mxConnectionConstraint
     public $perimeter;
 
     /**
-     * Constructor: mxConnectionConstraint
+     * Constructor: mxConnectionConstraint.
      *
      * Constructs a new connection constraint for the given point and boolean
      * arguments.
@@ -39,6 +41,9 @@ class mxConnectionConstraint
      * in relative coordinates. Default is null.
      * perimeter - Optional boolean that specifies if the fixed point should be
      * projected onto the perimeter of the terminal. Default is true.
+     *
+     * @param null|mixed $point
+     * @param mixed      $perimeter
      */
     public function __construct($point = null, $perimeter = true)
     {

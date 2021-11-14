@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -18,7 +18,7 @@ use Mxgraph\Util\mxConstants;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Class: mxElbowConnector
+ * Class: mxElbowConnector.
  *
  * Uses either <SideToSide> or <TopToBottom> depending on the horizontal
  * flag in the cell style. <SideToSide> is used if horizontal is true or
@@ -28,17 +28,21 @@ use Mxgraph\Util\mxUtils;
 class mxElbowConnector implements mxEdgeStyleFunction
 {
     /**
-     *
+     * @param mixed $state
+     * @param mixed $source
+     * @param mixed $target
+     * @param mixed $points
+     * @param mixed $result
      */
-    public function apply($state, $source, $target, $points, &$result)
+    public function apply($state, $source, $target, $points, &$result): void
     {
-        $pt = ($points != null && sizeof($points) > 0) ? $points[0] : null;
+        $pt = (null != $points && \count($points) > 0) ? $points[0] : null;
 
         $vertical = false;
         $horizontal = false;
 
-        if ($source != null && $target != null) {
-            if ($pt != null) {
+        if (null != $source && null != $target) {
+            if (null != $pt) {
                 $left = min($source->x, $target->x);
                 $right = max(
                     $source->x + $source->width,
@@ -76,8 +80,8 @@ class mxElbowConnector implements mxEdgeStyleFunction
             }
         }
 
-        if (!$horizontal && ($vertical ||
-                mxUtils::getValue($state->style, mxConstants::$STYLE_ELBOW) == mxConstants::$ELBOW_VERTICAL)) {
+        if (!$horizontal && ($vertical
+                || mxUtils::getValue($state->style, mxConstants::$STYLE_ELBOW) == mxConstants::$ELBOW_VERTICAL)) {
             mxEdgeStyle::$TopToBottom->apply($state, $source, $target, $points, $result);
         } else {
             mxEdgeStyle::$SideToSide->apply($state, $source, $target, $points, $result);

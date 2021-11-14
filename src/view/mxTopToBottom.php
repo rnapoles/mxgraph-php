@@ -1,7 +1,7 @@
 <?php
 /**
  * EXB R5 - Business suite
- * Copyright (C) EXB Software 2020 - All Rights Reserved
+ * Copyright (C) EXB Software 2020 - All Rights Reserved.
  *
  * This file is part of EXB R5.
  *
@@ -18,7 +18,7 @@ use Mxgraph\Util\mxPoint;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Class: mxTopToBottom
+ * Class: mxTopToBottom.
  *
  * Implements a horizontal elbow edge. See <EntityRelation> for a
  * description of the parameters.
@@ -26,17 +26,21 @@ use Mxgraph\Util\mxUtils;
 class mxTopToBottom implements mxEdgeStyleFunction
 {
     /**
-     *
+     * @param mixed $state
+     * @param mixed $source
+     * @param mixed $target
+     * @param mixed $points
+     * @param mixed $result
      */
-    public function apply($state, $source, $target, $points, &$result)
+    public function apply($state, $source, $target, $points, &$result): void
     {
         $view = $state->view;
-        $pt = ($points != null && sizeof($points) > 0) ? $points[0] : null;
+        $pt = (null != $points && \count($points) > 0) ? $points[0] : null;
         $pts = $state->absolutePoints;
         $p0 = $pts[0];
-        $pe = $pts[sizeof($pts) - 1];
+        $pe = $pts[\count($pts) - 1];
 
-        if ($pt != null) {
+        if (null != $pt) {
             $pt = $view->transformControlPoint($state, $pt);
         }
 
@@ -52,46 +56,46 @@ class mxTopToBottom implements mxEdgeStyleFunction
             $target->y = $pe->y;
         }
 
-        if (isset($source) && isset($target)) {
+        if (isset($source, $target)) {
             $t = max($source->y, $target->y);
-            $b = min($source->y+$source->height, $target->y+$target->height);
+            $b = min($source->y + $source->height, $target->y + $target->height);
 
             $x = $view->getRoutingCenterX($source);
 
-            if ($pt != null &&
-                $pt->x >= $source->x &&
-                $pt->x <= $source->x + $source->width) {
+            if (null != $pt
+                && $pt->x >= $source->x
+                && $pt->x <= $source->x + $source->width) {
                 $x = $pt->x;
             }
 
-            $y = ($pt != null) ? $pt->y : $b + ($t - $b) / 2;
+            $y = (null != $pt) ? $pt->y : $b + ($t - $b) / 2;
 
-            if (!mxUtils::contains($target, $x, $y) &&
-                !mxUtils::contains($source, $x, $y)) {
-                array_push($result, new mxPoint($x, $y));
+            if (!mxUtils::contains($target, $x, $y)
+                && !mxUtils::contains($source, $x, $y)) {
+                $result[] = new mxPoint($x, $y);
             }
 
-            if ($pt != null &&
-                $pt->x >= $target->x &&
-                $pt->x <= $target->x + $target->width) {
+            if (null != $pt
+                && $pt->x >= $target->x
+                && $pt->x <= $target->x + $target->width) {
                 $x = $pt->x;
             } else {
                 $x = $view->getRoutingCenterX($target);
             }
 
-            if (!mxUtils::contains($target, $x, $y) &&
-                !mxUtils::contains($source, $x, $y)) {
-                array_push($result, new mxPoint($x, $y));
+            if (!mxUtils::contains($target, $x, $y)
+                && !mxUtils::contains($source, $x, $y)) {
+                $result[] = new mxPoint($x, $y);
             }
 
-            if (sizeof($result) == 1) {
-                if ($pt == null) {
-                    array_push($result, new mxPoint($x, $y));
+            if (1 == \count($result)) {
+                if (null == $pt) {
+                    $result[] = new mxPoint($x, $y);
                 } else {
                     $l = max($source->x, $target->x);
                     $r = min($source->x + $source->width, $target->x + $target->width);
 
-                    array_push($result, new mxPoint($r + ($r - $l) / 2, $y));
+                    $result[] = new mxPoint($r + ($r - $l) / 2, $y);
                 }
             }
         }

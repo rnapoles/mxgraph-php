@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Util;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxLog
 {
     /**
-     * Class: mxLog
+     * Class: mxLog.
      *
      * Logging facility.
      *
@@ -19,196 +21,217 @@ class mxLog
     public static $level_fine = true;
 
     /**
-     * Variable: level_debug
+     * Variable: level_debug.
      *
      * Specifies the debug logging level.
      */
     public static $level_debug = true;
 
     /**
-     * Variable: level_info
+     * Variable: level_info.
      *
      * Specifies the info logging level.
      */
     public static $level_info = true;
 
     /**
-     * Variable: level_warn
+     * Variable: level_warn.
      *
      * Specifies the warn logging level.
      */
     public static $level_warn = true;
 
     /**
-     * Variable: level_error
+     * Variable: level_error.
      *
      * Specifies the error logging level.
      */
     public static $level_error = true;
 
     /**
-     * Variable: current
+     * Variable: current.
      *
      * Default is true.
      */
-    public static $current = array();
+    public static $current = [];
 
     /**
-     * Variable: tab
+     * Variable: tab.
      *
      * Default is true.
      */
-    public static $tab = "";
+    public static $tab = '';
 
     /**
-     * Variable: logfiles
+     * Variable: logfiles.
      *
      * Holds the array of logfiles.
      */
-    public static $logfiles = array();
+    public static $logfiles = [];
 
     /**
-     * Variable: printLog
+     * Variable: printLog.
      *
      * Specifies if the log should be printed out.
      */
     public static $printLog = false;
 
     /**
-     * Function: addLogfile
+     * Function: addLogfile.
      *
      * Adds a file for logging.
+     *
+     * @param mixed $filename
      */
-    public static function addLogfile($filename)
+    public static function addLogfile($filename): void
     {
-        $fh = fopen($filename, "a");
-        array_push(mxLog::$logfiles, $fh);
+        $fh = fopen($filename, 'a');
+        self::$logfiles[] = $fh;
     }
 
     /**
-     * Function: enter
+     * Function: enter.
      *
      * Logs a method entry.
+     *
+     * @param mixed $method
+     * @param mixed $text
      */
-    public static function enter($method, $text="")
+    public static function enter($method, $text = ''): void
     {
-        mxLog::writeln("$method: { $text");
+        self::writeln("{$method}: { {$text}");
         $t0 = microtime(true);
-        array_push(mxLog::$current, $t0);
-        mxLog::$tab .= "    ";
+        self::$current[] = $t0;
+        self::$tab .= '    ';
     }
 
     /**
-     * Function: leave
+     * Function: leave.
      *
      * Logs a method exit.
+     *
+     * @param mixed $text
      */
-    public static function leave($text="")
+    public static function leave($text = ''): void
     {
-        $t0 = array_pop(mxLog::$current);
-        $tab = mxLog::$tab;
-        mxLog::$tab = substr($tab, 0, strlen($tab)-4);
-        $dt = "(dt=".(microtime(true)-$t0).")";
-        mxLog::writeln("} $dt $text");
+        $t0 = array_pop(self::$current);
+        $tab = self::$tab;
+        self::$tab = substr($tab, 0, \strlen($tab) - 4);
+        $dt = '(dt='.(microtime(true) - $t0).')';
+        self::writeln("} {$dt} {$text}");
     }
 
     /**
-     * Function: fine
+     * Function: fine.
      *
      * Logs a fine trace.
+     *
+     * @param mixed $text
      */
-    public static function fine($text)
+    public static function fine($text): void
     {
-        if (mxLog::$level_fine) {
-            mxLog::writeln($text);
+        if (self::$level_fine) {
+            self::writeln($text);
         }
     }
 
     /**
-     * Function: debug
+     * Function: debug.
      *
      * Logs a debug trace.
+     *
+     * @param mixed $text
      */
-    public static function debug($text)
+    public static function debug($text): void
     {
-        if (mxLog::$level_debug) {
-            mxLog::writeln($text);
+        if (self::$level_debug) {
+            self::writeln($text);
         }
     }
 
     /**
-     * Function: info
+     * Function: info.
      *
      * Logs an info trace.
+     *
+     * @param mixed $text
      */
-    public static function info($text)
+    public static function info($text): void
     {
-        if (mxLog::$level_info) {
-            mxLog::writeln($text);
+        if (self::$level_info) {
+            self::writeln($text);
         }
     }
 
     /**
-     * Function: warn
+     * Function: warn.
      *
      * Logs a warn trace.
+     *
+     * @param mixed $text
      */
-    public static function warn($text)
+    public static function warn($text): void
     {
-        if (mxLog::$level_warn) {
-            mxLog::writeln($text);
+        if (self::$level_warn) {
+            self::writeln($text);
             error_log($text);
         }
     }
 
     /**
-     * Function: error
+     * Function: error.
      *
      * Logs an error trace.
+     *
+     * @param mixed $text
      */
-    public static function error($text)
+    public static function error($text): void
     {
-        if (mxLog::$level_error) {
-            mxLog::writeln($text);
+        if (self::$level_error) {
+            self::writeln($text);
             error_log($text);
         }
     }
 
     /**
-     * Function: writeln
+     * Function: writeln.
      *
      * Writes a line with a linefeed to the log.
+     *
+     * @param mixed $text
      */
-    public static function writeln($text)
+    public static function writeln($text): void
     {
-        mxLog::write("$text\n");
+        self::write("{$text}\n");
     }
 
     /**
-     * Function: write
+     * Function: write.
      *
      * Writes a line to the log.
+     *
+     * @param mixed $text
      */
-    public static function write($text)
+    public static function write($text): void
     {
-        $msg = date("Y-m-d H:i:s").": ".mxLog::$tab.$text;
-        foreach (mxLog::$logfiles as $fh) {
-            fputs($fh, $msg);
+        $msg = date('Y-m-d H:i:s').': '.self::$tab.$text;
+        foreach (self::$logfiles as $fh) {
+            fwrite($fh, $msg);
         }
-        if (mxLog::$printLog) {
-            $msg = str_replace(" ", "&nbsp;", $msg);
-            print("$msg<br>");
+        if (self::$printLog) {
+            $msg = str_replace(' ', '&nbsp;', $msg);
+            echo "{$msg}<br>";
         }
     }
 
     /**
-     * Function: close
+     * Function: close.
      *
      * Closes all open logfiles.
      */
-    public static function close()
+    public static function close(): void
     {
-        foreach (mxLog::$logfiles as $fh) {
+        foreach (self::$logfiles as $fh) {
             fclose($fh);
         }
     }

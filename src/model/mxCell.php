@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Model;
 
 use Mxgraph\Util\mxUtils;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxCell
 {
     /**
-     * Class: mxCell
+     * Class: mxCell.
      *
      * Cells are the elements of the graph model. They represent the state
      * of the groups, vertices and edges in a graph.
@@ -19,102 +21,102 @@ class mxCell
      *
      * Holds the Id. Default is null.
      */
-    public $id = null;
+    public $id;
 
     /**
-     * Variable: value
+     * Variable: value.
      *
      * Holds the user object. Default is null.
      */
-    public $value = null;
+    public $value;
 
     /**
-     * Variable: geometry
+     * Variable: geometry.
      *
      * Holds the <mxGeometry>. Default is null.
      */
-    public $geometry = null;
+    public $geometry;
 
     /**
-     * Variable: style
+     * Variable: style.
      *
      * Holds the style as a string of the form [(stylename|key=value);].
      * Default is null.
      */
-    public $style = null;
+    public $style;
 
     /**
-     * Variable: vertex
+     * Variable: vertex.
      *
      * Specifies whether the cell is a vertex. Default is false.
      */
     public $vertex = false;
 
     /**
-     * Variable: edge
+     * Variable: edge.
      *
      * Specifies whether the cell is an edge. Default is false.
      */
     public $edge = false;
 
     /**
-     * Variable: connectable
+     * Variable: connectable.
      *
      * Specifies whether the cell is connectable. Default is true.
      */
     public $connectable = true;
 
     /**
-     * Variable: visible
+     * Variable: visible.
      *
      * Specifies whether the cell is visible. Default is true.
      */
     public $visible = true;
 
     /**
-     * Variable: collapsed
+     * Variable: collapsed.
      *
      * Specifies whether the cell is collapsed. Default is false.
      */
     public $collapsed = false;
 
     /**
-     * Variable: parent
+     * Variable: parent.
      *
      * Reference to the parent cell.
      */
-    public $parent = null;
+    public $parent;
 
     /**
-     * Variable: source
+     * Variable: source.
      *
      * Reference to the source terminal.
      */
-    public $source = null;
+    public $source;
 
     /**
-     * Variable: target
+     * Variable: target.
      *
      * Reference to the target terminal.
      */
-    public $target = null;
+    public $target;
 
     /**
-     * Variable: children
+     * Variable: children.
      *
      * Holds the child cells.
      */
-    public $children = null; // transient
+    public $children; // transient
 
     /**
-     * Variable: edges
+     * Variable: edges.
      *
      * Holds the edges.
      */
-    public $edges = null; // transient
+    public $edges; // transient
 
     /**
-     * Constructor: mxCell
+     * Constructor: mxCell.
      *
      * Constructs a new cell to be used in a graph model.
      * This method invokes <onInit> upon completion.
@@ -124,6 +126,10 @@ class mxCell
      * value - Optional object that represents the cell value.
      * geometry - Optional <mxGeometry> that specifies the geometry.
      * style - Optional formatted string that defines the style.
+     *
+     * @param null|mixed $value
+     * @param null|mixed $geometry
+     * @param null|mixed $style
      */
     public function __construct($value = null, $geometry = null, $style = null)
     {
@@ -133,7 +139,7 @@ class mxCell
     }
 
     /**
-     * Function: getId
+     * Function: getId.
      *
      * Returns the Id of the cell as a string.
      */
@@ -143,17 +149,19 @@ class mxCell
     }
 
     /**
-     * Function: setId
+     * Function: setId.
      *
      * Sets the Id of the cell to the given string.
+     *
+     * @param mixed $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
 
     /**
-     * Function: getValue
+     * Function: getValue.
      *
      * Returns the user object of the cell. The user
      * object is stored in <value>.
@@ -164,18 +172,20 @@ class mxCell
     }
 
     /**
-     * Function: setValue
+     * Function: setValue.
      *
      * Sets the user object of the cell. The user object
      * is stored in <value>.
+     *
+     * @param mixed $value
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
 
     /**
-     * Function: getGeometry
+     * Function: getGeometry.
      *
      * Returns the <mxGeometry> that describes the <geometry>.
      */
@@ -185,17 +195,19 @@ class mxCell
     }
 
     /**
-     * Function: setGeometry
+     * Function: setGeometry.
      *
      * Sets the <mxGeometry> to be used as the <geometry>.
+     *
+     * @param mixed $geometry
      */
-    public function setGeometry($geometry)
+    public function setGeometry($geometry): void
     {
         $this->geometry = $geometry;
     }
 
     /**
-     * Function: getStyle
+     * Function: getStyle.
      *
      * Returns a string that describes the <style>.
      */
@@ -205,17 +217,19 @@ class mxCell
     }
 
     /**
-     * Function: setStyle
+     * Function: setStyle.
      *
      * Sets the string to be used as the <style>.
+     *
+     * @param mixed $style
      */
-    public function setStyle($style)
+    public function setStyle($style): void
     {
         $this->style = $style;
     }
 
     /**
-     * Function: isVertex
+     * Function: isVertex.
      *
      * Returns true if the cell is a vertex.
      */
@@ -225,7 +239,7 @@ class mxCell
     }
 
     /**
-     * Function: setVertex
+     * Function: setVertex.
      *
      * Specifies if the cell is a vertex. This should only be assigned at
      * construction of the cell and not be changed during its lifecycle.
@@ -233,14 +247,16 @@ class mxCell
      * Parameters:
      *
      * vertex - Boolean that specifies if the cell is a vertex.
+     *
+     * @param mixed $vertex
      */
-    public function setVertex($vertex)
+    public function setVertex($vertex): void
     {
         $this->vertex = $vertex;
     }
 
     /**
-     * Function: isEdge
+     * Function: isEdge.
      *
      * Returns true if the cell is an edge.
      */
@@ -250,7 +266,7 @@ class mxCell
     }
 
     /**
-     * Function: setEdge
+     * Function: setEdge.
      *
      * Specifies if the cell is an edge. This should only be assigned at
      * construction of the cell and not be changed during its lifecycle.
@@ -258,14 +274,16 @@ class mxCell
      * Parameters:
      *
      * edge - Boolean that specifies if the cell is an edge.
+     *
+     * @param mixed $edge
      */
-    public function setEdge($edge)
+    public function setEdge($edge): void
     {
         $this->edge = $edge;
     }
 
     /**
-     * Function: isConnectable
+     * Function: isConnectable.
      *
      * Returns true if the cell is connectable.
      */
@@ -275,21 +293,23 @@ class mxCell
     }
 
     /**
-     * Function: setConnectable
+     * Function: setConnectable.
      *
      * Sets the connectable state.
      *
      * Parameters:
      *
      * connectable - Boolean that specifies the new connectable state.
+     *
+     * @param mixed $connectable
      */
-    public function setConnectable($connectable)
+    public function setConnectable($connectable): void
     {
         $this->connectable = $connectable;
     }
 
     /**
-     * Function: isVisible
+     * Function: isVisible.
      *
      * Returns true if the cell is visibile.
      */
@@ -299,21 +319,23 @@ class mxCell
     }
 
     /**
-     * Function: setVisible
+     * Function: setVisible.
      *
      * Specifies if the cell is visible.
      *
      * Parameters:
      *
      * visible - Boolean that specifies the new visible state.
+     *
+     * @param mixed $visible
      */
-    public function setVisible($visible)
+    public function setVisible($visible): void
     {
         $this->visible = $visible;
     }
 
     /**
-     * Function: isCollapsed
+     * Function: isCollapsed.
      *
      * Returns true if the cell is collapsed.
      */
@@ -323,21 +345,23 @@ class mxCell
     }
 
     /**
-     * Function: setCollapsed
+     * Function: setCollapsed.
      *
      * Sets the collapsed state.
      *
      * Parameters:
      *
      * collapsed - Boolean that specifies the new collapsed state.
+     *
+     * @param mixed $collapsed
      */
-    public function setCollapsed($collapsed)
+    public function setCollapsed($collapsed): void
     {
         $this->collapsed = $collapsed;
     }
 
     /**
-     * Function: getParent
+     * Function: getParent.
      *
      * Returns the cell's parent.
      */
@@ -347,21 +371,23 @@ class mxCell
     }
 
     /**
-     * Function: setParent
+     * Function: setParent.
      *
      * Sets the parent cell.
      *
      * Parameters:
      *
      * parent - <mxCell> that represents the new parent.
+     *
+     * @param mixed $parent
      */
-    public function setParent($parent)
+    public function setParent($parent): void
     {
         $this->parent = $parent;
     }
 
     /**
-     * Function: getTerminal
+     * Function: getTerminal.
      *
      * Returns the source or target terminal.
      *
@@ -369,18 +395,20 @@ class mxCell
      *
      * source - Boolean that specifies if the source terminal should be
      * returned.
+     *
+     * @param mixed $source
      */
     public function getTerminal($source)
     {
         if ($source) {
             return $this->source;
-        } else {
-            return $this->target;
         }
+
+        return $this->target;
     }
 
     /**
-     * Function: setTerminal
+     * Function: setTerminal.
      *
      * Sets the source or target terminal and returns the new terminal.
      *
@@ -389,6 +417,9 @@ class mxCell
      * terminal - <mxCell> that represents the new source or target terminal.
      * source - Boolean that specifies if the source or target terminal
      * should be set.
+     *
+     * @param mixed $terminal
+     * @param mixed $source
      */
     public function setTerminal($terminal, $source)
     {
@@ -402,23 +433,25 @@ class mxCell
     }
 
     /**
-     * Function: getChildCount
+     * Function: getChildCount.
      *
      * Returns the number of child cells.
      */
     public function getChildCount()
     {
-        return ($this->children == null) ? 0 : sizeof($this->children);
+        return (null == $this->children) ? 0 : \count($this->children);
     }
 
     /**
-     * Function: getIndex
+     * Function: getIndex.
      *
      * Returns the index of the specified child in the child array.
      *
      * Parameters:
      *
      * child - Child whose index should be returned.
+     *
+     * @param mixed $child
      */
     public function getIndex($child)
     {
@@ -426,17 +459,19 @@ class mxCell
     }
 
     /**
-     * Function: getChildAt
+     * Function: getChildAt.
      *
      * Returns the child at the specified index.
      *
      * Parameters:
      *
      * index - Integer that specifies the child to be returned.
+     *
+     * @param mixed $index
      */
     public function getChildAt($index)
     {
-        if ($this->children != null) {
+        if (null != $this->children) {
             return $this->children[$index];
         }
 
@@ -444,7 +479,7 @@ class mxCell
     }
 
     /**
-     * Function: insert
+     * Function: insert.
      *
      * Inserts the specified child into the child array at the specified index
      * and updates the parent reference of the child. If not childIndex is
@@ -456,6 +491,9 @@ class mxCell
      * child - <mxCell> to be inserted or appended to the child array.
      * index - Optional integer that specifies the index at which the child
      * should be inserted into the child array.
+     *
+     * @param mixed      $child
+     * @param null|mixed $index
      */
     public function insert($child, $index = null)
     {
@@ -464,18 +502,18 @@ class mxCell
                 $index = $this->getChildCount();
 
                 if ($child->getParent() === $this) {
-                    $index--;
+                    --$index;
                 }
             }
 
             $child->removeFromParent();
             $child->setParent($this);
 
-            if ($this->children == null) {
-                $this->children = array();
-                array_push($this->children, $child);
+            if (null == $this->children) {
+                $this->children = [];
+                $this->children[] = $child;
             } else {
-                array_splice($this->children, $index, 0, array($child));
+                array_splice($this->children, $index, 0, [$child]);
             }
         }
 
@@ -483,7 +521,7 @@ class mxCell
     }
 
     /**
-     * Function: remove
+     * Function: remove.
      *
      * Removes the child at the specified index from the child array and
      * returns the child that was removed. Will remove the parent reference of
@@ -493,13 +531,15 @@ class mxCell
      *
      * index - Integer that specifies the index of the child to be
      * removed.
+     *
+     * @param mixed $index
      */
     public function remove($index)
     {
-        if ($this->children != null && $index >= 0) {
+        if (null != $this->children && $index >= 0) {
             $child = $this->getChildAt($index);
 
-            if ($child != null) {
+            if (null != $child) {
                 array_splice($this->children, $index, 1);
                 $child->setParent(null);
             }
@@ -511,11 +551,11 @@ class mxCell
     }
 
     /**
-     * Function: removeFromParent
+     * Function: removeFromParent.
      *
      * Removes the cell from its parent.
      */
-    public function removeFromParent()
+    public function removeFromParent(): void
     {
         if (isset($this->parent)) {
             $index = $this->parent->getIndex($this);
@@ -524,23 +564,25 @@ class mxCell
     }
 
     /**
-     * Function: getEdgeCount
+     * Function: getEdgeCount.
      *
      * Returns the number of edges in the edge array.
      */
     public function getEdgeCount()
     {
-        return ($this->edges == null) ? 0 : sizeof($this->edges);
+        return (null == $this->edges) ? 0 : \count($this->edges);
     }
 
     /**
-     * Function: getEdgeIndex
+     * Function: getEdgeIndex.
      *
      * Returns the index of the specified edge in <edges>.
      *
      * Parameters:
      *
      * edge - <mxCell> whose index in <edges> should be returned.
+     *
+     * @param mixed $edge
      */
     public function getEdgeIndex($edge)
     {
@@ -548,17 +590,19 @@ class mxCell
     }
 
     /**
-     * Function: getEdgeAt
+     * Function: getEdgeAt.
      *
      * Returns the edge at the specified index in <edges>.
      *
      * Parameters:
      *
      * index - Integer that specifies the index of the edge to be returned.
+     *
+     * @param mixed $index
      */
     public function getEdgeAt($index)
     {
-        if ($this->edges != null) {
+        if (null != $this->edges) {
             return $this->edges[$index];
         }
 
@@ -566,7 +610,7 @@ class mxCell
     }
 
     /**
-     * Function: insertEdge
+     * Function: insertEdge.
      *
      * Inserts the specified edge into the edge array and returns the edge.
      * Will update the respective terminal reference of the edge.
@@ -575,6 +619,9 @@ class mxCell
      *
      * edge - <mxCell> to be inserted into the edge array.
      * outgoing - Boolean that specifies if the edge is outgoing.
+     *
+     * @param mixed $edge
+     * @param mixed $outgoing
      */
     public function insertEdge($edge, $outgoing)
     {
@@ -582,14 +629,14 @@ class mxCell
             $edge->removeFromTerminal($outgoing);
             $edge->setTerminal($this, $outgoing);
 
-            if ($this->edges == null ||
-                $edge->getTerminal(!$outgoing) !== $this ||
-                mxUtils::indexOf($this->edges, $edge) < 0) {
-                if ($this->edges == null) {
-                    $this->edges = array();
+            if (null == $this->edges
+                || $edge->getTerminal(!$outgoing) !== $this
+                || mxUtils::indexOf($this->edges, $edge) < 0) {
+                if (null == $this->edges) {
+                    $this->edges = [];
                 }
 
-                array_push($this->edges, $edge);
+                $this->edges[] = $edge;
             }
         }
 
@@ -597,7 +644,7 @@ class mxCell
     }
 
     /**
-     * Function: removeEdge
+     * Function: removeEdge.
      *
      * Removes the specified edge from the edge array and returns the edge.
      * Will remove the respective terminal reference from the edge.
@@ -606,12 +653,15 @@ class mxCell
      *
      * edge - <mxCell> to be removed from the edge array.
      * outgoing - Boolean that specifies if the edge is outgoing.
+     *
+     * @param mixed $edge
+     * @param mixed $outgoing
      */
     public function removeEdge($edge, $outgoing)
     {
         if (isset($edge)) {
-            if ($edge->getTerminal(!$outgoing) !== $this &&
-                $this->edges != null) {
+            if ($edge->getTerminal(!$outgoing) !== $this
+                && null != $this->edges) {
                 $index = $this->getEdgeIndex($edge);
 
                 if ($index >= 0) {
@@ -626,7 +676,7 @@ class mxCell
     }
 
     /**
-     * Function: removeFromTerminal
+     * Function: removeFromTerminal.
      *
      * Removes the edge from its source or target terminal.
      *
@@ -634,8 +684,10 @@ class mxCell
      *
      * source - Boolean that specifies if the edge should be removed from its
      * source or target terminal.
+     *
+     * @param mixed $source
      */
-    public function removeFromTerminal($source)
+    public function removeFromTerminal($source): void
     {
         $terminal = $this->getTerminal($source);
 
@@ -645,17 +697,20 @@ class mxCell
     }
 
     /**
-     * Function: getAttribute
+     * Function: getAttribute.
      *
      * Returns the specified attribute from the user object if it is an XML
      * node.
+     *
+     * @param mixed      $key
+     * @param null|mixed $defaultValue
      */
     public function getAttribute($key, $defaultValue = null)
     {
         $userObject = $this->getValue();
 
-        $value = (is_object($userObject) &&
-            $userObject->nodeType == XML_ELEMENT_NODE) ?
+        $value = (\is_object($userObject)
+            && \XML_ELEMENT_NODE == $userObject->nodeType) ?
             $userObject->getAttribute($key) : null;
 
         if (!isset($value)) {
@@ -666,29 +721,32 @@ class mxCell
     }
 
     /**
-     * Function: setAttribute
+     * Function: setAttribute.
      *
      * Sets the specified attribute on the user object if it is an XML node.
+     *
+     * @param mixed $key
+     * @param mixed $value
      */
-    public function setAttribute($key, $value)
+    public function setAttribute($key, $value): void
     {
         $userObject = $this->getValue();
 
-        if (is_object($userObject) &&
-            $userObject->nodeType == XML_ELEMENT_NODE) {
+        if (\is_object($userObject)
+            && \XML_ELEMENT_NODE == $userObject->nodeType) {
             $userObject->setAttribute($key, $value);
         }
     }
 
     /**
-     * Function: copy
+     * Function: copy.
      *
      * Returns a clone of the cell. Uses <cloneValue> to clone
      * the user object.
      */
     public function copy()
     {
-        $clone = new mxCell($this->copyValue(), null, $this->style);
+        $clone = new self($this->copyValue(), null, $this->style);
         $clone->vertex = $this->vertex;
         $clone->edge = $this->edge;
         $clone->connectable = $this->connectable;
@@ -704,7 +762,7 @@ class mxCell
     }
 
     /**
-     * Function: copyValue
+     * Function: copyValue.
      *
      * Returns a clone of the cell's user object.
      */
@@ -713,7 +771,7 @@ class mxCell
         $value = $this->getValue();
 
         if (isset($value)) {
-            if (method_exists($value, "cloneNode")) {
+            if (method_exists($value, 'cloneNode')) {
                 $value = $value->cloneNode(true);
             }
         }

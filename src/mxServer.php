@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph;
 
 use Mxgraph\Io\mxCellCodec;
@@ -22,7 +24,7 @@ use Mxgraph\View\mxTopToBottom;
 use Mxgraph\View\mxTrianglePerimeter;
 
 /**
- * Copyright (c) 2006, Gaudenz Alder
+ * Copyright (c) 2006, Gaudenz Alder.
  *
  * Class: mxServer
  *
@@ -34,13 +36,12 @@ use Mxgraph\View\mxTrianglePerimeter;
  * Constant that holds the current mxGraph version. The current version
  * is @MXGRAPH-VERSION@.
  */
-
 class mxServer
 {
-    public static function init()
+    public static function init(): void
     {
-        if (defined('MXGRAPH-VERSION') == false) {
-            define("MXGRAPH-VERSION", "@MXGRAPH-VERSION@");
+        if (false == \defined('MXGRAPH-VERSION')) {
+            \define('MXGRAPH-VERSION', '@MXGRAPH-VERSION@');
 
             if (\PHP_VERSION_ID < 80000) {
                 libxml_disable_entity_loader(true);

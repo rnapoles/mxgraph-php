@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Io;
 
 use Mxgraph\Model\mxCellPath;
@@ -7,12 +9,12 @@ use Mxgraph\Util\mxLog;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxCodec
 {
     /**
-     * Class: mxCodec
+     * Class: mxCodec.
      *
      * XML codec for PHP object graphs. In order to resolve forward references
      * when reading files the XML document that contains the data must be passed
@@ -25,21 +27,21 @@ class mxCodec
     public $document;
 
     /**
-     * Variable: objects
+     * Variable: objects.
      *
      * Maps from IDs to objects.
      */
-    public $objects = array();
+    public $objects = [];
 
     /**
-     * Variable: elements
+     * Variable: elements.
      *
      * Maps from IDs to elements.
      */
-    public $elements = null;
+    public $elements;
 
     /**
-     * Variable: encodeDefaults
+     * Variable: encodeDefaults.
      *
      * Specifies if default values should be encoded.
      * Default is false.
@@ -47,13 +49,15 @@ class mxCodec
     public $encodeDefaults = false;
 
     /**
-     * Constructor: mxGraphViewHtmlReader
+     * Constructor: mxGraphViewHtmlReader.
      *
      * Constructs a new HTML graph view reader.
+     *
+     * @param null|mixed $document
      */
-    public function __construct($document=null)
+    public function __construct($document = null)
     {
-        if ($document == null) {
+        if (null == $document) {
             $document = mxUtils::createXmlDocument();
         }
 
@@ -61,7 +65,7 @@ class mxCodec
     }
 
     /**
-     * Function: putObject
+     * Function: putObject.
      *
      * Assoiates the given object with the given ID.
      *
@@ -69,6 +73,9 @@ class mxCodec
      *
      * id - ID for the object to be associated with.
      * obj - Object to be associated with the ID.
+     *
+     * @param mixed $id
+     * @param mixed $object
      */
     public function putObject($id, $object)
     {
@@ -78,12 +85,14 @@ class mxCodec
     }
 
     /**
-     * Function: getObject
+     * Function: getObject.
      *
      * Returns the decoded object for the element with the specified ID in
      * <document>. If the object is not known then <lookup> is used to find an
      * object. If no object is found, then the element with the respective ID
      * from the document is parsed using <decode>.
+     *
+     * @param mixed $id
      */
     public function getObject($id)
     {
@@ -109,7 +118,7 @@ class mxCodec
     }
 
     /**
-     * Function: lookup
+     * Function: lookup.
      *
      * Hook for subclassers to implement a custom lookup
      * mechanism for cell IDs. This implementation always
@@ -118,6 +127,8 @@ class mxCodec
      * Parameters:
      *
      * id - ID of the object to be returned.
+     *
+     * @param mixed $id
      */
     public function lookup($id)
     {
@@ -125,18 +136,20 @@ class mxCodec
     }
 
     /**
-     * Function: getElementById
+     * Function: getElementById.
      *
      * Returns the element with the given ID from <document>.
      *
      * Parameters:
      *
      * id - String that contains the ID.
+     *
+     * @param mixed $id
      */
     public function getElementById($id)
     {
-        if ($this->elements == null) {
-            $this->elements = array();
+        if (null == $this->elements) {
+            $this->elements = [];
             $this->addElement($this->document->documentElement);
         }
 
@@ -144,30 +157,32 @@ class mxCodec
     }
 
     /**
-     * Function: addElement
+     * Function: addElement.
      *
      * Adds the given element to <elements> if it has an ID.
+     *
+     * @param mixed $node
      */
-    public function addElement($node)
+    public function addElement($node): void
     {
         if ($node instanceof \DOMElement) {
-            $id = $node->getAttribute("id");
+            $id = $node->getAttribute('id');
 
-            if ($id != null && \array_key_exists($id, $this->elements) == false) {
+            if (null != $id && false == \array_key_exists($id, $this->elements)) {
                 $this->elements[$id] = $node;
             }
         }
 
         $node = $node->firstChild;
 
-        while ($node != null) {
+        while (null != $node) {
             $this->addElement($node);
             $node = $node->nextSibling;
         }
     }
 
     /**
-     * Function: getId
+     * Function: getId.
      *
      * Returns the ID of the specified object. This implementation
      * calls <reference> first and if that returns null handles
@@ -178,6 +193,8 @@ class mxCodec
      * Parameters:
      *
      * obj - Object to return the ID for.
+     *
+     * @param mixed $obj
      */
     public function getId($obj)
     {
@@ -186,25 +203,25 @@ class mxCodec
         if (isset($obj)) {
             $id = $this->reference($obj);
 
-            if (!isset($id) && mxCodecRegistry::getName($obj) == "mxCell") {
+            if (!isset($id) && 'mxCell' == mxCodecRegistry::getName($obj)) {
                 $id = $obj->getId();
 
                 if (!isset($id)) {
                     // Uses an on-the-fly Id
                     $id = mxCellPath::create($obj);
 
-                    if (strlen($id) == 0) {
-                        $id = "root";
+                    if (0 == \strlen($id)) {
+                        $id = 'root';
                     }
                 }
             }
         }
 
-        return $id;//str_replace("\\", "_", $id);
+        return $id; //str_replace("\\", "_", $id);
     }
 
     /**
-     * Function: reference
+     * Function: reference.
      *
      * Hook for subclassers to implement a custom method
      * for retrieving IDs from objects. This implementation
@@ -213,6 +230,8 @@ class mxCodec
      * Parameters:
      *
      * obj - Object whose ID should be returned.
+     *
+     * @param mixed $obj
      */
     public function reference($obj)
     {
@@ -220,7 +239,7 @@ class mxCodec
     }
 
     /**
-     * Function: encode
+     * Function: encode.
      *
      * Encodes the specified object and returns the resulting
      * XML node.
@@ -228,14 +247,16 @@ class mxCodec
      * Parameters:
      *
      * obj - Object to be encoded.
+     *
+     * @param mixed $obj
      */
     public function encode($obj)
     {
         $node = null;
 
-        if (is_object($obj) || is_array($obj)) {
-            if (is_array($obj)) {
-                $enc = new mxObjectCodec(array());
+        if (\is_object($obj) || \is_array($obj)) {
+            if (\is_array($obj)) {
+                $enc = new mxObjectCodec([]);
             } else {
                 $enc = mxCodecRegistry::getCodec(
                     mxCodecRegistry::getName($obj)
@@ -245,11 +266,11 @@ class mxCodec
             if (isset($enc)) {
                 $node = $enc->encode($this, $obj);
             } else {
-                if (get_class($obj) == "DOMElement") {
+                if ('DOMElement' == \get_class($obj)) {
                     /** @var \DOMElement $node */
                     $node = $obj->cloneNode(true);
                 } else {
-                    mxLog::warn("mxCodec.encode: No codec for ".
+                    mxLog::warn('mxCodec.encode: No codec for '.
                         mxCodecRegistry::getName($obj));
                 }
             }
@@ -259,7 +280,7 @@ class mxCodec
     }
 
     /**
-     * Function: decode
+     * Function: decode.
      *
      * Decodes the given XML node. The optional "into"
      * argument specifies an existing object to be
@@ -273,12 +294,15 @@ class mxCodec
      *
      * node - XML node to be decoded.
      * into - Optional object to be decodec into.
+     *
+     * @param mixed      $node
+     * @param null|mixed $into
      */
     public function decode($node, $into = null)
     {
         $obj = null;
 
-        if (isset($node) && $node->nodeType == XML_ELEMENT_NODE) {
+        if (isset($node) && \XML_ELEMENT_NODE == $node->nodeType) {
             $dec = mxCodecRegistry::getCodec($node->nodeName);
 
             try {
@@ -286,11 +310,12 @@ class mxCodec
                     $obj = $dec->decode($this, $node, $into);
                 } else {
                     $obj = $node->cloneNode(true);
-                    $obj->removeAttribute("as");
+                    $obj->removeAttribute('as');
                 }
             } catch (\Exception $ex) {
                 // ignore
-                mxLog::debug("Cannot decode ".$node->nodeName.": $ex");
+                mxLog::debug('Cannot decode '.$node->nodeName.": {$ex}");
+
                 throw $ex;
             }
         }
@@ -299,7 +324,7 @@ class mxCodec
     }
 
     /**
-     * Function: encodeCell
+     * Function: encodeCell.
      *
      * Encoding of cell hierarchies is built-into the core, but
      * is a higher-level function that needs to be explicitely
@@ -317,22 +342,26 @@ class mxCodec
      * node - Parent XML node to add the encoded cell into.
      * includeChildren - Optional boolean indicating if the
      * function should include all descendents. Default is true.
+     *
+     * @param mixed $cell
+     * @param mixed $node
+     * @param mixed $includeChildren
      */
-    public function encodeCell($cell, $node, $includeChildren=true)
+    public function encodeCell($cell, $node, $includeChildren = true): void
     {
         $node->appendChild($this->encode($cell));
 
         if ($includeChildren) {
             $childCount = $cell->getChildCount();
 
-            for ($i = 0; $i < $childCount; $i++) {
+            for ($i = 0; $i < $childCount; ++$i) {
                 $this->encodeCell($cell->getChildAt($i), $node);
             }
         }
     }
 
     /**
-     * Function: decodeCell
+     * Function: decodeCell.
      *
      * Decodes cells that have been encoded using inversion, ie.
      * where the user object is the enclosing node in the XML,
@@ -347,12 +376,15 @@ class mxCodec
      * the graph structure should be restored by calling insert
      * and insertEdge on the parent and terminals, respectively.
      * Default is true.
+     *
+     * @param mixed $node
+     * @param mixed $restoreStructures
      */
     public function decodeCell($node, $restoreStructures = true)
     {
         $cell = null;
 
-        if (isset($node) && $node->nodeType == XML_ELEMENT_NODE) {
+        if (isset($node) && \XML_ELEMENT_NODE == $node->nodeType) {
             // Tries to find a codec for the given node name. If that does
             // not return a codec then the node is the user object (an XML node
             // that contains the mxCell, aka inversion).
@@ -371,7 +403,7 @@ class mxCodec
             }
 
             if (!($decoder instanceof mxCellCodec)) {
-                $decoder = mxCodecRegistry::getCodec("mxCell");
+                $decoder = mxCodecRegistry::getCodec('mxCell');
             }
 
             $cell = $decoder->decode($this, $node);
@@ -385,11 +417,13 @@ class mxCodec
     }
 
     /**
-     * Function: insertIntoGraph
+     * Function: insertIntoGraph.
      *
      * Inserts the given cell into its parent and terminal cells.
+     *
+     * @param mixed $cell
      */
-    public function insertIntoGraph($cell)
+    public function insertIntoGraph($cell): void
     {
         $parent = $cell->getParent();
         $source = $cell->getTerminal(true);
@@ -414,7 +448,7 @@ class mxCodec
     }
 
     /**
-     * Function: setAttribute
+     * Function: setAttribute.
      *
      * Sets the attribute on the specified node to value. This is a
      * helper method that makes sure the attribute and value arguments
@@ -425,12 +459,16 @@ class mxCodec
      * node - XML node to set the attribute for.
      * attributes - Attributename to be set.
      * value - New value of the attribute.
+     *
+     * @param mixed $node
+     * @param mixed $attribute
+     * @param mixed $value
      */
-    public function setAttribute($node, $attribute, $value)
+    public function setAttribute($node, $attribute, $value): void
     {
-        if (is_array($value)) {
-            error_log("cannot write array $attribute");
-        } elseif (isset($attribute) && isset($value)) {
+        if (\is_array($value)) {
+            error_log("cannot write array {$attribute}");
+        } elseif (isset($attribute, $value)) {
             $node->setAttribute($attribute, $value);
         }
     }

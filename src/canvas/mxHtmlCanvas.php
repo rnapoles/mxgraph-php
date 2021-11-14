@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxgraph\Canvas;
 
 use Mxgraph\Util\mxConstants;
 use Mxgraph\Util\mxUtils;
 
 /**
- * Copyright (c) 2006-2013, Gaudenz Alder
+ * Copyright (c) 2006-2013, Gaudenz Alder.
  */
 class mxHtmlCanvas extends mxGdCanvas
 {
     /**
-     * Class: mxHtmlCanvas
+     * Class: mxHtmlCanvas.
      *
      * Canvas for drawing graphs using HTML.
      *
@@ -22,19 +24,22 @@ class mxHtmlCanvas extends mxGdCanvas
     public $html;
 
     /**
-     * Constructor: mxGdCanvas
+     * Constructor: mxGdCanvas.
      *
      * Constructs a new GD canvas. Use a HTML color definition for
      * the optional background parameter, eg. white or #FFFFFF.
+     *
+     * @param mixed $scale
+     * @param mixed $basePath
      */
-    public function __construct($scale=1, $basePath = "")
+    public function __construct($scale = 1, $basePath = '')
     {
         parent::__construct(null, null, $scale, null, $basePath);
-        $this->html = "";
+        $this->html = '';
     }
 
     /**
-     * Function: getHtml
+     * Function: getHtml.
      *
      * Gets the HTML that represents the canvas.
      */
@@ -44,21 +49,30 @@ class mxHtmlCanvas extends mxGdCanvas
     }
 
     /**
-     * Function: out
+     * Function: out.
      *
      * Adds the specified string to the output.
+     *
+     * @param mixed $string
      */
     public function out($string)
     {
-        return $this->html .= "$string\n";
+        return $this->html .= "{$string}\n";
     }
 
     /**
-     * Function: drawLine
+     * Function: drawLine.
      *
      * Draws the specified line.
+     *
+     * @param mixed      $x0
+     * @param mixed      $y0
+     * @param mixed      $x1
+     * @param mixed      $y1
+     * @param null|mixed $stroke
+     * @param mixed      $dashed
      */
-    public function drawLine($x0, $y0, $x1, $y1, $stroke = null, $dashed = false)
+    public function drawLine($x0, $y0, $x1, $y1, $stroke = null, $dashed = false): void
     {
         $tmpX = min($x0, $x1);
         $tmpY = min($y0, $y1);
@@ -67,17 +81,17 @@ class mxHtmlCanvas extends mxGdCanvas
         $x0 = $tmpX;
         $y0 = $tmpY;
 
-        if ($w == 0 || $h == 0) {
-            $style = "position:absolute;".
-                "overflow:hidden;".
-                "left:".$x0."px;".
-                "top:".$y0."px;".
-                "width:".$w."px;".
-                "height:".$h."px;".
-                "border-color:$stroke;".
-                "border-style:solid;".
-                "border-width:1 1 0 0px";
-            $this->out("<DIV STYLE='$style'></DIV>");
+        if (0 == $w || 0 == $h) {
+            $style = 'position:absolute;'.
+                'overflow:hidden;'.
+                'left:'.$x0.'px;'.
+                'top:'.$y0.'px;'.
+                'width:'.$w.'px;'.
+                'height:'.$h.'px;'.
+                "border-color:{$stroke};".
+                'border-style:solid;'.
+                'border-width:1 1 0 0px';
+            $this->out("<DIV STYLE='{$style}'></DIV>");
         } else {
             $x = $x0 + ($x1 - $x0) / 2;
             $this->drawLine($x0, $y0, $x, $y0);
@@ -87,45 +101,69 @@ class mxHtmlCanvas extends mxGdCanvas
     }
 
     /**
-     * Function: drawShape
+     * Function: drawShape.
      *
      * Draws the specified shape.
+     *
+     * @param mixed      $shape
+     * @param mixed      $x
+     * @param mixed      $y
+     * @param mixed      $w
+     * @param mixed      $h
+     * @param null|mixed $stroke
+     * @param null|mixed $fill
      */
-    public function drawShape($shape, $x, $y, $w, $h, $stroke=null, $fill=null)
+    public function drawShape($shape, $x, $y, $w, $h, $stroke = null, $fill = null): void
     {
-        $style = "position:absolute;".
-            "left:".$x."px;".
-            "top:".$y."px;".
-            "width:".$w."px;".
-            "height:".$h."px;".
-            "border-style:solid;".
-            "border-color:$stroke;".
-            "border-width:1px;".
-            "background-color:$fill;";
-        $this->out("<DIV STYLE='$style'></DIV>");
+        $style = 'position:absolute;'.
+            'left:'.$x.'px;'.
+            'top:'.$y.'px;'.
+            'width:'.$w.'px;'.
+            'height:'.$h.'px;'.
+            'border-style:solid;'.
+            "border-color:{$stroke};".
+            'border-width:1px;'.
+            "background-color:{$fill};";
+        $this->out("<DIV STYLE='{$style}'></DIV>");
     }
 
     /**
-     * Function: drawImage
+     * Function: drawImage.
      *
      * Draws the specified image.
+     *
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $image
+     * @param mixed $aspect
+     * @param mixed $flipH
+     * @param mixed $flipV
      */
-    public function drawImage($x, $y, $w, $h, $image, $aspect = true, $flipH = false, $flipV = false)
+    public function drawImage($x, $y, $w, $h, $image, $aspect = true, $flipH = false, $flipV = false): void
     {
-        $style = "position:absolute;".
-            "left:".$x."px;".
-            "top:".$y."px;".
-            "width:".$w."px;".
-            "height:".$h."px;";
-        $this->out("<IMAGE SRC='$image' STYLE='$style'/>");
+        $style = 'position:absolute;'.
+            'left:'.$x.'px;'.
+            'top:'.$y.'px;'.
+            'width:'.$w.'px;'.
+            'height:'.$h.'px;';
+        $this->out("<IMAGE SRC='{$image}' STYLE='{$style}'/>");
     }
 
     /**
-     * Function: drawText
+     * Function: drawText.
      *
      * Draws the specified text.
+     *
+     * @param mixed $string
+     * @param mixed $x
+     * @param mixed $y
+     * @param mixed $w
+     * @param mixed $h
+     * @param mixed $style
      */
-    public function drawText($string, $x, $y, $w, $h, $style)
+    public function drawText($string, $x, $y, $w, $h, $style): void
     {
         $horizontal = mxUtils::getValue($style, mxConstants::$STYLE_HORIZONTAL, 1);
         $font = mxUtils::getValue(
@@ -138,52 +176,56 @@ class mxHtmlCanvas extends mxGdCanvas
             mxConstants::$STYLE_FONTSIZE,
             mxConstants::$DEFAULT_FONTSIZE
         ) * $this->scale;
-        $color = mxUtils::getValue($style, mxConstants::$STYLE_FONTCOLOR, "black");
-        $align = mxUtils::getValue($style, mxConstants::$STYLE_ALIGN, "center");
-        $valign = mxUtils::getValue($style, mxConstants::$STYLE_VERTICAL_ALIGN, "middle");
+        $color = mxUtils::getValue($style, mxConstants::$STYLE_FONTCOLOR, 'black');
+        $align = mxUtils::getValue($style, mxConstants::$STYLE_ALIGN, 'center');
+        $valign = mxUtils::getValue($style, mxConstants::$STYLE_VERTICAL_ALIGN, 'middle');
 
-        $style = "position:absolute;".
-            "overflow:hidden;".
-            "left:".($x-4)."px;".
-            "width:".$w."px;".
-            "height:".$h."px;".
-            "font-family:$font;".
-            "font-size:".$fontSize."px;".
-            "color:$color;";
+        $style = 'position:absolute;'.
+            'overflow:hidden;'.
+            'left:'.($x - 4).'px;'.
+            'width:'.$w.'px;'.
+            'height:'.$h.'px;'.
+            "font-family:{$font};".
+            'font-size:'.$fontSize.'px;'.
+            "color:{$color};";
 
         if ($horizontal) {
-            $style .= "top:".($y-5)."px;";
+            $style .= 'top:'.($y - 5).'px;';
         } else {
-            $style .= "top:".($y-$h)."px;";
+            $style .= 'top:'.($y - $h).'px;';
         }
 
         $string = htmlentities($string);
-        $string = str_replace("\n", "<br>", $string);
-        $this->out("<TABLE STYLE='$style'>".
-            "<TR><TD ALIGN='$align' VALIGN='$valign'>".
-            "$string</TD></TR></TABLE>");
+        $string = str_replace("\n", '<br>', $string);
+        $this->out("<TABLE STYLE='{$style}'>".
+            "<TR><TD ALIGN='{$align}' VALIGN='{$valign}'>".
+            "{$string}</TD></TR></TABLE>");
     }
 
     /**
-     * Destructor: destroy
+     * Destructor: destroy.
      *
      * Destroy all allocated resources.
      */
-    public function destroy()
+    public function destroy(): void
     {
-        $this->html = "";
+        $this->html = '';
     }
 
     /**
-     * Function: drawGraph
+     * Function: drawGraph.
      *
      * Draws the given graph using this canvas.
+     *
+     * @param mixed      $graph
+     * @param null|mixed $clip
+     * @param null|mixed $bg
      */
     public static function drawGraph($graph, $clip = null, $bg = null)
     {
         $graph->view->validate();
 
-        $canvas = new mxHtmlCanvas($graph->view->scale);
+        $canvas = new self($graph->view->scale);
         $graph->drawGraph($canvas);
 
         return $canvas->getHtml();
