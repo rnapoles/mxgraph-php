@@ -36,25 +36,16 @@ class mxRhombusPerimeter implements mxPerimeterFunction
         $py = $next->y;
 
         // Special case for intersecting the diamond's corners
-        if ($cx == $px)
-        {
-            if ($cy > $py)
-            {
+        if ($cx == $px) {
+            if ($cy > $py) {
                 return new mxPoint($cx, $y); // top
-            }
-            else
-            {
+            } else {
                 return new mxPoint($cx, $y + $h); // bottom
             }
-        }
-        else if ($cy == $py)
-        {
-            if ($cx > $px)
-            {
+        } elseif ($cy == $py) {
+            if ($cx > $px) {
                 return new mxPoint($x, $cy); // left
-            }
-            else
-            {
+            } else {
                 return new mxPoint($x + $w, $cy); // right
             }
         }
@@ -62,42 +53,62 @@ class mxRhombusPerimeter implements mxPerimeterFunction
         $tx = $cx;
         $ty = $cy;
 
-        if ($orthogonal)
-        {
-            if ($px >= $x && $px <= $x + $w)
-            {
+        if ($orthogonal) {
+            if ($px >= $x && $px <= $x + $w) {
                 $tx = $px;
-            }
-            else if ($py >= $y && $py <= $y + $h)
-            {
+            } elseif ($py >= $y && $py <= $y + $h) {
                 $ty = $py;
             }
         }
 
         // In which quadrant will the intersection be?
         // set the slope and offset of the border line accordingly
-        if ($px < $cx)
-        {
-            if ($py < $cy)
-            {
-                return mxUtils::intersection($px, $py,
-                    $tx, $ty, $cx, $y, $x, $cy);
+        if ($px < $cx) {
+            if ($py < $cy) {
+                return mxUtils::intersection(
+                    $px,
+                    $py,
+                    $tx,
+                    $ty,
+                    $cx,
+                    $y,
+                    $x,
+                    $cy
+                );
+            } else {
+                return mxUtils::intersection(
+                    $px,
+                    $py,
+                    $tx,
+                    $ty,
+                    $cx,
+                    $y + $h,
+                    $x,
+                    $cy
+                );
             }
-            else
-            {
-                return mxUtils::intersection($px, $py,
-                    $tx, $ty, $cx, $y + $h, $x, $cy);
-            }
-        }
-        else if ($py < $cy)
-        {
-            return mxUtils::intersection($px, $py,
-                $tx, $ty, $cx, $y, $x + $w, $cy);
-        }
-        else
-        {
-            return mxUtils::intersection($px, $py,
-                $tx, $ty, $cx, $y + $h, $x + $w, $cy);
+        } elseif ($py < $cy) {
+            return mxUtils::intersection(
+                $px,
+                $py,
+                $tx,
+                $ty,
+                $cx,
+                $y,
+                $x + $w,
+                $cy
+            );
+        } else {
+            return mxUtils::intersection(
+                $px,
+                $py,
+                $tx,
+                $ty,
+                $cx,
+                $y + $h,
+                $x + $w,
+                $cy
+            );
         }
     }
 }

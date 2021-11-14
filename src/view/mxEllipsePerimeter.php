@@ -37,47 +37,37 @@ class mxEllipsePerimeter implements mxPerimeterFunction
         $dx = (int) ($px - $cx);
         $dy = (int) ($py - $cy);
 
-        if ($dx == 0 && $dy != 0)
-        {
+        if ($dx == 0 && $dy != 0) {
             return new mxPoint($cx, $cy + $b * $dy / abs($dy));
-        }
-        else if ($dx == 0 && $dy == 0)
-        {
+        } elseif ($dx == 0 && $dy == 0) {
             return new mxPoint($px, $py);
         }
 
-        if ($orthogonal)
-        {
-            if ($py >= $y && $py <= $y + $bounds->height)
-            {
+        if ($orthogonal) {
+            if ($py >= $y && $py <= $y + $bounds->height) {
                 $ty = $py - $cy;
                 $tx = sqrt($a*$a*(1-($ty*$ty)/($b*$b)));
 
-                if (is_nan($tx))
-                {
+                if (is_nan($tx)) {
                     $tx = 0;
                 }
 
-                if ($px <= $x)
-                {
+                if ($px <= $x) {
                     $tx = -$tx;
                 }
 
                 return new mxPoint($cx+$tx, $py);
             }
 
-            if ($px >= $x && $px <= $x + $bounds->width)
-            {
+            if ($px >= $x && $px <= $x + $bounds->width) {
                 $tx = $px - $cx;
                 $ty = sqrt($b*$b*(1-($tx*$tx)/($a*$a)));
 
-                if (is_nan($ty))
-                {
+                if (is_nan($ty)) {
                     $ty = 0;
                 }
 
-                if ($py <= $y)
-                {
+                if ($py <= $y) {
                     $ty = -$ty;
                 }
 
@@ -108,13 +98,10 @@ class mxEllipsePerimeter implements mxPerimeterFunction
         // Correct solution
         $xout = 0;
         $yout = 0;
-        if ($dist1 < $dist2)
-        {
+        if ($dist1 < $dist2) {
             $xout = $xout1;
             $yout = $yout1;
-        }
-        else
-        {
+        } else {
             $xout = $xout2;
             $yout = $yout2;
         }

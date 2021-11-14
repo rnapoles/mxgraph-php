@@ -37,36 +37,39 @@ class mxElbowConnector implements mxEdgeStyleFunction
         $vertical = false;
         $horizontal = false;
 
-        if ($source != null && $target != null)
-        {
-            if ($pt != null)
-            {
+        if ($source != null && $target != null) {
+            if ($pt != null) {
                 $left = min($source->x, $target->x);
-                $right = max($source->x + $source->width,
-                    $target->x + $target->width);
+                $right = max(
+                    $source->x + $source->width,
+                    $target->x + $target->width
+                );
 
                 $top = min($source->y, $target->y);
-                $bottom = max($source->y + $source->height,
-                    $target->y + $target->height);
+                $bottom = max(
+                    $source->y + $source->height,
+                    $target->y + $target->height
+                );
 
                 $pt = $state->view->transformControlPoint($state, $pt);
 
                 $vertical = $pt->y < $top || $pt->y > $bottom;
                 $horizontal = $pt->x < $left || $pt->x > $right;
-            }
-            else
-            {
+            } else {
                 $left = max($source->x, $target->x);
-                $right = min($source->x + $source->width,
-                    $target->x + $target->width);
+                $right = min(
+                    $source->x + $source->width,
+                    $target->x + $target->width
+                );
 
                 $vertical = $left == $right;
 
-                if (!$vertical)
-                {
+                if (!$vertical) {
                     $top = max($source->y, $target->y);
-                    $bottom = min($source->y + $source->height,
-                        $target->y + $target->height);
+                    $bottom = min(
+                        $source->y + $source->height,
+                        $target->y + $target->height
+                    );
 
                     $horizontal = $top == $bottom;
                 }
@@ -74,14 +77,10 @@ class mxElbowConnector implements mxEdgeStyleFunction
         }
 
         if (!$horizontal && ($vertical ||
-                mxUtils::getValue($state->style, mxConstants::$STYLE_ELBOW) == mxConstants::$ELBOW_VERTICAL))
-        {
+                mxUtils::getValue($state->style, mxConstants::$STYLE_ELBOW) == mxConstants::$ELBOW_VERTICAL)) {
             mxEdgeStyle::$TopToBottom->apply($state, $source, $target, $points, $result);
-        }
-        else
-        {
+        } else {
             mxEdgeStyle::$SideToSide->apply($state, $source, $target, $points, $result);
         }
     }
-
 }

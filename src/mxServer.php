@@ -35,8 +35,10 @@ use Mxgraph\View\mxTrianglePerimeter;
  * is @MXGRAPH-VERSION@.
  */
 
-class mxServer {
-    public static function init() {
+class mxServer
+{
+    public static function init()
+    {
         if (defined('MXGRAPH-VERSION') == false) {
             define("MXGRAPH-VERSION", "@MXGRAPH-VERSION@");
             libxml_disable_entity_loader(true);

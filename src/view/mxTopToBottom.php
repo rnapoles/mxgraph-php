@@ -25,7 +25,6 @@ use Mxgraph\Util\mxUtils;
  */
 class mxTopToBottom implements mxEdgeStyleFunction
 {
-
     /**
      *
      */
@@ -37,27 +36,23 @@ class mxTopToBottom implements mxEdgeStyleFunction
         $p0 = $pts[0];
         $pe = $pts[sizeof($pts) - 1];
 
-        if ($pt != null)
-        {
+        if ($pt != null) {
             $pt = $view->transformControlPoint($state, $pt);
         }
 
-        if (isset($p0))
-        {
+        if (isset($p0)) {
             $source = new mxCellState();
             $source->x = $p0->x;
             $source->y = $p0->y;
         }
 
-        if (isset($pe))
-        {
+        if (isset($pe)) {
             $target = new mxCellState();
             $target->x = $pe->x;
             $target->y = $pe->y;
         }
 
-        if (isset($source) && isset($target))
-        {
+        if (isset($source) && isset($target)) {
             $t = max($source->y, $target->y);
             $b = min($source->y+$source->height, $target->y+$target->height);
 
@@ -65,44 +60,34 @@ class mxTopToBottom implements mxEdgeStyleFunction
 
             if ($pt != null &&
                 $pt->x >= $source->x &&
-                $pt->x <= $source->x + $source->width)
-            {
+                $pt->x <= $source->x + $source->width) {
                 $x = $pt->x;
             }
 
             $y = ($pt != null) ? $pt->y : $b + ($t - $b) / 2;
 
             if (!mxUtils::contains($target, $x, $y) &&
-                !mxUtils::contains($source, $x, $y))
-            {
+                !mxUtils::contains($source, $x, $y)) {
                 array_push($result, new mxPoint($x, $y));
             }
 
             if ($pt != null &&
                 $pt->x >= $target->x &&
-                $pt->x <= $target->x + $target->width)
-            {
+                $pt->x <= $target->x + $target->width) {
                 $x = $pt->x;
-            }
-            else
-            {
+            } else {
                 $x = $view->getRoutingCenterX($target);
             }
 
             if (!mxUtils::contains($target, $x, $y) &&
-                !mxUtils::contains($source, $x, $y))
-            {
+                !mxUtils::contains($source, $x, $y)) {
                 array_push($result, new mxPoint($x, $y));
             }
 
-            if (sizeof($result) == 1)
-            {
-                if ($pt == null)
-                {
+            if (sizeof($result) == 1) {
+                if ($pt == null) {
                     array_push($result, new mxPoint($x, $y));
-                }
-                else
-                {
+                } else {
                     $l = max($source->x, $target->x);
                     $r = min($source->x + $source->width, $target->x + $target->width);
 
@@ -111,5 +96,4 @@ class mxTopToBottom implements mxEdgeStyleFunction
             }
         }
     }
-
 }

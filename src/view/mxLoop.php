@@ -30,18 +30,15 @@ class mxLoop implements mxEdgeStyleFunction
      */
     public function apply($state, $source, $target, $points, &$result)
     {
-        if ($source != null)
-        {
+        if ($source != null) {
             $view = $state->view;
             $graph = $view->graph;
             $pt = ($points != null && sizeof($points) > 0) ? $points[0] : null;
 
-            if ($pt != null)
-            {
+            if ($pt != null) {
                 $pt = $view->transformControlPoint($state, $pt);
 
-                if (mxUtils::contains($source, $pt->x, $pt->y))
-                {
+                if (mxUtils::contains($source, $pt->x, $pt->y)) {
                     $pt = null;
                 }
             }
@@ -51,56 +48,45 @@ class mxLoop implements mxEdgeStyleFunction
             $y = 0;
             $dy = 0;
 
-            $seg = mxUtils::getValue($state->style,
-                    mxConstants::$STYLE_SEGMENT, $graph->gridSize)
+            $seg = mxUtils::getValue(
+                $state->style,
+                mxConstants::$STYLE_SEGMENT,
+                $graph->gridSize
+            )
                 * $view->scale;
-            $dir = mxUtils::getValue($state->style,
+            $dir = mxUtils::getValue(
+                $state->style,
                 mxConstants::$STYLE_DIRECTION,
-                mxConstants::$DIRECTION_WEST);
+                mxConstants::$DIRECTION_WEST
+            );
 
             if ($dir == mxConstants::$DIRECTION_NORTH ||
-                $dir == mxConstants::$DIRECTION_SOUTH)
-            {
+                $dir == mxConstants::$DIRECTION_SOUTH) {
                 $x = $view->getRoutingCenterX($source);
                 $dx = $seg;
-            }
-            else
-            {
+            } else {
                 $y = $view->getRoutingCenterY($source);
                 $dy = $seg;
             }
 
             if ($pt == null ||
                 $pt->x < $source->x ||
-                $pt->x > $source->x + $source->width)
-            {
-                if ($pt != null)
-                {
+                $pt->x > $source->x + $source->width) {
+                if ($pt != null) {
                     $x = $pt->x;
                     $dy = max(abs($y - $pt->y), $dy);
-                }
-                else
-                {
-                    if ($dir == mxConstants::$DIRECTION_NORTH)
-                    {
+                } else {
+                    if ($dir == mxConstants::$DIRECTION_NORTH) {
                         $y = $source->y - 2 * $dx;
-                    }
-                    else if ($dir == mxConstants::$DIRECTION_SOUTH)
-                    {
+                    } elseif ($dir == mxConstants::$DIRECTION_SOUTH) {
                         $y = $source->y + $source->height + 2 * $dx;
-                    }
-                    else if ($dir == mxConstants::$DIRECTION_EAST)
-                    {
+                    } elseif ($dir == mxConstants::$DIRECTION_EAST) {
                         $x = $source->x - 2 * $dy;
-                    }
-                    else
-                    {
+                    } else {
                         $x = $source->x + $source->width + 2 * $dy;
                     }
                 }
-            }
-            else if ($pt != null)
-            {
+            } elseif ($pt != null) {
                 $x = $view->getRoutingCenterX($source);
                 $dx = max(abs($x - $pt->x), $dy);
                 $y = $pt->y;

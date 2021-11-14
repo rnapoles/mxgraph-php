@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Mxgraph\View;
 
-
 class mxPerimeter
 {
     /**

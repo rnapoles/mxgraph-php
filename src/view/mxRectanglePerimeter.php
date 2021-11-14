@@ -34,59 +34,42 @@ class mxRectanglePerimeter implements mxPerimeterFunction
         $beta = $pi2 - $alpha;
         $t = atan2($bounds->height, $bounds->width);
 
-        if ($alpha < - $pi + $t || $alpha > $pi - $t)
-        {
+        if ($alpha < - $pi + $t || $alpha > $pi - $t) {
             // Left side
             $p->x = $bounds->x;
             $p->y = $cy - $bounds->width * tan($alpha) / 2;
-        }
-        else if ($alpha < -$t)
-        {
+        } elseif ($alpha < -$t) {
             // Top side
             $p->y = $bounds->y;
             $p->x = $cx - $bounds->height * tan($beta) / 2;
-        }
-        else if ($alpha < $t)
-        {
+        } elseif ($alpha < $t) {
             // Right side
             $p->x = $bounds->x + $bounds->width;
             $p->y = $cy + $bounds->width * tan($alpha) / 2;
-        }
-        else
-        {
+        } else {
             // Bottom side
             $p->y = $bounds->y + $bounds->height;
             $p->x = $cx + $bounds->height * tan($beta) / 2;
         }
 
-        if ($orthogonal)
-        {
+        if ($orthogonal) {
             if ($next->x >= $bounds->x &&
-                $next->x <= $bounds->x + $bounds->width)
-            {
+                $next->x <= $bounds->x + $bounds->width) {
                 $p->x = $next->x;
-            }
-            else if ($next->y >= $bounds->y &&
-                $next->y <= $bounds->y + $bounds->height)
-            {
+            } elseif ($next->y >= $bounds->y &&
+                $next->y <= $bounds->y + $bounds->height) {
                 $p->y = $next->y;
             }
 
-            if ($next->x < $bounds->x)
-            {
+            if ($next->x < $bounds->x) {
                 $p->x = $bounds->x;
-            }
-            else if ($next->x > $bounds->x + $bounds->width)
-            {
+            } elseif ($next->x > $bounds->x + $bounds->width) {
                 $p->x = $bounds->x + $bounds->width + 1;
             }
 
-            if ($next->y < $bounds->y)
-            {
+            if ($next->y < $bounds->y) {
                 $p->y = $bounds->y;
-            }
-            else if ($next->y > $bounds->y + $bounds->height)
-            {
+            } elseif ($next->y > $bounds->y + $bounds->height) {
                 $p->y = $bounds->y + $bounds->height + 1;
             }
         }

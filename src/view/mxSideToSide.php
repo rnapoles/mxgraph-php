@@ -36,27 +36,23 @@ class mxSideToSide implements mxEdgeStyleFunction
         $p0 = $pts[0];
         $pe = $pts[sizeof($pts) - 1];
 
-        if ($pt != null)
-        {
+        if ($pt != null) {
             $pt = $view->transformControlPoint($state, $pt);
         }
 
-        if (isset($p0))
-        {
+        if (isset($p0)) {
             $source = new mxCellState();
             $source->x = $p0->x;
             $source->y = $p0->y;
         }
 
-        if (isset($pe))
-        {
+        if (isset($pe)) {
             $target = new mxCellState();
             $target->x = $pe->x;
             $target->y = $pe->y;
         }
 
-        if (isset($source) && isset($target))
-        {
+        if (isset($source) && isset($target)) {
             $l = max($source->x, $target->x);
             $r = min($source->x+$source->width, $target->x+$target->width);
 
@@ -65,41 +61,32 @@ class mxSideToSide implements mxEdgeStyleFunction
             $y1 = $view->getRoutingCenterY($source);
             $y2 = $view->getRoutingCenterY($target);
 
-            if ($pt != null)
-            {
+            if ($pt != null) {
                 if ($pt->y >= $source->y &&
-                    $pt->y <= $source->y + $source->height)
-                {
+                    $pt->y <= $source->y + $source->height) {
                     $y1 = $pt->y;
                 }
 
                 if ($pt->y >= $target->y &&
-                    $pt->y <= $target->y + $target->height)
-                {
+                    $pt->y <= $target->y + $target->height) {
                     $y2 = $pt->y;
                 }
             }
 
             if (!mxUtils::contains($target, $x, $y1) &&
-                !mxUtils::contains($source, $x, $y1))
-            {
+                !mxUtils::contains($source, $x, $y1)) {
                 array_push($result, new mxPoint($x, $y1));
             }
 
             if (!mxUtils::contains($target, $x, $y2) &&
-                !mxUtils::contains($source, $x, $y2))
-            {
+                !mxUtils::contains($source, $x, $y2)) {
                 array_push($result, new mxPoint($x, $y2));
             }
 
-            if (sizeof($result) == 1)
-            {
-                if (isset($pt))
-                {
+            if (sizeof($result) == 1) {
+                if (isset($pt)) {
                     array_push($result, new mxPoint($x, $pt->y));
-                }
-                else
-                {
+                } else {
                     $t = max($source->y, $target->y);
                     $b = min($source->y+$source->height, $target->y+$target->height);
 
